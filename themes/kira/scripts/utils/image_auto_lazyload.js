@@ -1,17 +1,27 @@
 'use strict';
 
 function imageAutoLazyloadHelper(content) {
+	var siteRoot = hexo.config.root || '/';
+	if (!siteRoot.endsWith('/')) {
+		siteRoot += '/';
+	}
+	var imageRoot = siteRoot + 'images/';
+
 	var str = content.replace(
 		/<img.*?src="(.*?)" alt="(.*?)".*?\/?>/gi,
 		'<img data-fancybox="gallery" data-sizes="auto" data-src="$1" alt="$2" class="lazyload">'
 	);
 	str = str.replace(
 		/src="images\//g,
-		'src="https://cdn.jsdelivr.net/gh/ch1ny/ch1ny.github.io/images/'
+		'src="' + imageRoot
 	);
 	str = str.replace(
-		/\.\.\/\.\.\/images\//g,
-		'https://cdn.jsdelivr.net/gh/ch1ny/ch1ny.github.io/images/'
+		/src="\.\.\/\.\.\/images\//g,
+		'src="' + imageRoot
+	);
+	str = str.replace(
+		/src="\/images\//g,
+		'src="' + imageRoot
 	);
 	return str;
 }

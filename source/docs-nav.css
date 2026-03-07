@@ -6,11 +6,11 @@
     display: none !important;
 }
 
-.kira-header>a[href="/"] img {
+.kira-header>a img {
     display: none !important;
 }
 
-.kira-header>a[href="/"]::after {
+.kira-header>a::after {
     content: attr(title);
     font-weight: 700;
     font-size: 1rem;

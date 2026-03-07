@@ -16,7 +16,7 @@ https://github.com/Alchyr/ModTemplate-StS2
 
 进入 [Godot 下载界面](https://godotengine.org/download/archive/4.5.1-stable/)，下载并安装编辑器。注意选择 `.NET` 版本。
 
-![Godot 下载页面](/images/image1.png)
+![Godot 下载页面](../../images/image1.png)
 
 或者，你也可以下载制作组自己使用的 Godot 修改版本 [MegaDot](https://megadot.megacrit.com/)。由于暂不清楚这个版本和官方版本的区别，所以建议直接使用官方版本。
 
@@ -26,17 +26,17 @@ https://github.com/Alchyr/ModTemplate-StS2
 
 4. 安装 [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)。你还可以安装 [Godot Tools](https://marketplace.visualstudio.com/items?itemName=geequlim.godot-tools) 等插件。
 
-![VS Code 插件](/images/image2.png)
+![VS Code 插件](../../images/image2.png)
 
 5. 如有问题可以参考 Godot 的官方文档：[C# 开发环境配置](https://docs.godotengine.org/zh-cn/4.x/tutorials/scripting/c_sharp/c_sharp_basics.html)。
 
 6. 打开 `Godot` 创建一个新项目。渲染器尽量使用 `Mobile/移动`，以和游戏保持一致。
 
-![创建项目](/images/image3.png)
+![创建项目](../../images/image3.png)
 
 7. 点击右上角的“创建 C# 解决方案”按钮。
 
-![创建 C# 解决方案](/images/image4.png)
+![创建 C# 解决方案](../../images/image4.png)
 
 8. 用 `VS Code` 打开项目文件夹。创建一个新文件（双击资源管理器或者右键新建文件），名字为 `mod_manifest.json`。填写以下内容：
 
@@ -127,9 +127,9 @@ public class Entry
 - 文件夹选择你之前导出的 dll 同名目录。
 - 注意一定得是 pck。
 
-![导出设置1](/images/image5.png)
+![导出设置1](../../images/image5.png)
 
-![导出设置2](/images/image6.png)
+![导出设置2](../../images/image6.png)
 
 13. 现在你的 `mods` 文件夹里有一个你的 mod 命名的文件夹，里面有一个 dll 文件和一个 pck 文件，这两个文件是构成一个 mod 的组件。
 

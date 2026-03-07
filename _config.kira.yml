@@ -1,6 +1,6 @@
 avatar: "" # 头像已隐藏
 background: # 既是博客的背景，又是文章默认头图
-    path: /images/qq20260307.png
+    path: https://glitchedreme.github.io/SlayTheSpire2ModdingTutorials/images/qq20260307.png
     width: 1600
     height: 900
 favicon:

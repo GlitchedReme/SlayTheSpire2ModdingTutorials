@@ -28,7 +28,7 @@ categories:
 
 3. 如果你遇到网络问题，点击 `Export Settings...` 把 `Download Plugins` 关了。
 
-![gdsdecomp 设置](/images/image7.png)
+![gdsdecomp 设置](../../images/image7.png)
 
 4. 等项目导出完，使用 Godot 导入 `project.godot` 即可。
 
@@ -46,11 +46,11 @@ categories:
 
 简单参考：
 
-![Harmony 示例](/images/image8.png)
+![Harmony 示例](../../images/image8.png)
 
 相当于对源码：
 
-![源码对应关系](/images/image9.png)
+![源码对应关系](../../images/image9.png)
 
 ## 控制台
 

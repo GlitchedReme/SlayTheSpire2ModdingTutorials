@@ -19,54 +19,58 @@
 		<% if (theme.docsTree && theme.docsTree.length) { %>
 			<% theme.docsTree.forEach(function(section) { %>
 				<% if (section.path) { %>
-					<a class="kira-list-item mdui-ripple <%= is_current(section.path) %>"
-						href="<%- url_for(section.path) -%>" title="<%= section.title %>">
-						<i class="kirafont <%= section.icon || 'icon-home' %>"></i>
-						<div class="kira-list-item-content">
-							<%= section.title %>
-						</div>
-					</a>
-					<% } else { %>
-						<% var sectionOpen=section.open===false ? '' : 'open' ; %>
-							<details class="kira-tree-group" <%- sectionOpen %>>
-								<summary class="kira-tree-summary">
-									<i class="kirafont icon-book"></i>
-									<span>
-										<%= section.title %>
-									</span>
-								</summary>
-								<div class="kira-tree-children">
-									<div class="kira-tree-children-inner">
-										<% (section.children || []).forEach(function(item) { %>
-											<a class="kira-list-item mdui-ripple <%= is_current(item.path) %>"
-												href="<%- url_for(item.path) -%>" title="<%= item.title %>">
-												<i class="kirafont icon-file"></i>
-												<div class="kira-list-item-content">
-													<%= item.title %>
-												</div>
-											</a>
-											<% }) %>
+					<% var sectionPath=section.path==='/' ? section.path : section.path.replace(/^\/+/, '' ); %>
+						<a class="kira-list-item mdui-ripple <%= is_current(section.path) %>"
+							href="<%- url_for(sectionPath, { relative: true }) -%>" title="<%= section.title %>">
+							<i class="kirafont <%= section.icon || 'icon-home' %>"></i>
+							<div class="kira-list-item-content">
+								<%= section.title %>
+							</div>
+						</a>
+						<% } else { %>
+							<% var sectionOpen=section.open===false ? '' : 'open' ; %>
+								<details class="kira-tree-group" <%- sectionOpen %>>
+									<summary class="kira-tree-summary">
+										<i class="kirafont icon-book"></i>
+										<span>
+											<%= section.title %>
+										</span>
+									</summary>
+									<div class="kira-tree-children">
+										<div class="kira-tree-children-inner">
+											<% (section.children || []).forEach(function(item) { %>
+												<% var itemPath=item.path==='/' ? item.path :
+													item.path.replace(/^\/+/, '' ); %>
+													<a class="kira-list-item mdui-ripple <%= is_current(item.path) %>"
+														href="<%- url_for(itemPath, { relative: true }) -%>"
+														title="<%= item.title %>">
+														<i class="kirafont icon-file"></i>
+														<div class="kira-list-item-content">
+															<%= item.title %>
+														</div>
+													</a>
+													<% }) %>
+										</div>
 									</div>
-								</div>
-							</details>
-							<% } %>
-								<% }) %>
-									<% } else { %>
-										<% for (name in theme.menu) { %>
-											<a class="kira-list-item mdui-ripple <%= is_current(theme.menu[name][0]) %>"
-												href="<%- url_for(theme.menu[name][0]) -%>" title="<%= name %>">
-												<i class="kirafont
+								</details>
+								<% } %>
+									<% }) %>
+										<% } else { %>
+											<% for (name in theme.menu) { %>
+												<a class="kira-list-item mdui-ripple <%= is_current(theme.menu[name][0]) %>"
+													href="<%- url_for(theme.menu[name][0]) -%>" title="<%= name %>">
+													<i class="kirafont
 						<% if (theme.menu[name][1]) { %>
 							<%= theme.menu[name][1] %>
 						<% } else { %>
 							<%= 'icon-unordered-list' %>
 						<% } %>"></i>
-												<div class="kira-list-item-content">
-													<%= name %>
-												</div>
-											</a>
-											<% } %>
+													<div class="kira-list-item-content">
+														<%= name %>
+													</div>
+												</a>
 												<% } %>
+													<% } %>
 	</div>
 	<aside id="kira-sidebar">
 		<% theme.widgets.forEach(function(widget) {%>
