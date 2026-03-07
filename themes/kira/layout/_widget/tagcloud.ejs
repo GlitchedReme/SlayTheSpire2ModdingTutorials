@@ -1,0 +1,25 @@
+<% if (site.tags.length) { %>
+	<div class="kira-widget-wrap">
+		<div id="randomtagcloud" class="kira-widget tagcloud kira-rainbow">
+			<%- tagcloud() %>
+		</div>
+		<% if (theme.maxTagcloud) { %>
+			<script>
+				const maxTagCounts = parseInt(<%= theme.maxTagcloud %>);
+				const tagsLength = parseInt(<%= site.tags.length %>);
+				let tagsArr = [];
+				for(let i = 0; i < tagsLength; i++){
+					tagsArr.push(i);
+				}
+				tagsArr.sort(function (l, r) {
+					return Math.random() > 0.5 ? -1 : 1;
+				});
+				tagsArr = tagsArr.slice(0, maxTagCounts < tagsLength ? tagsLength - maxTagCounts : 0);
+				const tagCloudContainer = document.querySelector('#randomtagcloud');
+				for(let tagIdx = 0; tagIdx < tagsArr.length; tagIdx++){
+					tagCloudContainer.children[tagsArr[tagIdx]].style.display = 'none';
+				}
+			</script>
+		<% } %>
+	</div>
+<% } %>

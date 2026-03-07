@@ -1,0 +1,212 @@
+.kira-count {
+    display: none !important;
+}
+
+.kira-avatar {
+    display: none !important;
+}
+
+.kira-header>a[href="/"] img {
+    display: none !important;
+}
+
+.kira-header>a[href="/"]::after {
+    content: attr(title);
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Collapsible docs tree navigation */
+.kira-docs-tree {
+    display: grid;
+    gap: 8px;
+}
+
+.kira-tree-group {
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.kira-tree-summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    user-select: none;
+}
+
+.kira-tree-summary::-webkit-details-marker {
+    display: none;
+}
+
+.kira-tree-summary::after {
+    content: "";
+    margin-left: auto;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.24s ease;
+}
+
+.kira-tree-group[open] .kira-tree-summary::after {
+    transform: rotate(225deg);
+}
+
+.kira-tree-children {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.3s ease, opacity 0.25s ease;
+    opacity: 1;
+}
+
+.kira-tree-group:not([open]) .kira-tree-children {
+    grid-template-rows: 0fr;
+    opacity: 0;
+}
+
+.kira-tree-children-inner {
+    overflow: hidden;
+    padding: 0 8px 8px;
+}
+
+.kira-docs-tree .kira-list-item {
+    margin: 2px 0;
+    border-radius: 8px;
+}
+
+.kira-docs-tree .kira-list-item .kira-list-item-content {
+    font-size: 0.92rem;
+}
+
+/* Increase background image visibility. */
+.kira-background {
+    opacity: 0.75 !important;
+}
+
+/* Make article area translucent instead of pure white. */
+.kira-content {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(5px);
+}
+
+.kira-content .kira-main-content {
+    background-color: transparent !important;
+}
+
+/* Remove remaining hard-white blocks inside post pages. */
+.kira-content .kira-main-content .kira-post-copyright,
+.kira-content .kira-main-content .kira-post-nav,
+.kira-content .kira-main-content .kira-post-footer,
+.kira-content .kira-main-content .kira-page-nav {
+    background-color: rgba(255, 255, 255, 0.46) !important;
+}
+
+/* Ensure image viewer always covers the full viewport. */
+.kira-image,
+.kira-image .kira-image-modal {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+}
+
+.kira-image {
+    z-index: 9999 !important;
+}
+
+.kira-image .kira-image-modal.visible {
+    background-color: rgba(8, 10, 14, 0.78) !important;
+    backdrop-filter: blur(6px) !important;
+}
+
+/* Dark UI surfaces + light text */
+.kira-content {
+    background-color: rgba(22, 26, 32, 0.72) !important;
+}
+
+.kira-content .kira-main-content,
+.kira-content .kira-main-content article,
+.kira-content .kira-main-content p,
+.kira-content .kira-main-content li,
+.kira-content .kira-main-content blockquote,
+.kira-content .kira-main-content h1,
+.kira-content .kira-main-content h2,
+.kira-content .kira-main-content h3,
+.kira-content .kira-main-content h4,
+.kira-content .kira-main-content h5,
+.kira-content .kira-main-content h6 {
+    color: #e8edf2 !important;
+}
+
+.kira-tree-group,
+.kira-content .kira-main-content .kira-post-copyright,
+.kira-content .kira-main-content .kira-post-nav,
+.kira-content .kira-main-content .kira-post-footer,
+.kira-content .kira-main-content .kira-page-nav {
+    background-color: rgba(32, 38, 46, 0.78) !important;
+    color: #e8edf2 !important;
+}
+
+/* Keep meta chips as different colors instead of one flat tone. */
+.kira-content .kira-main-content .kira-post-meta.kira-rainbow a:nth-child(3n+1) {
+    background-color: rgba(28, 44, 72, 0.82) !important;
+    color: #d8e7ff !important;
+}
+
+.kira-content .kira-main-content .kira-post-meta.kira-rainbow a:nth-child(3n+2) {
+    background-color: rgba(58, 33, 66, 0.82) !important;
+    color: #ecd7ff !important;
+}
+
+.kira-content .kira-main-content .kira-post-meta.kira-rainbow a:nth-child(3n+3) {
+    background-color: rgba(86, 44, 20, 0.85) !important;
+    color: #ffe2c4 !important;
+}
+
+.kira-list-item,
+.kira-list-item i,
+.kira-tree-summary,
+.kira-copyright,
+.kira-copyright a {
+    color: #e8edf2 !important;
+}
+
+.kira-list-item.true {
+    background: #bb6516 !important;
+    box-shadow: 0 2px 14px rgba(187, 101, 22, 0.55) !important;
+}
+
+.kira-content .kira-main-content a,
+.kira-post-copyright a,
+.kira-copyright a,
+.kira-tree-summary::after {
+    color: #d97519 !important;
+    border-color: #d97519 !important;
+}
+
+/* Reduce eye strain for inline code blocks on dark surfaces. */
+.kira-content .kira-main-content code {
+    background-color: rgba(187, 101, 22, 0.22) !important;
+    border: 1px solid rgba(217, 117, 25, 0.42) !important;
+    color: #ffd8b2 !important;
+}
+
+/* Keep inline code style, but remove orange tint from fenced code blocks. */
+.kira-content .kira-main-content pre code,
+.kira-content .kira-main-content .highlight code,
+.kira-content .kira-main-content .highlight .code pre {
+    background-color: transparent !important;
+    border: none !important;
+    color: inherit !important;
+}

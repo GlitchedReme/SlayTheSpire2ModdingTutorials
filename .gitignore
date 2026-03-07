@@ -1,0 +1,19 @@
+.DS_Store
+Thumbs.db
+db.json
+*.log
+node_modules/
+public/
+.deploy*/
+_multiconfig.yml
+
+# Editor and OS noise
+.vscode/
+.idea/
+*.tmp
+*.swp
+
+# Temporary caches and reports
+.cache/
+coverage/
+pnpm-debug.log*

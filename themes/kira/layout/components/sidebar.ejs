@@ -1,0 +1,95 @@
+<div class="kira-sidebar" id="sidebar">
+	<div class="kira-avatar mdui-ripple">
+		<a href="<%= theme.avatar %>" title="<%= config.author || config.title %>">
+			<img src="<%= theme.avatar %>" alt="<%= config.author || config.title %>" />
+		</a>
+	</div>
+	<div class="kira-count">
+		<div><span>文章</span>
+			<%= site.posts.length %>
+		</div>
+		<div><span>标签</span>
+			<%= site.tags.length %>
+		</div>
+		<div><span>分类</span>
+			<%= site.categories.length %>
+		</div>
+	</div>
+	<div class="kira-list kira-docs-tree">
+		<% if (theme.docsTree && theme.docsTree.length) { %>
+			<% theme.docsTree.forEach(function(section) { %>
+				<% if (section.path) { %>
+					<a class="kira-list-item mdui-ripple <%= is_current(section.path) %>"
+						href="<%- url_for(section.path) -%>" title="<%= section.title %>">
+						<i class="kirafont <%= section.icon || 'icon-home' %>"></i>
+						<div class="kira-list-item-content">
+							<%= section.title %>
+						</div>
+					</a>
+					<% } else { %>
+						<% var sectionOpen=section.open===false ? '' : 'open' ; %>
+							<details class="kira-tree-group" <%- sectionOpen %>>
+								<summary class="kira-tree-summary">
+									<i class="kirafont icon-book"></i>
+									<span>
+										<%= section.title %>
+									</span>
+								</summary>
+								<div class="kira-tree-children">
+									<div class="kira-tree-children-inner">
+										<% (section.children || []).forEach(function(item) { %>
+											<a class="kira-list-item mdui-ripple <%= is_current(item.path) %>"
+												href="<%- url_for(item.path) -%>" title="<%= item.title %>">
+												<i class="kirafont icon-file"></i>
+												<div class="kira-list-item-content">
+													<%= item.title %>
+												</div>
+											</a>
+											<% }) %>
+									</div>
+								</div>
+							</details>
+							<% } %>
+								<% }) %>
+									<% } else { %>
+										<% for (name in theme.menu) { %>
+											<a class="kira-list-item mdui-ripple <%= is_current(theme.menu[name][0]) %>"
+												href="<%- url_for(theme.menu[name][0]) -%>" title="<%= name %>">
+												<i class="kirafont
+						<% if (theme.menu[name][1]) { %>
+							<%= theme.menu[name][1] %>
+						<% } else { %>
+							<%= 'icon-unordered-list' %>
+						<% } %>"></i>
+												<div class="kira-list-item-content">
+													<%= name %>
+												</div>
+											</a>
+											<% } %>
+												<% } %>
+	</div>
+	<aside id="kira-sidebar">
+		<% theme.widgets.forEach(function(widget) {%>
+			<%- partial('_widget/' + widget) %>
+				<% }) %>
+	</aside>
+	<div class="kira-copyright">
+		&copy; <%= date(new Date(), 'YYYY' ) %>
+			<a href="<%- url_for('/') %>">
+				<%= config.author || config.title %>
+			</a>
+			<%= __('Powered by') %> <a href="http://hexo.io/" target="_blank">Hexo</a> &
+				<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+				<br />
+				<% if (theme.beian) { %>
+					<a href="https://beian.miit.gov.cn/" target="_blank">
+						<%= theme.beian %>
+					</a>
+					<% } %>
+						<%- theme.sidebar %>
+	</div>
+</div>
+<div class="kira-sidebar-modal" id="sidebar-modal" onclick="(function(self) {
+		self.classList.remove('show');
+		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
+	})(this)"></div>

@@ -1,0 +1,110 @@
+avatar: "" # 头像已隐藏
+background: # 既是博客的背景，又是文章默认头图
+    path: /images/qq20260307.png
+    width: 1600
+    height: 900
+favicon:
+    href: https://kira.host/assets/Pictures/Others/116359b4ccf19917.jpg # 网站图标
+    type: image/png # 图标类型，可能的值有(image/png, image/vnd.microsoft.icon, image/x-icon, image/gif)
+
+# 附加图标库 使用说明：https://kira.host/hexo/config/icon.html
+# iconlib: //at.alicdn.com/t/font_3299330_el19bsi97h8.css
+
+cdn: # 这里可以修改站点使用的库的CDN
+    gitalk:
+        css: https://unpkg.com/gitalk@latest/dist/gitalk.css
+        js: https://unpkg.com/gitalk@latest/dist/gitalk.min.js
+    giscus:
+        js: https://giscus.app/client.js
+
+menu:
+    教程目录:
+        - /
+        - icon-book
+
+docsTree:
+    - title: 首页
+      path: /
+      icon: icon-home
+    - title: 基础
+      open: true
+      children:
+          - title: 01 环境配置
+            path: /docs/01-env-setup/
+          - title: 02 安装、看源码、修改
+            path: /docs/02-install-view-source-and-patch/
+
+widgets: []
+
+maxTagcloud: 0 # 标签云组件显示的标签数量，0 表示不限制
+
+social: {}
+
+color: # 配色方案，从first到seventh为优先级为1-7的颜色，默认为彩虹配色
+    first: # 同时作为主题色
+        r: 187
+        g: 101
+        b: 22
+    second:
+        r: 64
+        g: 82
+        b: 108
+    third:
+        r: 217
+        g: 117
+        b: 25
+    fourth:
+        r: 98
+        g: 118
+        b: 146
+    fifth:
+        r: 55
+        g: 44
+        b: 72
+    sixth:
+        r: 179
+        g: 104
+        b: 70
+    seventh:
+        r: 44
+        g: 164
+        b: 191
+
+# 评论区
+gitalk:
+    active: false # 是否启用 gitalk
+    admin: -your github username- # 拥有对该repo进行操作的 GitHub username
+    owner: -your github username- # 持有该 repo 的 GitHub username
+    repo: -issue repo name- # 存放评论的 issue 所在的 repo
+    clientID: -id- # GitHub Client ID
+    clientSecret: -key- # GitHub Client Secret
+    title: "" # Gitalk Issue Title
+giscus:
+    active: true # 是否启用 giscus
+    repo: -your github username-/-your giscus repo- # 存放评论的 discus 所在的 repo
+    repoID: -your giscus repo ID- # GitHub repo ID
+    category: Announcements # 选择新 discussions 所在的分类
+    categoryID: -giscus category id- # 分类 ID
+    mapping: pathname # pathname, url, title, og:title, specific, number
+    # term: # abc 123 # specific | number
+    theme: light
+    lang: en
+
+copyright: '<strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可'
+copyTip: "著作权归作者所有。\n商业转载请联系作者获得授权，非商业转载请注明出处。\n来源：%url" # 自定义复制版权文案,使用 %url 代替当前页面URL, 修改为false禁用
+
+# 自定义侧边栏尾部内容
+sidebar: ""
+
+# 自定义样式
+customStyles:
+    - docs-nav
+
+# 友链配置
+friends:
+    # - avatar: <友链缩略图>
+    #   link: <跳转连接>
+    #   name: <名称>
+
+# 可复制的代码块
+copyableCodeblock: true
