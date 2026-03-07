@@ -18,7 +18,6 @@
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
 }
 
-/* Collapsible docs tree navigation */
 .kira-docs-tree {
     display: grid;
     gap: 8px;
@@ -87,12 +86,10 @@
     font-size: 0.92rem;
 }
 
-/* Increase background image visibility. */
 .kira-background {
     opacity: 0.75 !important;
 }
 
-/* Make article area translucent instead of pure white. */
 .kira-content {
     background-color: rgba(255, 255, 255, 0.6) !important;
     backdrop-filter: blur(5px);
@@ -102,7 +99,6 @@
     background-color: transparent !important;
 }
 
-/* Remove remaining hard-white blocks inside post pages. */
 .kira-content .kira-main-content .kira-post-copyright,
 .kira-content .kira-main-content .kira-post-nav,
 .kira-content .kira-main-content .kira-post-footer,
@@ -110,7 +106,6 @@
     background-color: rgba(255, 255, 255, 0.46) !important;
 }
 
-/* Ensure image viewer always covers the full viewport. */
 .kira-image,
 .kira-image .kira-image-modal {
     position: fixed !important;
@@ -130,7 +125,6 @@
     backdrop-filter: blur(6px) !important;
 }
 
-/* Dark UI surfaces + light text */
 .kira-content {
     background-color: rgba(22, 26, 32, 0.72) !important;
 }
@@ -158,7 +152,6 @@
     color: #e8edf2 !important;
 }
 
-/* Keep meta chips as different colors instead of one flat tone. */
 .kira-content .kira-main-content .kira-post-meta.kira-rainbow a:nth-child(3n+1) {
     background-color: rgba(28, 44, 72, 0.82) !important;
     color: #d8e7ff !important;
@@ -195,18 +188,122 @@
     border-color: #d97519 !important;
 }
 
-/* Reduce eye strain for inline code blocks on dark surfaces. */
 .kira-content .kira-main-content code {
     background-color: rgba(187, 101, 22, 0.22) !important;
     border: 1px solid rgba(217, 117, 25, 0.42) !important;
     color: #ffd8b2 !important;
 }
 
-/* Keep inline code style, but remove orange tint from fenced code blocks. */
 .kira-content .kira-main-content pre code,
 .kira-content .kira-main-content .highlight code,
 .kira-content .kira-main-content .highlight .code pre {
     background-color: transparent !important;
     border: none !important;
     color: inherit !important;
+}
+
+/* Busuanzi panel above acknowledgements */
+.kira-widget-busuanzi {
+    margin: 14px 20px 10px !important;
+    background-color: rgba(32, 38, 46, 0.78) !important;
+    border: 1px solid rgba(217, 117, 25, 0.35);
+}
+
+.kira-busuanzi-stats {
+    padding: 8px 14px 16px;
+    display: grid;
+    gap: 8px;
+}
+
+.kira-busuanzi-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: rgba(12, 16, 22, 0.45);
+    color: #e8edf2;
+}
+
+.kira-busuanzi-label {
+    color: #bac6d8;
+    font-size: 12px;
+}
+
+.kira-busuanzi-value {
+    color: #ffd8b2;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Show a visible scrollbar for article/content area */
+.kira-content {
+    height: calc(100vh - 4vh) !important;
+    max-height: calc(100vh - 4vh) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(217, 117, 25, 0.85) rgba(11, 14, 20, 0.5) !important;
+}
+
+.kira-content::-webkit-scrollbar {
+    width: 10px !important;
+    display: block !important;
+}
+
+.kira-content::-webkit-scrollbar-track {
+    background: rgba(11, 14, 20, 0.45);
+    border-radius: 8px;
+}
+
+.kira-content::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(217, 117, 25, 0.95), rgba(153, 82, 19, 0.95));
+    border-radius: 8px;
+    border: 1px solid rgba(255, 193, 127, 0.35);
+}
+
+/* Desktop: sidebar + content should fill the full available width. */
+@media (min-width: 1001px) {
+    .kira-body {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        justify-content: flex-start !important;
+        box-sizing: border-box;
+        padding: 8px 16px;
+        gap: 14px;
+    }
+
+    .kira-sidebar {
+        width: 240px;
+        min-width: 240px;
+        max-width: 240px;
+    }
+
+    .kira-content {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .kira-right-column {
+        width: 0 !important;
+        min-width: 0 !important;
+        flex: 0 0 0 !important;
+    }
+
+    .kira-right-column .kira-backtotop {
+        position: fixed;
+        right: 20px;
+        bottom: 16px;
+        margin: 0 !important;
+    }
+}
+
+/* Shrink in-article images to 50% of their container width. */
+.kira-content .kira-main-content article img:not(.kira-post-cover-image) {
+    width: 50% !important;
+    max-width: 50% !important;
+    height: auto !important;
 }

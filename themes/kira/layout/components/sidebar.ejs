@@ -73,21 +73,43 @@
 			<%- partial('_widget/' + widget) %>
 				<% }) %>
 	</aside>
-	<div class="kira-copyright">
-		&copy; <%= date(new Date(), 'YYYY' ) %>
-			<a href="<%- url_for('/') %>">
-				<%= config.author || config.title %>
-			</a>
-			<%= __('Powered by') %> <a href="http://hexo.io/" target="_blank">Hexo</a> &
-				<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
-				<br />
-				<% if (theme.beian) { %>
-					<a href="https://beian.miit.gov.cn/" target="_blank">
-						<%= theme.beian %>
+	<% if (!theme.busuanzi || theme.busuanzi.active !==false) { %>
+		<div class="kira-widget-wrap kira-widget-busuanzi">
+			<h3 class="kira-widget-title">
+				<%= (theme.busuanzi && theme.busuanzi.title) || '访客统计' %>
+			</h3>
+			<div class="kira-widget kira-busuanzi-stats">
+				<div class="kira-busuanzi-item" id="busuanzi_container_site_pv">
+					<span class="kira-busuanzi-label">总访问</span>
+					<span class="kira-busuanzi-value" id="busuanzi_value_site_pv"></span>
+				</div>
+				<div class="kira-busuanzi-item" id="busuanzi_container_site_uv">
+					<span class="kira-busuanzi-label">总访客</span>
+					<span class="kira-busuanzi-value" id="busuanzi_value_site_uv"></span>
+				</div>
+				<div class="kira-busuanzi-item" id="busuanzi_container_page_pv">
+					<span class="kira-busuanzi-label">本文阅读</span>
+					<span class="kira-busuanzi-value" id="busuanzi_value_page_pv"></span>
+				</div>
+			</div>
+			<script defer src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+		</div>
+		<% } %>
+			<div class="kira-copyright">
+				&copy; <%= date(new Date(), 'YYYY' ) %>
+					<a href="<%- url_for('/') %>">
+						<%= config.author || config.title %>
 					</a>
-					<% } %>
-						<%- theme.sidebar %>
-	</div>
+					<%= __('Powered by') %> <a href="http://hexo.io/" target="_blank">Hexo</a> &
+						<a href="https://github.com/ch1ny/kira-hexo/" target="_blank">Kira-Hexo</a>
+						<br />
+						<% if (theme.beian) { %>
+							<a href="https://beian.miit.gov.cn/" target="_blank">
+								<%= theme.beian %>
+							</a>
+							<% } %>
+								<%- theme.sidebar %>
+			</div>
 </div>
 <div class="kira-sidebar-modal" id="sidebar-modal" onclick="(function(self) {
 		self.classList.remove('show');

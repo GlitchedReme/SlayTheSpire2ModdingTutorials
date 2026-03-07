@@ -81,20 +81,27 @@ gitalk:
     title: "" # Gitalk Issue Title
 giscus:
     active: true # 是否启用 giscus
-    repo: -your github username-/-your giscus repo- # 存放评论的 discus 所在的 repo
-    repoID: -your giscus repo ID- # GitHub repo ID
+    repo: GlitchedReme/SlayTheSpire2ModdingTutorials # 存放评论的 discus 所在的 repo
+    repoID: R_kgDORf0PEA # GitHub repo ID
     category: Announcements # 选择新 discussions 所在的分类
-    categoryID: -giscus category id- # 分类 ID
+    categoryID: DIC_kwDORf0PEM4C3zDO # 分类 ID
     mapping: pathname # pathname, url, title, og:title, specific, number
     # term: # abc 123 # specific | number
-    theme: light
-    lang: en
+    strict: false
+    reactions: true
+    metadata: false
+    theme: dark_dimmed
+    lang: zh-CN
 
 copyright: '<strong>版权声明：</strong>本文采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/cn/deed.zh" target="_blank">CC BY-NC-SA 3.0 CN</a> 协议进行许可'
 copyTip: "著作权归作者所有。\n商业转载请联系作者获得授权，非商业转载请注明出处。\n来源：%url" # 自定义复制版权文案,使用 %url 代替当前页面URL, 修改为false禁用
 
 # 自定义侧边栏尾部内容
 sidebar: ""
+
+busuanzi:
+    active: true
+    title: 访客统计
 
 # 自定义样式
 customStyles:
