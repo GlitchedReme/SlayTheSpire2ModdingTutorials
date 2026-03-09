@@ -33,6 +33,8 @@ docsTree:
             path: /docs/01-env-setup/
           - title: 02 安装、看源码、修改
             path: /docs/02-install-view-source-and-patch/
+          - title: 03 添加新内容
+            path: /docs/03-add-new-contents/
 
 widgets: []
 

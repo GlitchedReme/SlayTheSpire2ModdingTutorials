@@ -1,7 +1,122 @@
 <div class="kira-right-column">
-	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop" aria-label="回到顶部" title="回到顶部">
+	<div class="kira-chapters-panel" id="kira-chapters-panel" style="display: none;">
+		<div class="kira-chapters-title">章节导航</div>
+		<nav class="kira-chapters-nav" aria-label="文章章节导航">
+			<ul id="kira-chapters-list"></ul>
+		</nav>
+	</div>
+	<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop"
+		aria-label="回到顶部" title="回到顶部">
 		<button class="mdui-fab mdui-ripple">
 			<i class="kirafont icon-caret-up"></i>
 		</button>
 	</a>
 </div>
+
+<script>
+	(function () {
+		function setActiveItem(list, targetId) {
+			var items = list.querySelectorAll('.kira-chapter-item');
+			items.forEach(function (item) {
+				var link = item.querySelector('a');
+				if (!link) {
+					return;
+				}
+				var id = (link.getAttribute('href') || '').replace(/^#/, '');
+				item.classList.toggle('is-active', id === targetId);
+			});
+		}
+
+		function buildChapters() {
+			var panel = document.getElementById('kira-chapters-panel');
+			var list = document.getElementById('kira-chapters-list');
+			var article = document.querySelector('.kira-main-content .kira-post article');
+			var content = document.querySelector('.kira-content');
+
+			if (!panel || !list || !article || !content) {
+				return;
+			}
+
+			var headings = article.querySelectorAll('h2, h3');
+			if (!headings.length) {
+				panel.style.display = 'none';
+				return;
+			}
+
+			list.innerHTML = '';
+			var chapterTargets = [];
+			headings.forEach(function (heading, index) {
+				var level = heading.tagName.toLowerCase();
+				var spanWithId = heading.querySelector('span[id]');
+				var id = spanWithId ? spanWithId.id : heading.id;
+				var targetElement = spanWithId || heading;
+
+				if (!id) {
+					id = 'chapter-' + (index + 1);
+					heading.id = id;
+					targetElement = heading;
+				}
+
+				var text = heading.textContent ? heading.textContent.trim() : '';
+				if (!text) {
+					return;
+				}
+
+				var li = document.createElement('li');
+				li.className = 'kira-chapter-item ' + (level === 'h3' ? 'is-sub' : '');
+
+				var a = document.createElement('a');
+				a.href = '#' + id;
+				a.textContent = text;
+				a.addEventListener('click', function (event) {
+					event.preventDefault();
+					var contentRect = content.getBoundingClientRect();
+					var targetRect = targetElement.getBoundingClientRect();
+					var nextTop = content.scrollTop + (targetRect.top - contentRect.top) - 14;
+					content.scrollTo({ top: Math.max(0, nextTop), behavior: 'smooth' });
+					setActiveItem(list, id);
+				});
+
+				li.appendChild(a);
+				list.appendChild(li);
+				chapterTargets.push({ id: id, el: targetElement });
+			});
+
+			if (!list.children.length) {
+				panel.style.display = 'none';
+				return;
+			}
+
+			panel.style.display = 'block';
+
+			function syncActiveByScroll() {
+				if (!chapterTargets.length) {
+					return;
+				}
+
+				var containerRect = content.getBoundingClientRect();
+				var triggerTop = containerRect.top + 120;
+				var currentId = chapterTargets[0].id;
+
+				chapterTargets.forEach(function (item) {
+					var top = item.el.getBoundingClientRect().top;
+					if (top <= triggerTop) {
+						currentId = item.id;
+					}
+				});
+
+				setActiveItem(list, currentId);
+			}
+
+			content.addEventListener('scroll', syncActiveByScroll, { passive: true });
+			window.addEventListener('resize', syncActiveByScroll);
+			syncActiveByScroll();
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', buildChapters);
+		} else {
+			buildChapters();
+		}
+	})();
+</script>
