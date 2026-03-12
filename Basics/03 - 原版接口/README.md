@@ -1,11 +1,3 @@
----
-title: 03 添加新内容
-date: 2026-03-12 00:00:00
-permalink: docs/03-add-new-contents/
-categories:
-- Basics
----
-
 如同尖塔1一样，添加一个新内容包括以下步骤：编写类、注册、写本地化文本。
 
 由于官方接口目前并不完善，推荐之后通过`baselib`添加内容（目前开发阶段）。

@@ -1,6 +1,6 @@
 ---
 title: 02 准备工作
-date: 2026-03-07 00:00:00
+date: 2026-03-12 00:00:00
 permalink: docs/02-install-view-source-and-patch/
 categories:
 - Basics
@@ -63,4 +63,8 @@ categories:
 尖塔根目录有许多`launch_xxx.bat`，选择一个合适的，右键记事本编辑，在其中加一个`--log`，例如`@echo off
 "%~dp0SlayTheSpire2.exe" --log --rendering-driver opengl3 %*`。
 
-然后在根目录创建一个`steam_appid.txt`，里面写`2868840`，然后双击修改的bat文件运行即可以一个能输出log的命令行的方式打开游戏。
+然后在根目录创建一个`steam_appid.txt`，里面写`2868840`，然后双击修改的bat文件运行即可以一个能输出log的命令行的方式打开游戏。或者添加`-force-steam=off`参数。
+
+## 本地&联机测试
+
+复制出两个新的`bat`，其中一个添加`--fastmp=host`参数，作为主机，另一个添加`-fastmp=join -clientId=1001`参数，作为非主机玩家。当然你可以添加更多，记得修改`clientId`。

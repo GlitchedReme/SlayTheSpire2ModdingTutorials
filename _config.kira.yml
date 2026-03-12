@@ -35,6 +35,8 @@ docsTree:
             path: /docs/02-install-view-source-and-patch/
           - title: 03 添加新内容
             path: /docs/03-add-new-contents/
+          - title: 04 BaseLib
+            path: /docs/04-baselib/
 
 widgets: []
 

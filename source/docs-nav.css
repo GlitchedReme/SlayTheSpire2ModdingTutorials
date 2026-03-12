@@ -207,6 +207,24 @@
     color: inherit !important;
 }
 
+.kira-content .kira-main-content blockquote {
+    background: rgba(20, 26, 34, 0.82) !important;
+    border: 1px solid rgba(217, 117, 25, 0.42) !important;
+    border-left: 4px solid #bb6516 !important;
+    color: #dbe5f2 !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.22);
+}
+
+.kira-content .kira-main-content blockquote::before,
+.kira-content .kira-main-content blockquote::after {
+    color: rgba(255, 216, 178, 0.72) !important;
+}
+
+.kira-content .kira-main-content blockquote a,
+.kira-content .kira-main-content blockquote code {
+    color: #ffd8b2 !important;
+}
+
 /* Busuanzi panel above acknowledgements */
 .kira-widget-busuanzi {
     margin: 14px 20px 10px !important;
