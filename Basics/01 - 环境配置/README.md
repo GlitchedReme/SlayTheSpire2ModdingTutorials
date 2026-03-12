@@ -1,9 +1,12 @@
 ## 环境配置
 
-0. Discord上的开发者制作的其他教程和mod模板：
+0. 其他教程和mod模板：
+
 https://github.com/Cany0udance/EarlyStS2ModdingGuides/wiki/Getting-Started-With-Modding
 
 https://github.com/Alchyr/ModTemplate-StS2
+
+https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 1. 《杀戮尖塔2》是用`Godot4.5.1 Mono`开发的，所以你需要安装`Godot4.5.1 Mono`版本的编辑器。
 
@@ -130,5 +133,3 @@ public class Entry
 * pck文件是mod的素材资源。如果你没有素材上的变动，不需要重新打包一次pck。
 
 14. 运行游戏。第一次会提示是否开启mod，选择是，然后游戏或许会关闭，打开第二次即可，如果右下角显示“已加载模组”即加载成功。
-
-目前只有如何创建mod文件，添加内容和修改代码之后再讲解。
