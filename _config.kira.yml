@@ -23,20 +23,34 @@ menu:
         - icon-book
 
 docsTree:
-    - title: 首页
-      path: /
-      icon: icon-home
-    - title: 基础
-      open: true
-      children:
-          - title: 01 环境配置
-            path: /docs/01-env-setup/
-          - title: 02 安装、看源码、修改
-            path: /docs/02-install-view-source-and-patch/
-          - title: 03 添加新内容
-            path: /docs/03-add-new-contents/
-          - title: 04 BaseLib
-            path: /docs/04-baselib/
+    [
+        { title: 首页, path: /, icon: icon-home },
+        {
+            title: 基础,
+            open: true,
+            children:
+                [
+                    { title: 01 环境配置, path: /docs/01-env-setup/ },
+                    {
+                        title: 02 安装、看源码、修改,
+                        path: /docs/02-install-view-source-and-patch/,
+                    },
+                    { title: 03 添加新内容, path: /docs/03-add-new-contents/ },
+                    { title: 04 BaseLib, path: /docs/04-baselib/ },
+                ],
+        },
+        {
+            title: 视觉,
+            open: true,
+            children:
+                [
+                    {
+                        title: 01 卡图&皮肤替换,
+                        path: /docs/05-card-art-and-skin-replacement/,
+                    },
+                ],
+        },
+    ]
 
 widgets: []
 

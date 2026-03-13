@@ -113,3 +113,9 @@ deploy:
 
 aplayer:
   asset_inject: false # 禁止 aplayer 注入资源
+
+search:
+  path: search.json
+  field: post
+  content: true
+  format: striptags

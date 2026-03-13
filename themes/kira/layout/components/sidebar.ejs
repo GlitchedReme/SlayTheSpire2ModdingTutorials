@@ -15,6 +15,13 @@
 			<%= site.categories.length %>
 		</div>
 	</div>
+	<div class="kira-search-panel">
+		<div class="kira-search-input-wrap">
+			<i class="kirafont icon-search"></i>
+			<input id="kira-search-input" type="search" placeholder="搜索全部文章内容..." autocomplete="off" />
+		</div>
+		<div id="kira-search-results" class="kira-search-results" hidden></div>
+	</div>
 	<div class="kira-list kira-docs-tree">
 		<% if (theme.docsTree && theme.docsTree.length) { %>
 			<% theme.docsTree.forEach(function(section) { %>
@@ -119,3 +126,120 @@
 		self.classList.remove('show');
 		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
 	})(this)"></div>
+<script>
+	(function () {
+		var input = document.getElementById('kira-search-input');
+		var results = document.getElementById('kira-search-results');
+		var docsTree = document.querySelector('.kira-docs-tree');
+		if (!input || !results || !docsTree) return;
+
+		var baseRoot = '<%- config.root %>';
+		var indexedPosts = [];
+		var loadingPromise = null;
+
+		function escapeHtml(text) {
+			return (text || '')
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#39;');
+		}
+
+		function normalize(text) {
+			return (text || '').toLowerCase();
+		}
+
+		function resolveUrl(url) {
+			if (!url) return '#';
+			if (/^https?:\/\//i.test(url)) return url;
+			if (url.indexOf(baseRoot) === 0) return url;
+			if (url.charAt(0) === '/') return url;
+			return baseRoot + url.replace(/^\/+/, '');
+		}
+
+		function getSnippet(content, query) {
+			var plain = (content || '').replace(/\s+/g, ' ').trim();
+			if (!plain) return '';
+			var lower = plain.toLowerCase();
+			var keywordIndex = lower.indexOf(query);
+			if (keywordIndex < 0) return plain.slice(0, 100);
+			var start = Math.max(0, keywordIndex - 25);
+			var end = Math.min(plain.length, keywordIndex + 75);
+			return (start > 0 ? '…' : '') + plain.slice(start, end) + (end < plain.length ? '…' : '');
+		}
+
+		function setResultHtml(html) {
+			results.innerHTML = html;
+			results.hidden = false;
+			docsTree.style.display = 'none';
+		}
+
+		function resetSearchView() {
+			results.innerHTML = '';
+			results.hidden = true;
+			docsTree.style.display = '';
+		}
+
+		async function loadIndex() {
+			if (indexedPosts.length) return indexedPosts;
+			if (!loadingPromise) {
+				loadingPromise = fetch('<%- url_for('search.json', { relative: true }) %>')
+					.then(function (response) {
+						if (!response.ok) throw new Error('Search index request failed');
+						return response.json();
+					})
+					.then(function (payload) {
+						var records = Array.isArray(payload) ? payload : (payload.posts || []);
+						indexedPosts = records
+							.map(function (item) {
+								return {
+									title: item.title || '',
+									content: item.content || '',
+									url: item.url || item.path || ''
+								};
+							})
+							.filter(function (item) {
+								return item.url;
+							});
+						return indexedPosts;
+					});
+			}
+			return loadingPromise;
+		}
+
+		input.addEventListener('input', async function () {
+			var rawQuery = input.value || '';
+			var query = normalize(rawQuery.trim());
+			if (!query) {
+				resetSearchView();
+				return;
+			}
+
+			setResultHtml('<div class="kira-search-state">正在搜索...</div>');
+
+			try {
+				var posts = await loadIndex();
+				var matched = posts.filter(function (item) {
+					return normalize(item.title).indexOf(query) !== -1 || normalize(item.content).indexOf(query) !== -1;
+				}).slice(0, 20);
+
+				if (!matched.length) {
+					setResultHtml('<div class="kira-search-state">没有找到匹配内容</div>');
+					return;
+				}
+
+				var html = matched.map(function (item) {
+					var title = escapeHtml(item.title || '未命名文章');
+					var snippet = escapeHtml(getSnippet(item.content, query));
+					var href = escapeHtml(resolveUrl(item.url));
+					return '<a class="kira-search-item" href="' + href + '"><div class="kira-search-item-title">' + title + '</div><div class="kira-search-item-snippet">' + snippet + '</div></a>';
+				}).join('');
+
+				setResultHtml(html);
+			} catch (error) {
+				setResultHtml('<div class="kira-search-state">搜索索引加载失败，请稍后重试</div>');
+			}
+		});
+	})();
+</script>

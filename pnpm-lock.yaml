@@ -14,6 +14,9 @@ importers:
       hexo-generator-index:
         specifier: ^3.0.0
         version: 3.0.0
+      hexo-generator-searchdb:
+        specifier: ^1.5.0
+        version: 1.5.0(chokidar@3.6.0)
       hexo-renderer-ejs:
         specifier: ^2.0.0
         version: 2.0.0
@@ -708,6 +711,9 @@ packages:
   hexo-generator-index@3.0.0:
     resolution: {integrity: sha512-83AuNN4cWdLVi//3ugR8E3kR6rrOwhXZt+hOCm1IjtIGj353/GlrtpMHpqZHU5kqipzj4miy9dweVdukXglVWw==}
     engines: {node: '>=14'}
+
+  hexo-generator-searchdb@1.5.0:
+    resolution: {integrity: sha512-d0b5SueDxJimTFaHpPg430FQFx7DtMkmEIHo0UTOjXWRy+eDqNSp1CuS04P7fWzMnH2h+aQc6O9D2yY+3sdAUg==}
 
   hexo-i18n@2.0.0:
     resolution: {integrity: sha512-dkUXecEtChaQMdTHN4WR13c8GwKqjbSOZPJS9qDqV6Ebnb77Wa/nQzWFckhP0dCps3a9lUQBd8hYGOMbOosiQQ==}
@@ -2426,6 +2432,12 @@ snapshots:
   hexo-generator-index@3.0.0:
     dependencies:
       hexo-pagination: 3.0.0
+
+  hexo-generator-searchdb@1.5.0(chokidar@3.6.0):
+    dependencies:
+      nunjucks: 3.2.4(chokidar@3.6.0)
+    transitivePeerDependencies:
+      - chokidar
 
   hexo-i18n@2.0.0:
     dependencies:
