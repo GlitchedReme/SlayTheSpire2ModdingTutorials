@@ -1,5 +1,7 @@
 ## 环境配置
 
+以下内容仅适用于`0.98.3`版本。
+
 0. 其他教程和mod模板：
 
 https://github.com/Cany0udance/EarlyStS2ModdingGuides/wiki/Getting-Started-With-Modding
