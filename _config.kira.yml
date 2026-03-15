@@ -37,6 +37,7 @@ docsTree:
                     },
                     { title: 03 添加新内容, path: /docs/03-add-new-contents/ },
                     { title: 04 BaseLib, path: /docs/04-baselib/ },
+                    { title: 05 添加新人物, path: /docs/05-add-new-character/ },
                 ],
         },
         {

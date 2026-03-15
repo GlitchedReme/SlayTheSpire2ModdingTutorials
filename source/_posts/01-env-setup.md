@@ -1,20 +1,24 @@
 ---
 title: 01 环境配置
-date: 2026-03-07 00:00:00
+date: 2026-03-15 00:00:00
 permalink: docs/01-env-setup/
 categories:
 - Basics
 ---
 
-以下内容仅适用于`0.98.3`版本。
+## 版本说明
 
-## 参考资料
+以下内容仅适用于 `0.99` 及之后的版本。你需要在 Steam 里切换 `public-beta` 分支。
 
-Discord 上的开发者制作的其他教程和 mod 模板：
+## 其他教程和模板
 
 https://github.com/Cany0udance/EarlyStS2ModdingGuides/wiki/Getting-Started-With-Modding
 
 https://github.com/Alchyr/ModTemplate-StS2
+
+https://github.com/freude916/sts2-quickRestart/blob/main/README.md
+
+可以通过 `dotnet new install Alchyr.Sts2.Templates` 直接安装项目模板，具体查看 `ModTemplate-StS2`。
 
 ## 安装 Godot 4.5.1 Mono
 
@@ -32,7 +36,7 @@ https://github.com/Alchyr/ModTemplate-StS2
 
 ## 选择文本编辑器
 
-可以使用[Visual Studio Code](https://code.visualstudio.com/)或者[Rider](https://www.jetbrains.com/zh-cn/rider/download/?section=windows)（推荐新手使用Rider）。另外也可以使用 Visual Studio等其他 IDE。以下只介绍 VS Code 的配置方法。
+可以使用 [Visual Studio Code](https://code.visualstudio.com/) 或者 [Rider](https://www.jetbrains.com/zh-cn/rider/download/?section=windows)（推荐新手使用 Rider）。另外也可以使用 Visual Studio 等其他 IDE。以下只介绍 VS Code 的配置方法。
 
 ## 安装 VS Code 插件
 
@@ -56,23 +60,27 @@ https://github.com/Alchyr/ModTemplate-StS2
 
 ![创建 C# 解决方案](../../images/image4.png)
 
-## 创建 mod_manifest.json
+## 创建 {modid}.json
 
-用 `VS Code` 打开项目文件夹。创建一个新文件（双击资源管理器或者右键新建文件），名字为 `mod_manifest.json`。填写以下内容：
+用 `VS Code` 打开项目文件夹。创建一个新文件（双击资源管理器或者右键新建文件），名字为 `{modid}.json`。`modid` 建议和项目名以及其中内容相同。填写以下内容：
 
 ```json
 {
-  "pck_name": "test", // 和你的项目名一致
-  "name": "Test Mod", // mod 名称
-  "author": "Reme", // 作者
-  "description": "A mod", // 说明
-  "version": "0.0.1" // 版本
+  "id": "MyMod",           // 必填，唯一 ID，建议和项目名一致
+  "name": "我的 Mod",
+  "author": "作者名",
+  "description": "Mod 描述",
+  "version": "1.0",
+  "has_pck": true,          // 是否有 .pck 资源包
+  "has_dll": true,          // 是否有 .dll 代码
+  "dependencies": [""],    // 依赖的其他 mod id
+  "affects_gameplay": true  // 多人模式时是否影响内容；替换模型/优化等不影响内容可填 false，默认 true
 }
 ```
 
 ## 修改 .csproj
 
-打开你的 `.csproj` 文件，修改并换成以下内容：
+打开你的 `.csproj` 文件，**修改**并换成以下内容：
 
 ```xml
 <Project Sdk="Godot.NET.Sdk/4.5.1">
@@ -98,18 +106,14 @@ https://github.com/Alchyr/ModTemplate-StS2
       <HintPath>$(Sts2DataDir)\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
-
-    <Reference Include="Steamworks.NET">
-      <HintPath>$(Sts2DataDir)\Steamworks.NET.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
   </ItemGroup>
 
-  <!-- 自动复制 dll -->
+  <!-- 自动复制 dll 和 json -->
   <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
     <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high" />
     <MakeDir Directories="$(Sts2Dir)\mods\" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" />
+    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
   </Target>
 </Project>
 ```
@@ -129,15 +133,15 @@ namespace Test.Scripts;
 [ModInitializer("Init")]
 public class Entry
 {
-    // 打 patch（即修改游戏代码的功能）用
-    private static Harmony? _harmony;
-
     // 初始化函数
     public static void Init()
     {
+        // 打 patch（即修改游戏代码的功能）用
         // 传入参数随意，只要不和其他人撞车即可
-        _harmony = new Harmony("sts2.reme.testmod");
-        _harmony.PatchAll();
+        var harmony = new Harmony("sts2.reme.testmod");
+        harmony.PatchAll();
+        // 使得 tscn 可以加载自定义脚本
+        ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);
         Log.Debug("Mod initialized!");
     }
 }
@@ -145,15 +149,16 @@ public class Entry
 
 ## 构建 DLL
 
-按下 `Ctrl + Shift + B` 选择 `dotnet: build`，或者终端命令行输入 `dotnet build` 创建 dll 文件。由于之前 `.csproj` 文件的配置，dll 文件会自动复制到游戏根目录的 `mods` 文件夹。
+按下 `Ctrl + Shift + B` 选择 `dotnet: build`，或者终端命令行输入 `dotnet build` 创建 dll 文件。由于之前 `.csproj` 文件的配置，dll 文件会自动复制到游戏根目录的 `mods` 文件夹里。
 
 ## 导出 PCK
 
-回到 Godot 编辑器，点击 项目 -> 导出，点击上方的“添加”一个 Windows 预设，然后：
+回到 Godot 编辑器，点击项目 -> 导出，点击上方的“添加”一个 Windows 预设，然后：
 
 - 点击“导出 pck/zip”，把文件名字改成 `[项目名].pck`。
 - 文件夹选择你之前导出的 dll 同名目录。
-- 注意一定得是 pck。
+- **注意一定得是 pck！！！**
+- 可选：由于现在不需要 pck 里包含 `{modid}.json` 了，在导出选项里点击“资源”，在“从项目中排除文件或目录”填写 `{modid}.json,*.cs`。`modid` 填你自己的，不要写 `{modid}`。
 
 ![导出设置1](../../images/image5.png)
 
@@ -163,11 +168,9 @@ public class Entry
 
 现在你的 `mods` 文件夹里有一个你的 mod 命名的文件夹，里面有一个 dll 文件和一个 pck 文件，这两个文件是构成一个 mod 的组件。
 
-- dll 文件是 mod 的代码。如果你之后改动了代码，只要重新 build 一下就行。
-- pck 文件是 mod 的素材资源。如果你没有素材上的变动，不需要重新打包一次 pck。
+- dll 文件是 mod 的代码。如果你没有代码，可以不要。如果你之后改动了代码，只要重新 build 一下就行。
+- pck 文件是 mod 的素材资源。如果你没有素材，可以不要。如果你没有素材上的变动，不需要重新打包一次 pck。
 
 ## 运行并验证
 
-运行游戏。第一次会提示是否开启 mod，选择“是”，然后游戏或许会关闭，打开第二次即可。如果右下角显示“已加载模组”即加载成功。
-
-目前只有如何创建 mod 文件，添加内容和修改代码之后再讲解。
+运行游戏。第一次会提示是否开启 mod，选择“是”，然后游戏会关闭，打开第二次即可。如果右下角显示“已加载模组”即加载成功。如果发现存档丢失，看下一章。

@@ -6,7 +6,8 @@
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
-    "server": "hexo server"
+    "server": "hexo server",
+    "sync:posts": "node tools/sync-posts-from-sources.cjs"
   },
   "hexo": {
     "version": "7.3.0"
