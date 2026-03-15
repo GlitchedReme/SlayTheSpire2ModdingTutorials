@@ -159,6 +159,17 @@ public class Entry
 - 文件夹选择你之前导出的 dll 同名目录。
 - **注意一定得是 pck！！！**
 - 可选：由于现在不需要 pck 里包含 `{modid}.json` 了，在导出选项里点击“资源”，在“从项目中排除文件或目录”填写 `{modid}.json,*.cs`。`modid` 填你自己的，不要写 `{modid}`。
+- 如果你想支持`0.98`版本，放一个`mod_manifest.json`并打包进pck里。参考：
+
+```json
+{
+  "pck_name": "test", // 和你的项目名一致
+  "name": "Test Mod", // mod 名称
+  "author": "Reme", // 作者
+  "description": "A mod", // 说明
+  "version": "0.0.1" // 版本
+}
+```
 
 ![导出设置1](../../images/image5.png)
 
