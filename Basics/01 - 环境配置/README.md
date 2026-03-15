@@ -1,6 +1,6 @@
 ## 环境配置
 
-以下内容仅适用于`0.98.3`版本。
+以下内容仅适用于`0.99`及之后的版本。你需要在steam里切换`public-beta`分支。
 
 0. 其他教程和mod模板：
 
@@ -9,6 +9,8 @@ https://github.com/Cany0udance/EarlyStS2ModdingGuides/wiki/Getting-Started-With-
 https://github.com/Alchyr/ModTemplate-StS2
 
 https://github.com/freude916/sts2-quickRestart/blob/main/README.md
+
+可以通过`dotnet new install Alchyr.Sts2.Templates`直接安装项目模板，具体查看`ModTemplate-StS2`。
 
 1. 《杀戮尖塔2》是用`Godot4.5.1 Mono`开发的，所以你需要安装`Godot4.5.1 Mono`版本的编辑器。
 
@@ -35,15 +37,19 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 ![alt text](../../images/image4.png)
 
-8. 用`VS Code`打开项目文件夹。创建一个新文件（双击资源管理器或者右键新建文件），名字为`mod_manifest.json`。填写以下内容。
+8. 用`VS Code`打开项目文件夹。创建一个新文件（双击资源管理器或者右键新建文件），名字为`{modid}.json`。`modid`建议和项目名以及其中内容相同。填写以下内容。
 
 ```json
 {
-  "pck_name": "test", // 和你的项目名一致
-  "name": "Test Mod", // mod名称
-  "author": "Reme", // 作者
-  "description": "A mod", // 说明
-  "version": "0.0.1" // 版本
+  "id": "MyMod",           // 必填，唯一 ID，建议和项目名一致
+  "name": "我的 Mod",
+  "author": "作者名",
+  "description": "Mod 描述",
+  "version": "1.0",
+  "has_pck": true,         // 是否有 .pck 资源包
+  "has_dll": true,        // 是否有 .dll 代码
+  "dependencies": [""],     // 依赖的其他mod id
+  "affects_gameplay": true // 多人模式时是否影响内容，如果是替换模型和优化等不影响内容的mod可填false，默认true
 }
 ```
 
@@ -63,7 +69,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
     <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
   </PropertyGroup>
 
-    <ItemGroup>
+  <ItemGroup>
     <Reference Include="sts2">
       <HintPath>$(Sts2DataDir)\sts2.dll</HintPath>
       <Private>false</Private>
@@ -73,18 +79,14 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
       <HintPath>$(Sts2DataDir)\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
-
-    <Reference Include="Steamworks.NET">
-      <HintPath>$(Sts2DataDir)\Steamworks.NET.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
   </ItemGroup>
 
-  <!-- 自动复制dll -->
+  <!-- 自动复制dll和json -->
   <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
     <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high" />
     <MakeDir Directories="$(Sts2Dir)\mods\" />
     <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" />
+    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
   </Target>
 </Project>
 ```
@@ -102,15 +104,15 @@ namespace Test.Scripts;
 [ModInitializer("Init")]
 public class Entry
 {
-    // 打patch（即修改游戏代码的功能）用
-    private static Harmony? _harmony;
-
     // 初始化函数
     public static void Init()
     {
+        // 打patch（即修改游戏代码的功能）用
         // 传入参数随意，只要不和其他人撞车即可
-        _harmony = new Harmony("sts2.reme.testmod");
-        _harmony.PatchAll();
+        var harmony = new Harmony("sts2.reme.testmod");
+        harmony.PatchAll();
+        // 使得tscn可以加载自定义脚本
+        ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);
         Log.Debug("Mod initialized!");
     }
 }
@@ -124,6 +126,7 @@ public class Entry
 * 点击`导出pck/zip`，把文件名字改成`[项目名].pck`。
 * 文件夹选择你之前导出的dll同名目录。
 * <b>注意一定得是pck！！！</b>
+* 可选：由于现在不需要pck里包含`mod_manifest.json`了，在导出选项里点击`资源`，`从项目中排除文件或目录`，填写`{modid}.json,*.cs`，`modid`填你自己的，不要写`{modid}`。
 
 ![alt text](../../images/image5.png)
 
@@ -131,7 +134,7 @@ public class Entry
 
 13. 现在你的`mods`文件夹里有一个你的mod命名的文件夹，里面有一个dll文件和一个pck文件，这两个文件是构成一个mod的组件。
 
-* dll文件是mod的代码。如果你之后改动了代码，只要重新build一下就行。
-* pck文件是mod的素材资源。如果你没有素材上的变动，不需要重新打包一次pck。
+* dll文件是mod的代码。如果你没有代码，可以不要。如果你之后改动了代码，只要重新build一下就行。
+* pck文件是mod的素材资源。如果你没有素材，可以不要。如果你没有素材上的变动，不需要重新打包一次pck。
 
-14. 运行游戏。第一次会提示是否开启mod，选择是，然后游戏或许会关闭，打开第二次即可，如果右下角显示“已加载模组”即加载成功。
+14. 运行游戏。第一次会提示是否开启mod，选择是，然后游戏会关闭，打开第二次即可，如果右下角显示“已加载模组”即加载成功。如果发现存档丢失，看下一章。
