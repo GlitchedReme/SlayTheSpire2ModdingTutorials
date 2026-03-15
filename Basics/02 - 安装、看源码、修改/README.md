@@ -8,7 +8,7 @@
 
 # 查看源码
 
-任选其一：
+只看源码推荐用ilspy。任选其一：
 
 ## [gdsdecomp](https://github.com/GDRETools/gdsdecomp)，反编译整个游戏
 

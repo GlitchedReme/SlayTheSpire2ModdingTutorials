@@ -2,7 +2,7 @@
 
 https://github.com/Alchyr/BaseLib-StS2
 
-> 由于目前（2026.3.11）`BaseLib`尚处于开发阶段，如果只打patch不添加新内容可以不使用。
+> 由于目前（2026.3.14）`BaseLib`尚处于开发阶段，如果只打patch不添加新内容可以不使用。
 
 ## 下载
 
@@ -27,9 +27,15 @@ https://github.com/Alchyr/BaseLib-StS2
       <HintPath>$(Sts2Dir)/mods/BaseLib/BaseLib.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <!-- NuGet获取，注意版本是否一致 -->
-    <!-- <PackageReference Include="Alchyr.Sts2.BaseLib" Version="0.0.5.0" /> -->
+    <!-- NuGet获取，注意版本是否一致，不一致手动更改Version -->
+    <!-- <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" /> -->
   </ItemGroup>
+```
+
+* 不要忘了在你`{modid}.json`中填写`dependencies`。
+
+```json
+  "dependencies": ["BaseLib"],
 ```
 
 ## 添加新卡牌
@@ -53,9 +59,9 @@ public class TestCard2 : CustomCardModel {}
 
 ## 自定义模组配置
 
-* 要使用此功能，需要先放一张图片到`{PCKName}\mod_image.png`作为mod图标，尺寸任意，否则会由于报错不显示配置。
+* 要使用此功能，需要先放一张图片到`{modId}\mod_image.png`作为mod图标，尺寸任意，否则会由于报错不显示配置。
 * 添加一个继承`SimpleModConfig`（或者是`ModConfig`如果你想要更复杂的设置）的类，在其中添加`public static bool`变量。目前只支持`bool`。
-* 在初始化函数调用`ModConfigRegistry.Register`。字符串写你的`pckname`。
+* 在初始化函数调用`ModConfigRegistry.Register`。字符串写你的`modId`。
 
 ```csharp
 [ModInitializer("Init")]
@@ -99,7 +105,4 @@ TODO
 TODO
 
 ## 添加先古之民
-TODO
-
-## 添加新人物
 TODO

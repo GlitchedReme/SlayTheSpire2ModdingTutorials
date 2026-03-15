@@ -1,6 +1,6 @@
 如同尖塔1一样，添加一个新内容包括以下步骤：编写类、注册、写本地化文本。
 
-由于官方接口目前并不完善，推荐之后通过`baselib`添加内容（目前开发阶段）。
+> 这一章节将被逐步废弃，推荐通过`baselib`添加内容（目前开发阶段）。请先查看`BaseLib`这一章。
 
 ## 添加新卡牌
 
@@ -130,8 +130,8 @@ public class TestCard : TestCardModel {}
 
 ### 文本
 
-此外还需要本地化文件。创建一个`{PCKName}/localization/{Language}/cards.json`。
-* `PCKName`即为你`mod_manifest.json`中填写的。
+此外还需要本地化文件。创建一个`{modId}/localization/{Language}/cards.json`。
+* `modId`即为你`{modId}.json`中填写的。
 * `Language`可以写`zhs`表示简体中文。填写`{CardId}.title`（卡牌名）和`{CardId}.description`（卡牌描述）：
 
 ```json
@@ -175,7 +175,7 @@ public class TestRelic : RelicModel
 
 ![示例遗物](../../images/image13.png)
 
-然后注册，写一个本地化文件，`{PCKName}/localization/{Language}/relics.json`。
+然后注册，写一个本地化文件，`{modId}/localization/{Language}/relics.json`。
 
 ```csharp
 [ModInitializer("Init")]
