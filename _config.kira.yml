@@ -49,6 +49,10 @@ docsTree:
                         title: 01 卡图&皮肤替换,
                         path: /docs/05-card-art-and-skin-replacement/,
                     },
+                    {
+                        title: 02 风格原画绘制,
+                        path: /docs/06-style-art-drawing/,
+                    },
                 ],
         },
     ]

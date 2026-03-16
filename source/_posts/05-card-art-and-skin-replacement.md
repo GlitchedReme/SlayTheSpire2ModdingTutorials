@@ -107,6 +107,6 @@ public static class Entry
 ## 任意模型替换思路
  
 * 只需patch`CharacterModel.CreateVisuals`返回继承`NCreatureVisuals`自制节点，就可以使用任意的场景替换人物。
-* 创建一个继承`NCreatureVisuals`的类，把它挂载到你新建的`Node2D`场景中。参考`添加新人物`的`自定义人物背景`这一节。
+* ~~创建一个继承`NCreatureVisuals`的类，把它挂载到你新建的`Node2D`场景中。~~参考`添加新人物`的`自定义人物背景`这一节。现在不需要脚本了
 * 该场景需要有唯一化命名（%）的`Visuals(Node2D)`，`Bounds(Control)`，`IntentPos(Marker2D)`，`CenterPos(Marker2D)`。
 * 如果想使用3d模型，新建`subviewportcontainer→subviewport`的层级结构，然后在`subviewport`中添加`camera3d`和任意3d模型，在3d视图中调整视角至2d视图正常显示。最后设置`subviewport`的`transparent`为`true`。

@@ -171,15 +171,9 @@ TestCharacter (Node2D)
 
 <b>其中`Visuals`，`Bounds`，`IntentPos`，`CenterPos`需要右键勾选`作为唯一名称访问`，出现`%`即可。名字不要改。</b>
 
-创建一个`NTestCharacter.cs`，继承`CreatureVisuals`。然后把它挂载到`TestCharacter`节点上。
+~~创建一个`NTestCharacter.cs`，继承`CreatureVisuals`。然后把它挂载到`TestCharacter`节点上。~~现在不需要了。
 
 `Bounds`就是你的人物hitbox的大小，如果你觉得血条太短调整一下它的大小。
-
-```csharp
-public partial class NTestCharacter : NCreatureVisuals
-{
-}
-```
 
 * 其中`Visuals`可以更改成任意继承了`Node2D`的类型，例如`SpineSprite`或是`AnimatedSprite2D`，或者在它之下新建节点都可。如何使用`Spine`，参考`卡图&皮肤替换`这一章。
 * 人物显示在x轴上方。
