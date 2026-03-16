@@ -10,7 +10,9 @@
 
 只看源码推荐用ilspy。任选其一：
 
-## [gdsdecomp](https://github.com/GDRETools/gdsdecomp)，反编译整个游戏
+## gdsdecomp，反编译整个游戏
+
+https://github.com/GDRETools/gdsdecomp
 
 1. 点击右侧`Releases`下载最新版。
 
@@ -22,9 +24,9 @@
 
 4. 等项目导出完，使用godot导入`project.godot`即可。
 
-## [ilspy](https://github.com/icsharpcode/ILSpy)或[dnspy](https://github.com/dnSpy/dnSpy)，仅反编译游戏代码
+## ilspy或dnspy，仅反编译游戏代码
 
-按说明安装软件，然后打开游戏根目录的`data_sts2_windows_x86_64\sts2.dll`即可查看代码。
+按说明安装[ilspy](https://github.com/icsharpcode/ILSpy)或[dnspy](https://github.com/dnSpy/dnSpy)，然后打开游戏根目录的`data_sts2_windows_x86_64\sts2.dll`即可查看代码。
 
 ## 修改代码
 

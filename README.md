@@ -8,6 +8,8 @@
 
 个人mod交流群：542370192
 
+以防你有网络问题下载工具：https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar
+
 一些常用文档网址：
 
 Godot: https://docs.godotengine.org/zh-cn/4.x/
