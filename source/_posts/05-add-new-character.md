@@ -173,6 +173,8 @@ TestCharacter (Node2D)
 
 创建一个`NTestCharacter.cs`，继承`CreatureVisuals`。然后把它挂载到`TestCharacter`节点上。
 
+`Bounds`就是你的人物hitbox的大小，如果你觉得血条太短调整一下它的大小。
+
 ```csharp
 public partial class NTestCharacter : NCreatureVisuals
 {

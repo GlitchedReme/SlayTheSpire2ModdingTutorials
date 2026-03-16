@@ -14,7 +14,7 @@ https://github.com/Alchyr/BaseLib-StS2
 
 ## 下载
 
-* 前往 https://github.com/Alchyr/BaseLib-StS2/releases 下载`dll`和`pck`两个文件，把他们放在`mods`文件夹里。记住你下载的版本。
+* 前往 https://github.com/Alchyr/BaseLib-StS2/releases 下载`dll`，`pck`和`json`三个文件，把他们放在`mods`文件夹里。记住你下载的版本。
 
 * 在`csproj`文件中相应位置引用`BaseLib.dll`，如下，两种方式都可。
 
