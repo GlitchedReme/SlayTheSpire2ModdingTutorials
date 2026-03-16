@@ -1,6 +1,6 @@
 # 安装模组
 
-在尖塔2游戏根目录下的`mods`文件夹里（`xxx\Steam\steamapps\common\Slay the Spire 2\mods`），放置模组提供的`dll`和`pck`文件各一个。可以套一个文件夹方便管理。
+在尖塔2游戏根目录下的`mods`文件夹里（`xxx\Steam\steamapps\common\Slay the Spire 2\mods`），放置模组提供的`dll`，`pck`和`json`文件各一个。可以套一个文件夹方便管理。
 
 由于尖塔2不安装模组和安装模组的存档是分开的，当你玩模组版时需要复制一份非模组版的存档。
 
