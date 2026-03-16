@@ -26,9 +26,9 @@
 
 ## Spine导入&模型替换
 
-尖塔使用`4.2.43`版本的Spine，在这之下版本的不能直接使用。（需要自己想办法）
+尖塔使用`4.2.43`版本的Spine，在这之下版本的不能直接使用。（神秘链接或网盘：https://github.com/wang606/SpineSkeletonDataConverter）
 
-* 第一步，安装一个`Spine Godot Extension`，建议直接下载我编译好的：https://pan.baidu.com/s/1V2tvRIgl9brGqbgu-fGB6g?pwd=bcvd 。参考 https://zh.esotericsoftware.com/spine-godot 。
+* 第一步，安装一个`Spine Godot Extension`，建议直接下载我编译好的：https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar 。参考 https://zh.esotericsoftware.com/spine-godot 。
 
 * 把里面的文件放到你的项目根目录，然后~~可能需要~~重启一下Godot。把spine中导出的atlas,skel,png文件放入项目指定位置，能在Godot文件系统中看到就算成功。
 
@@ -45,7 +45,7 @@
 然后可以参考这段替换角色：
 
 ```csharp
-sing System;
+using System;
 using Godot;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Bindings.MegaSpine;
