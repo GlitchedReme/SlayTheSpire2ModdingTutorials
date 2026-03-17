@@ -290,6 +290,8 @@ script = ExtResource("mega_label")
 
 不要忘记在你的`Init`初始化函数中添加`ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);`这一行。
 
+* 打开`项目→项目设置`，把`将文本资源转换为二进制`禁用。
+
 ![alt text](../../images/image20.png)
 
 ## 附赠资源
