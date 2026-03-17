@@ -26,7 +26,7 @@
 
 ## Spine导入&模型替换
 
-尖塔使用`4.2.43`版本的Spine，在这之下版本的不能直接使用。（神秘链接或网盘：https://github.com/wang606/SpineSkeletonDataConverter）
+尖塔使用`4.2.43`版本的Spine，在这之下版本的不能直接使用。（神秘链接或网盘：https://github.com/wang606/SpineSkeletonDataConverter ）
 
 * 第一步，安装一个`Spine Godot Extension`，建议直接下载我编译好的：https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar 。参考 https://zh.esotericsoftware.com/spine-godot 。
 
