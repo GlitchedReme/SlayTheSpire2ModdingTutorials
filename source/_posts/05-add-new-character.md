@@ -199,6 +199,7 @@ TestEnergyCounter (Control)
 
 * 后面标`%`的需要作为唯一名称访问。名字不要改，label也是。
 * RotationLayers里放需要旋转的图层。没有也行。
+* 粒子动画节点参考原版设置，或者建议你直接复制最下方提供的tscn。
 
 ![alt text](../../images/image19.png)
 
@@ -291,6 +292,8 @@ script = ExtResource("mega_label")
 不要忘记在你的`Init`初始化函数中添加`ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);`这一行。
 
 * 打开`项目→项目设置`，把`将文本资源转换为二进制`禁用。
+
+![3](../../images/image16.png)
 
 ![alt text](../../images/image20.png)
 
