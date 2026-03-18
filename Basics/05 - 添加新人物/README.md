@@ -192,7 +192,7 @@ TestEnergyCounter (Control)
 
 * 后面标`%`的需要作为唯一名称访问。名字不要改，label也是。
 * RotationLayers里放需要旋转的图层。没有也行。
-* 粒子动画节点参考原版设置，或者你直接复制最下方提供的tscn。
+* 粒子动画节点参考原版设置，或者建议你直接复制最下方提供的tscn。
 
 ![alt text](../../images/image19.png)
 

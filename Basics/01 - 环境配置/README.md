@@ -1,7 +1,5 @@
 ## 环境配置
 
-以下内容仅适用于`0.99`及之后的版本。你需要在steam里切换`public-beta`分支。
-
 以防你有网络问题下载工具：https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar
 
 ## 其他教程和mod模板
@@ -43,7 +41,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 ## 创建Godot项目
 
-打开`Godot`创建一个新项目。渲染器尽量使用`Mobile/移动`，以和游戏保持一致。
+打开`Godot`创建一个新项目。渲染器尽量使用`Mobile/移动`，以和游戏保持一致。记住你的项目名。
 
 ![alt text](../../images/image3.png)
 
@@ -156,17 +154,6 @@ public class Entry
 * 文件夹选择你之前导出的dll同名目录。
 * <b>注意一定得是pck！！！</b>
 * 可选：由于现在不需要pck里包含`mod_manifest.json`了，在导出选项里点击`资源`，`从项目中排除文件或目录`，填写`{modid}.json`，`modid`填你自己的，不要写`{modid}`。
-- 如果你想支持`0.98`版本，放一个`mod_manifest.json`并打包进pck里。参考：
-
-```json
-{
-  "pck_name": "test", // 和你的项目名一致
-  "name": "Test Mod", // mod 名称
-  "author": "Reme", // 作者
-  "description": "A mod", // 说明
-  "version": "0.0.1" // 版本
-}
-```
 
 ![alt text](../../images/image5.png)
 
