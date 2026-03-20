@@ -65,8 +65,8 @@ using MegaCrit.Sts2.Core.ValueProps;
 namespace Test.Scripts;
 
 // 加入哪个卡池
-[Pool(typeof(TestCardPool))]
-public class TestCard : TestCardModel
+[Pool(typeof(ColorlessCardPool))]
+public class TestCard : CustomCardModel
 {
     // 基础耗能
     private const int energyCost = 1;
