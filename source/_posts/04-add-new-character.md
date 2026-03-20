@@ -1,7 +1,7 @@
 ---
-title: 05 添加新人物
+title: 04 添加新人物
 date: 2026-03-15 00:00:00
-permalink: docs/05-add-new-character/
+permalink: docs/04-add-new-character/
 categories:
 - Basics
 ---

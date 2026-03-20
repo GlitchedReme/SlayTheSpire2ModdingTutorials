@@ -35,9 +35,8 @@ docsTree:
                         title: 02 安装、看源码、修改,
                         path: /docs/02-install-view-source-and-patch/,
                     },
-                    { title: 03 添加新内容, path: /docs/03-add-new-contents/ },
-                    { title: 04 BaseLib, path: /docs/04-baselib/ },
-                    { title: 05 添加新人物, path: /docs/05-add-new-character/ },
+                    { title: 03 BaseLib, path: /docs/03-baselib/ },
+                    { title: 04 添加新人物, path: /docs/04-add-new-character/ },
                 ],
         },
         {

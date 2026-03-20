@@ -259,6 +259,24 @@
     color: #e8edf2 !important;
 }
 
+@media (max-width: 1000px) {
+    .kira-body .kira-sidebar {
+        background-color: rgba(22, 26, 32, 0.96) !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        width: 88vw !important;
+        max-width: 88vw !important;
+    }
+
+    .kira-body .kira-sidebar.show {
+        width: 88vw !important;
+    }
+
+    .kira-tree-group {
+        background-color: rgba(32, 38, 46, 0.92) !important;
+    }
+}
+
 .kira-list-item.true {
     background: #bb6516 !important;
     box-shadow: 0 2px 14px rgba(187, 101, 22, 0.55) !important;

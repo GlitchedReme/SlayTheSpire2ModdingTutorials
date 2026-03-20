@@ -31,12 +31,12 @@
 														<% if(page_category.name==category.name){ %>
 															<!-- 先找到与当前文字相同的目录 -->
 															<% let i=0;%>
-																<% category.posts.sort('date').map(function(post){ %>
+																<% category.posts.sort('title').map(function(post){ %>
 																	<% i++; %>
-																		<% if(post.title==page.title){ %>
+																		<% if(post.path==page.path){ %>
 																			<!-- 在找到当前文章所在的 index -->
 																			<% let ix=0;%>
-																				<% category.posts.sort('date').map(function(post){
+																				<% category.posts.sort('title').map(function(post){
 																					%>
 																					<% ix++; %>
 																						<% if(ix==i + 1 && post.title){
