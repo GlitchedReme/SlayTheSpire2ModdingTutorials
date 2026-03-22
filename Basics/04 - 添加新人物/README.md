@@ -167,12 +167,22 @@ TestCharacter (Node2D)
 
 `Bounds`就是你的人物hitbox的大小，如果你觉得血条太短调整一下它的大小。
 
-
-* 其中`Visuals`可以更改成任意继承了`Node2D`的类型，例如`SpineSprite`或是`AnimatedSprite2D`，或者在它之下新建节点都可。如何使用`Spine`，参考`卡图&皮肤替换`这一章。
 * 人物显示在x轴上方。
 * 如果想使用3d模型，新建`visuals→subviewportcontainer→subviewport`的层级结构，然后在`subviewport`中添加`camera3d`和任意3d模型，在3d视图中调整视角至2d视图正常显示。最后设置`subviewport`的`transparent`为`true`。
 
 ![alt text](../../images/image18.png)
+
+### 人物动画
+
+* 其中`Visuals`可以更改成任意继承了`Node2D`的类型，例如`SpineSprite`，`Sprite2D`或是`AnimatedSprite2D`，或者在它之下新建节点都可。
+
+* 如果要自然支持Spine播放，需要把`Visuals`改成`SpineSprite`，且你的战斗人物模型需要有`idle_loop`（待机循环），`attack`（攻击动作），`cast`（能力卡动作），`hurt`（受伤），`die`（死亡）这些动画名。
+
+* 如果你只有一张图，那么把`Visuals`改成`Sprite2D`类型更改图片即可。
+
+* 此外`baselib`支持使用`AnimationPlayer`控制动画，例如你使用`AnimatedSprite2D`或者是3D模型。虽然`AnimationPlayer`放在任意位置都可以，但推荐把根节点之下。动画名和上方设置的一致即可自动播放动画。
+
+* 例如：如果是使用`AnimatedSprite2D`，设置好`临近FPS`（例如0.2秒），然后前往`Visuals`节点点击属性`Frame`右侧的钥匙插入关键帧，重复修改当前帧和插入关键帧即可。参考：https://docs.godotengine.org/en/stable/tutorials/2d/2d_sprite_animation.html#sprite-sheet-with-animationplayer
 
 ## 自定义能量表盘
 
