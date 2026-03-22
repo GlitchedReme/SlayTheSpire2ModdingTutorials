@@ -113,7 +113,7 @@ public class TestCard : CustomCardModel
 
 * 添加一个`Pool`的attribute，并指定要添加的颜色卡池，然后会自动注册。
 * 继承`CustomCardModel`而不是`CardModel`。
-* <b>注意</b>：通过`baselib`添加卡牌，其id会变成`{命名空间第一段大写}-{原卡牌id}`，例如`namespace Test.Scripts;`取`TEST`，最后变成`TEST-TEST_CARD`。
+* <b>注意</b>：通过`baselib`添加卡牌，其id会变成`{命名空间第一段大写}-{原卡牌id}`，例如`namespace Test.Scripts;`取`TEST`，原始卡牌id为`TEST-CARD`，是`TestCard`的大写snake-case，最后变成`TEST-TEST_CARD`。
 
 ### 卡图
 
@@ -162,7 +162,7 @@ public class TestCard : TestCardModel {}
 ### 文本
 
 此外还需要本地化文件。创建一个`{modId}/localization/{Language}/cards.json`。
-* `modId`即为你`{modId}.json`中填写的。
+* `modId`即为你`{modId}.json`中填写的。<b>不是你的根目录，而是一个新文件夹。</b>
 * `Language`可以写`zhs`表示简体中文。填写`{CardId}.title`（卡牌名）和`{CardId}.description`（卡牌描述）：
 
 ```json
@@ -174,9 +174,24 @@ public class TestCard : TestCardModel {}
 
 编译打包`dll`和`pck`后打开游戏。如果你在对应池子中看到卡牌说明成功了。如果没有任何卡牌（或者一张在左上角的卡牌）说明出问题了。
 
-按`~`打开控制台输入`card TEST_CARD`获得这张卡。
+按`~`打开控制台输入`card TEST-TEST_CARD`获得这张卡。
 
 ![示例卡牌](../../images/image11.png)
+
+如果报错，回头看看。最终项目结构参考：
+
+```
+Test (你的项目文件夹)
+├── Scripts (你的脚本文件夹，随意)
+│   ├── TestCard.cs
+│   └── Entry.cs
+└── Test (不要忘了这一层文件夹)
+    ├── images
+    │   └── cards
+    │       └── test-test_card.png
+    └── localization
+        └── cards.json
+```
 
 ## 自定义模组配置
 

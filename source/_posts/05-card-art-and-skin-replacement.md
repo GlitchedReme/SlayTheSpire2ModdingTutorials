@@ -42,6 +42,8 @@ categories:
 
 * 创建一个`SpineSkeletonDataResource`，并把`Atlas Res`和`SkeletonFile Res`分别设置为atlas和skel文件。
 
+* 你的战斗人物模型需要有`idle_loop`（待机循环），`attack`（攻击动作），`cast`（能力卡动作），`hurt`（受伤），`die`（死亡）这些动画名。
+
 ![1](../../images/image14.png)
 
 ![2](../../images/image15.png)
