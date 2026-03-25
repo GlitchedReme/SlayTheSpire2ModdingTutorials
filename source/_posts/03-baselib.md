@@ -304,6 +304,8 @@ public class MyKeywords
 
 动态变量是指`伤害`，`格挡`，`抽牌数`，`获得能量数`等这种动态数值。虽然可以通过`new DynamicPower("xxx", 1)`这种形式添加，但是写一个新的类比较规范也便于扩展功能。
 
+通过`baselib`的`WithTooltip`可以添加tooltip。
+
 先创建新的类：
 ```csharp
 using BaseLib.Extensions;
