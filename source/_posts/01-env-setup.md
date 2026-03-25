@@ -63,6 +63,8 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 用`VS Code`打开项目文件夹。创建一个新文件（双击资源管理器或者右键新建文件），名字为`{modid}.json`。`modid`建议和项目名以及其中内容相同。填写以下内容。
 
+* <b>不是创建`{modid}.json`这么一个文件，而是把`{modid}`替换成你的项目名，例如`Test.json`。之后提到的`{}``[]`都是替换。</b>
+
 ```json
 {
   "id": "MyMod",           // 必填，唯一 ID，建议和项目名一致
