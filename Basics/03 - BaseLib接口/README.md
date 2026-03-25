@@ -182,7 +182,8 @@ Test (你的项目文件夹)
     │   └── cards
     │       └── test-test_card.png
     └── localization
-        └── cards.json
+        └── zhs
+            └── cards.json
 ```
 
 ## 自定义模组配置
