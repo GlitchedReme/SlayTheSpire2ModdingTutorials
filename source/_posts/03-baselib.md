@@ -10,7 +10,7 @@ categories:
 
 https://github.com/Alchyr/BaseLib-StS2
 
-> 由于目前（2026.3.20）`BaseLib`尚处于开发阶段，如果只打patch不添加新内容可以不使用。
+> 由于目前`BaseLib`尚处于开发阶段，如果只打patch不添加新内容可以不使用。
 
 ## 下载
 
@@ -299,6 +299,73 @@ public class MyKeywords
 ```
 
 ![alt text](../../images/image23.png)
+
+## 添加动态变量
+
+动态变量是指`伤害`，`格挡`，`抽牌数`，`获得能量数`等这种动态数值。虽然可以通过`new DynamicPower("xxx", 1)`这种形式添加，但是写一个新的类比较规范也便于扩展功能。
+
+先创建新的类：
+```csharp
+using BaseLib.Extensions;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+
+namespace Test.Scripts;
+
+public class TestDynamicVar : DynamicVar
+{
+    // 在描述中用作占位符的键，推荐添加前缀避免撞车
+    public const string Key = "Test-Leech";
+    // 本地化键，这里设置为大写的Key，也就是"TEST-LEECH"
+    public static readonly string LocKey = Key.ToUpperInvariant();
+
+    public TestDynamicVar(decimal baseValue) : base(Key, baseValue)
+    {
+        this.WithTooltip(LocKey);
+    }
+}
+```
+
+然后添加一个新的本地化文件`{modId}/localization/{Language}/static_hover_tips.json`。
+
+```json
+{
+    "TEST-LEECH.description": "吸取等量生命。",
+    "TEST-LEECH.title": "汲取"
+}
+```
+
+如果要使用这个变量，在`CanonicalVars`中添加你新建的变量即可。
+
+```csharp
+    protected override IEnumerable<DynamicVar> CanonicalVars => [
+        new DamageVar(12, ValueProp.Move),
+        new TestDynamicVar(3)
+    ];
+```
+
+然后修改卡牌的描述以使用：
+
+```json
+{
+    "TEST-TEST_CARD.title": "测试卡牌",
+    "TEST-TEST_CARD.description": "[gold]汲取[/gold]{Test-Leech:diff()}。\n造成{Damage:diff()}点伤害。"
+}
+```
+
+`:diff()`表示这个值一旦和基础值不同，就会变红色或绿色（例如升级时增加数值，预览变成绿色）。
+
+
+![alt text](../../images/image26.png)
+
+当然如果你只是个简单的数值，这样就行：
+
+```csharp
+    protected override IEnumerable<DynamicVar> CanonicalVars => [
+        new DamageVar(12, ValueProp.Move),
+        new DynamicVar("Test-Leech", 1m).WithTooltip("TEST-LEECH")
+    ];
+```
+
 
 ## 添加局内保存
 

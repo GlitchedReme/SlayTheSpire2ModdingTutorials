@@ -259,6 +259,33 @@
     color: #e8edf2 !important;
 }
 
+.kira-content .kira-main-content article>table {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+    scrollbar-width: auto;
+    scrollbar-color: rgba(217, 117, 25, 0.75) rgba(255, 255, 255, 0.12);
+}
+
+.kira-content .kira-main-content article>table th,
+.kira-content .kira-main-content article>table td {
+    white-space: nowrap;
+}
+
+.kira-content .kira-main-content article>table::-webkit-scrollbar {
+    height: 8px;
+}
+
+.kira-content .kira-main-content article>table::-webkit-scrollbar-thumb {
+    background-color: rgba(217, 117, 25, 0.75);
+    border-radius: 999px;
+}
+
+.kira-content .kira-main-content article>table::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
 @media (max-width: 1000px) {
     .kira-body .kira-sidebar {
         background-color: rgba(22, 26, 32, 0.96) !important;
