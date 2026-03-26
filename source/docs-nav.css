@@ -273,6 +273,34 @@
     white-space: nowrap;
 }
 
+.kira-content .kira-main-content article>table,
+.kira-content .kira-main-content article>table thead,
+.kira-content .kira-main-content article>table tbody,
+.kira-content .kira-main-content article>table tr,
+.kira-content .kira-main-content article>table th,
+.kira-content .kira-main-content article>table td {
+    color: #e8edf2;
+    border-color: rgba(255, 255, 255, 0.14);
+}
+
+.kira-content .kira-main-content article>table {
+    background: transparent !important;
+}
+
+.kira-content .kira-main-content article>table thead,
+.kira-content .kira-main-content article>table thead tr,
+.kira-content .kira-main-content article>table th {
+    background-color: rgba(28, 34, 43, 0.9);
+}
+
+.kira-content .kira-main-content article>table tr {
+    background-color: rgba(21, 27, 35, 0.78);
+}
+
+.kira-content .kira-main-content article>table tr:nth-child(2n) {
+    background-color: rgba(25, 31, 40, 0.88);
+}
+
 .kira-content .kira-main-content article>table::-webkit-scrollbar {
     height: 8px;
 }
