@@ -27,20 +27,20 @@ categories:
 
 | 标签名 | 作用 |
 | - | - |
-| [ancient_banner]...[/ancient_banner] | 古代横幅风格 |
-| [aqua]...[/aqua] | 水绿色文字 |
-| [blue]...[/blue] | 蓝色文字 |
-| [fade_in]...[/fade_in] | 渐显动画效果 |
-| [fly_in]...[/fly_in] | 飞入动画效果 |
-| [gold]...[/gold] | 金色文字 |
-| [green]...[/green] | 绿色文字 |
-| [jitter]...[/jitter] | 抖动动画效果 |
-| [orange]...[/orange] | 橙色文字 |
-| [pink]...[/pink] | 粉色文字 |
-| [purple]...[/purple] | 紫色文字 |
-| [red]...[/red] | 红色文字 |
-| [sine]...[/sine] | 正弦波动动画效果 |
-| [thinky_dots]...[/thinky_dots] | 思考点点动画效果 |
+| `[ancient_banner]...[/ancient_banner]` | 古代横幅风格 |
+| `[aqua]...[/aqua]` | 水绿色文字 |
+| `[blue]...[/blue]` | 蓝色文字 |
+| `[fade_in]...[/fade_in]` | 渐显动画效果 |
+| `[fly_in]...[/fly_in]` | 飞入动画效果 |
+| `[gold]...[/gold]` | 金色文字 |
+| `[green]...[/green]` | 绿色文字 |
+| `[jitter]...[/jitter]` | 抖动动画效果 |
+| `[orange]...[/orange]` | 橙色文字 |
+| `[pink]...[/pink]` | 粉色文字 |
+| `[purple]...[/purple]` | 紫色文字 |
+| `[red]...[/red]` | 红色文字 |
+| `[sine]...[/sine]` | 正弦波动动画效果 |
+| `[thinky_dots]...[/thinky_dots]` | 思考点点动画效果 |
 
 ## 占位变量
 
@@ -107,12 +107,11 @@ https://github.com/axuno/SmartFormat/wiki
 
 | 名称 | 含义 | 典型写法 |
 | - | - | - |
-| `energyPrefix` | 能量图标 | `{energyPrefix:energyIcons(1)}` |
 | `singleStarIcon` | 星星图标 | `每获得{singleStarIcon}时` |
 | `InCombat` | 是否处于战斗 | `{InCombat:\n（命中{CalculatedHits:diff()}次）\|}` |
 | `IsTargeting` | 当前是否有目标 | `{IsTargeting:\n（造成{CalculatedDamage:diff()}）\|}` |
 | `OnTable` | 牌是否在手牌或出牌区 | `{OnTable:cond:true?在场上\|不在场上}` |
-| `{IfUpgraded}` | 是否升级 | `[gold]升级[/gold]你[gold]手牌[/gold]中的{IfUpgraded:show:所有牌\|一张牌}。` |
+| `IfUpgraded` | 是否升级 | `[gold]升级[/gold]你[gold]手牌[/gold]中的{IfUpgraded:show:所有牌\|一张牌}。` |
 
 
 ## DynamicVar

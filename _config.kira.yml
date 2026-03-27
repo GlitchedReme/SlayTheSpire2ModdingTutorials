@@ -37,8 +37,17 @@ docsTree:
                     },
                     { title: 03 BaseLib, path: /docs/03-baselib/ },
                     { title: 04 添加新人物, path: /docs/04-add-new-character/ },
-                    { title: 05 变量与描述, path: /docs/05-variable-and-description/ },
+                    {
+                        title: 05 变量与描述,
+                        path: /docs/05-variable-and-description/,
+                    },
                 ],
+        },
+        {
+            title: 迁移,
+            open: true,
+            children:
+                [{ title: 07 0.99 至 0.100, path: /docs/07-migration-99-100/ }],
         },
         {
             title: 视觉,
