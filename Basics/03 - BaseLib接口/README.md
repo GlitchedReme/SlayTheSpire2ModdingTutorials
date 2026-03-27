@@ -189,7 +189,7 @@ Test (你的项目文件夹)
 ## 自定义模组配置
 
 * 要使用此功能，需要先放一张图片到`{modId}\mod_image.png`作为mod图标，尺寸任意，否则会由于报错不显示配置。
-* 添加一个继承`SimpleModConfig`（或者是`ModConfig`如果你想要更复杂的设置）的类，在其中添加`public static bool`变量。支持`bool`，`double`，`enum`。
+* 添加一个继承`SimpleModConfig`（或者是`ModConfig`如果你想要更复杂的设置）的类，在其中添加`public static bool`变量。支持`bool`，`double`，`enum`，`int`，`string`。
 * 在初始化函数调用`ModConfigRegistry.Register`。字符串写你的`modId`。
 
 ```csharp
@@ -374,6 +374,7 @@ public class TestRelic : CustomRelicModel
     [SavedProperty]
     public int Test_GameTurns { get; set; } = 0;
 
+    // 添加新的动态变量
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1), new DynamicVar("GameTurns", Test_GameTurns)];
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
@@ -427,7 +428,7 @@ public class TestPower : CustomPowerModel
 }
 ```
 
-然后使用`PowerCmd.Apply<TestPower>(...)`给予即可。
+然后使用`PowerCmd.Apply<TestPower>(...)`给予即可。或者使用控制台`power TEST-TEST_POWER 1 0`。
 
 ![alt text](../../images/image25.png)
 

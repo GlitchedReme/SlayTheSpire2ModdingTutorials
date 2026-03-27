@@ -15,8 +15,10 @@ public class TestCardPool : CustomCardPoolModel
     // 卡池的ID。必须唯一防撞车。
     public override string Title => "test";
 
-    // 卡池的能量图标。暂时不支持加载，建议暂时使用原版，或者通过更改CardModel的EnergyIcon修改。
-    public override string EnergyColorName => "ironclad";
+    // 描述中使用的能量图标。大小为24x24。
+    public override string? TextEnergyIconPath => "res://test/images/energy_test.png";
+    // tooltip和卡牌左上角的能量图标。大小为74x74。
+    public override string? BigEnergyIconPath => "res://test/images/energy_test_big.png";
 
     // 卡池的主题色。
     public override Color DeckEntryCardColor => new(0.5f, 0.5f, 1f);
@@ -31,8 +33,10 @@ public class TestCardPool : CustomCardPoolModel
 ```csharp
 public class TestRelicPool : CustomRelicPoolModel
 {
-    // 能量图标。
-    public override string EnergyColorName => "ironclad";
+    // 描述中使用的能量图标。大小为24x24。
+    public override string? TextEnergyIconPath => "res://test/images/energy_test.png";
+    // tooltip和卡牌左上角的能量图标。大小为74x74。
+    public override string? BigEnergyIconPath => "res://test/images/energy_test_big.png";
 }
 ```
 
@@ -41,12 +45,12 @@ public class TestRelicPool : CustomRelicPoolModel
 ```csharp
 public class TestPotionPool : CustomPotionPoolModel
 {
-    // 能量图标。
-    public override string EnergyColorName => "ironclad";
+    // 描述中使用的能量图标。大小为24x24。
+    public override string? TextEnergyIconPath => "res://test/images/energy_test.png";
+    // tooltip和卡牌左上角的能量图标。大小为74x74。
+    public override string? BigEnergyIconPath => "res://test/images/energy_test_big.png";
 }
 ```
-
-如果你的卡牌、药水、遗物都使用`CustomxxxModel`，且添加了`Pool`属性，那么不需要override`GenerateAllxxx`了。
 
 ## 创建人物
 
@@ -68,7 +72,7 @@ public class TestCharacter : PlaceholderCharacterModel
 
     // 人物模型tscn路径。要自定义见下。
     public override string CustomVisualPath => "res://test/scenes/test_character.tscn";
-    // 卡牌拖尾路径。
+    // 卡牌拖尾场景。
     // public override string CustomTrailPath => "res://scenes/vfx/card_trail_ironclad.tscn";
     // 人物头像路径。
     public override string CustomIconTexturePath => "res://icon.svg";
@@ -76,9 +80,9 @@ public class TestCharacter : PlaceholderCharacterModel
     // public override string CustomIconPath => "res://scenes/ui/character_icons/ironclad_icon.tscn";
     // 能量表盘tscn路径。要自定义见下。
     public override string CustomEnergyCounterPath => "res://test/scenes/test_energy_counter.tscn";
-    // 篝火休息动画。
+    // 篝火休息场景。
     // public override string CustomRestSiteAnimPath => "res://scenes/rest_site/characters/ironclad_rest_site.tscn";
-    // 商店人物动画。
+    // 商店人物场景。
     // public override string CustomMerchantAnimPath => "res://scenes/merchant/characters/ironclad_merchant.tscn";
     // 多人模式-手指。
     // public override string CustomArmPointingTexturePath => null;
@@ -188,21 +192,21 @@ TestCharacter (Node2D)
 
 `public override string CustomEnergyCounterPath => "res://test/scenes/test_energy_counter.tscn";`
 
+* 建议从原版或者下面的附赠资源处复制一份tscn快速开始。
 创建一个`Control`类型的新场景，设定以下结构：
 
 ```
 TestEnergyCounter (Control)
-├── BurstBack (CPUParticles2D) %
+├── EnergyVfxBack (Node2D) %
 ├── Layers (Control) %
 │   ├── Layer1 (TextureRect，或任意)
 │   └── RotationLayers (Control) %
-├── BurstFront (CPUParticles2D) %
+├── EnergyVfxFront (Node2D) %
 └── Label (Label)
 ```
 
 * 后面标`%`的需要作为唯一名称访问。名字不要改，label也是。
 * RotationLayers里放需要旋转的图层。没有也行。
-* 粒子动画节点参考原版设置，或者建议你直接复制最下方提供的tscn。
 
 ![alt text](../../images/image19.png)
 
@@ -214,44 +218,57 @@ public partial class NTestEnergyCounter : NEnergyCounter
 }
 ```
 
+然后创建一个继承`NParticlesContainer`的类，挂载到`EnergyVfxBack`和`EnergyVfxFront`上。
+
+其中的`_particles`无法使用`Export`设置，所以需要反射设置。当然你也可以往里添加`GpuParticles2D`以添加粒子动画效果。具体参考原版。
+
+```csharp
+public partial class NTestParticlesContainer : NParticlesContainer
+{
+    public override void _Ready()
+    {
+        base._Ready();
+        Traverse.Create(this).Field("_particles").SetValue(new Array<GpuParticles2D>());
+    }
+}
+```
+
+然后创建一个继承`MegaLabel`的类，挂载到`Label`上。
+
+```csharp
+public partial class TestMegaLabel : MegaLabel
+{
+}
+```
+
 保存一下然后关闭这个场景，然后开始<b>神秘操作</b>。在本地，或者是你的ide里打开这个tscn文件，先修改开头，
-* 在`ext_resource`这一组（推荐ext最下面，sub最上面）添加`mega_label`这一行。
-* 添加`kreon_bold_shared_font`这一行。
-* 在`sub_resource`这一组添加`FontVariation_kreon_bold_shared_font`，`base_font`，`spacing_glyph`这三行。
-* 修改`load_steps`，改为原来的数字+3。（ext数量+sub数量+1）
+* 在`ext_resource`这一组下添加`kreon_bold_shared_font`这一行。
+* 在`ext_resource`这一组下添加`FontVariation_kreon_bold_shared_font`，`base_font`，`spacing_glyph`这三行。
+* 修改`load_steps`，改为原来的数字+2。（ext数量+sub数量+1）
 
 ```tscn
-[gd_scene load_steps=8 format=3 uid="uid://cs3a5onikvhi4"]
+[gd_scene load_steps=7 format=3 uid="uid://cs3a5onikvhi4"]
 
-[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_85qf2"]
-[ext_resource type="Script" uid="uid://b4eaf7kin174o" path="res://Scripts/NTestEnergyCounter.cs" id="energy_counter"]
-
-[ext_resource type="Script" path="res://addons/mega_text/MegaLabel.cs" id="mega_label"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_85qf2"]
+[ext_resource type="Script" path="res://Scripts/NTestEnergyCounter.cs" id="1_tmfxn"]
+[ext_resource type="Script" path="res://Scripts/NTestParticlesContainer.cs" id="2_1ytbd"]
+[ext_resource type="Script" path="res://Scripts/TestMegaLabel.cs" id="4_6cpd0"]
 
 [ext_resource type="FontVariation" path="res://themes/kreon_bold_shared.tres" id="kreon_bold_shared_font"]
-
-[sub_resource type="Curve" id="Curve_85qf2"]
-_data = [Vector2(0.006, 0.031), 0.0, 4.464, 0, 0, Vector2(0.298, 0.736), 0.832, 0.832, 0, 0, Vector2(0.99, 0.933), -0.247, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Gradient" id="Gradient_1ytbd"]
-offsets = PackedFloat32Array(0, 0.35164836, 0.64835167, 1)
-colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="FontVariation" id="FontVariation_kreon_bold_shared_font"]
 base_font = ExtResource("kreon_bold_shared_font")
 spacing_glyph = 2
 ```
 
-* 然后往下，找到`[node name="Label" type="Label" parent="."]`这一行，添加以下两行。
+* 然后往下，找到`[node name="Label" type="Label" parent="."]`这一行，添加以下这一行。
 
 ```tscn
 theme_override_fonts/font = SubResource("FontVariation_kreon_bold_shared_font")
-script = ExtResource("mega_label")
 ```
 
-* 然后<b>不要再打开</b>这个文件。如果你想修改，保存以后重复以上内容。
-* TODO：或者你也可以通过新建一个继承`MegaLabel`的类挂载，把反编译的字体资源复制到本地以省去以上工作。
+* 然后如果你想修改这个能量表盘，打开场景后需要重复以上工作。
+* 或者你也可以把反编译的字体资源复制到本地以省去以上工作。
 
 ## 本地化文件
 
@@ -305,6 +322,10 @@ script = ExtResource("mega_label")
 ![alt text](../../images/image21.png)
 
 ![alt text](../../images/image22.png)
+
+![alt text](../../images/energy_test.png)
+
+![alt text](../../images/energy_test_big.png)
 
 `test_bg.tscn`:
 ```tscn
@@ -417,25 +438,16 @@ position = Vector2(0, -72)
 `test_energy_counter.tscn`:
 
 ```tscn
-[gd_scene load_steps=8 format=3 uid="uid://cs3a5onikvhi4"]
+[gd_scene load_steps=7 format=3 uid="uid://cs3a5onikvhi4"]
 
 [ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_85qf2"]
-[ext_resource type="Script" uid="uid://b4eaf7kin174o" path="res://Scripts/NTestEnergyCounter.cs" id="energy_counter"]
+[ext_resource type="Script" uid="uid://b4eaf7kin174o" path="res://Scripts/NTestEnergyCounter.cs" id="1_tmfxn"]
+[ext_resource type="Script" uid="uid://b8vmh6070x38m" path="res://Scripts/NTestParticlesContainer.cs" id="2_1ytbd"]
+[ext_resource type="Script" uid="uid://camgj4bhk5dps" path="res://Scripts/TestMegaLabel.cs" id="4_6cpd0"]
 
-[ext_resource type="Script" path="res://addons/mega_text/MegaLabel.cs" id="mega_label"]
+[ext_resource type="FontVariation" path="res://themes/kreon_bold_shared.tres" id="kreon_bold_shared_font"]
 
-[ext_resource type="FontVariation" uid="uid://bg85h22rkxs6g" path="res://themes/kreon_bold_shared.tres" id="3_jei5p"]
-
-[sub_resource type="Curve" id="Curve_85qf2"]
-_data = [Vector2(0.006, 0.031), 0.0, 4.464, 0, 0, Vector2(0.298, 0.736), 0.832, 0.832, 0, 0, Vector2(0.99, 0.933), -0.247, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="Gradient" id="Gradient_1ytbd"]
-offsets = PackedFloat32Array(0, 0.35164836, 0.64835167, 1)
-colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
-
-[sub_resource type="FontVariation" id="FontVariation_x0k5t"]
-base_font = ExtResource("3_jei5p")
+[sub_resource type="FontVariation" id="FontVariation_kreon_bold_shared_font"]
 spacing_glyph = 2
 
 [node name="TestEnergyCounter" type="Control"]
@@ -443,25 +455,13 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 128.0
 offset_bottom = 128.0
-script = ExtResource("energy_counter")
+script = ExtResource("1_tmfxn")
 metadata/_edit_lock_ = true
 
-[node name="BurstBack" type="CPUParticles2D" parent="."]
+[node name="EnergyVfxBack" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(64, 64)
-emitting = false
-amount = 1
-texture = ExtResource("1_85qf2")
-one_shot = true
-local_coords = true
-gravity = Vector2(0, 0)
-radial_accel_max = 10.0
-angle_max = 260.0
-scale_amount_min = 1.5
-scale_amount_max = 1.5
-scale_amount_curve = SubResource("Curve_85qf2")
-color = Color(1, 0.49411765, 0.48235294, 0.6)
-color_ramp = SubResource("Gradient_1ytbd")
+script = ExtResource("2_1ytbd")
 
 [node name="Layers" type="Control" parent="."]
 unique_name_in_owner = true
@@ -471,6 +471,12 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="RotationLayers" type="Control" parent="Layers"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="Layer1" type="TextureRect" parent="Layers"]
 layout_mode = 1
@@ -482,31 +488,10 @@ grow_vertical = 2
 texture = ExtResource("1_85qf2")
 expand_mode = 1
 
-[node name="RotationLayers" type="Control" parent="Layers"]
-unique_name_in_owner = true
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="BurstFront" type="CPUParticles2D" parent="."]
+[node name="EnergyVfxFront" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(64, 64)
-emitting = false
-amount = 1
-texture = ExtResource("1_85qf2")
-lifetime = 0.5
-one_shot = true
-local_coords = true
-gravity = Vector2(0, 0)
-angular_velocity_min = 30.0
-angular_velocity_max = 30.0
-radial_accel_max = 10.0
-angle_max = 260.0
-scale_amount_min = 1.5
-scale_amount_max = 1.5
-scale_amount_curve = SubResource("Curve_85qf2")
-color = Color(1, 0.49411765, 0.48235294, 0.6)
-color_ramp = SubResource("Gradient_1ytbd")
+script = ExtResource("2_1ytbd")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -521,17 +506,15 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(1, 0.9647059, 0.8862745, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.1882353)
-theme_override_colors/font_outline_color = Color(0.4, 0.4, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.1, 0.8, 1)
 theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 2
 theme_override_constants/outline_size = 16
 theme_override_constants/shadow_outline_size = 16
-theme_override_fonts/font = SubResource("FontVariation_x0k5t")
+theme_override_fonts/font = SubResource("FontVariation_kreon_bold_shared_font")
 theme_override_font_sizes/font_size = 36
-script = ExtResource("mega_label")
+text = "3/3"
 horizontal_alignment = 1
 vertical_alignment = 1
-text = "3/3"
-MinFontSize = 32
-MaxFontSize = 36
+script = ExtResource("4_6cpd0")
 ```
