@@ -120,6 +120,8 @@ public class TestCard : CustomCardModel
 可以通过在卡牌类中添加一个表达式属性来添加卡牌，这样的话可以任意指定位置：`public override string PortraitPath => $"res://test/images/cards/{Id.Entry.ToLowerInvariant()}.png";`，
 如下，那么路径就是`test/images/cards/test-test_card.png`（是你类名的`snake_case`命名风格加前缀，例如`TestCard`即为`test-test_card`）。当然按你的喜好组织资源路径也可。
 
+> 或者你也可以使用`public override string PortraitPath => $"res://test/images/cards/{nameof(TestCard)}.png";`，这样更方便，卡图名字设置为`TestCard.png`就行。
+
 卡图任意尺寸都可，且不需要裁剪，官方使用的尺寸是普通卡1000x760，先古卡606x852。
 
 ```csharp
@@ -336,7 +338,7 @@ public class TestDynamicVar : DynamicVar
 }
 ```
 
-如果要使用这个变量，在`CanonicalVars`中添加你新建的变量即可。
+如果要使用这个变量，在卡牌类的`CanonicalVars`中添加你新建的变量即可。
 
 ```csharp
     protected override IEnumerable<DynamicVar> CanonicalVars => [
@@ -368,6 +370,26 @@ public class TestDynamicVar : DynamicVar
     ];
 ```
 
+## 添加卡牌提示文本
+
+指的是卡牌旁出现的提示方框，或预览卡牌。
+
+仅需在卡牌类中重载`ExtraHoverTips`即可：
+
+```csharp
+[Pool(typeof(TestCardPool))]
+public class TestCard : CustomCardModel
+{
+    // 其余省略
+
+    // 通过HoverTipFactory添加各种提示文本
+    protected override IEnumerable<IHoverTip> ExtraHoverTips => [
+        HoverTipFactory.FromCard<Shiv>(),
+        HoverTipFactory.FromPower<TestPower>(),
+        HoverTipFactory.FromKeyword(MyKeywords.Unique)
+    ];
+}
+```
 
 ## 添加局内保存
 
@@ -441,19 +463,342 @@ public class TestPower : CustomPowerModel
 ![alt text](../../images/image25.png)
 
 ## 添加新怪物
-TODO
+TODO:虽然可以加，但是最好等一个baselib
 
 ## 添加新事件
-TODO
+TODO:不方便添加，等一个baselib
 
 ## 添加新药水
-TODO
+
+首先创建类：（很多代码和卡牌类似，参考即可）
+
+```csharp
+using BaseLib.Abstracts;
+using BaseLib.Utils;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Potions;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.Cards;
+
+namespace Test.Scripts;
+
+[Pool(typeof(TestPotionPool))]
+public class TestPotion : CustomPotionModel
+{
+    // 稀有度
+    public override PotionRarity Rarity => PotionRarity.Common;
+
+    // 使用方式，CombatOnly表示只能在战斗中使用。
+    public override PotionUsage Usage => PotionUsage.CombatOnly;
+
+    // 目标类型
+    public override TargetType TargetType => TargetType.Self;
+
+    // 定义动态变量
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(3)];
+
+    // 这里显示预览卡牌灵魂。或者你可以添加提示关键词
+    public override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<Soul>()];
+
+    public override string? PackedImagePath => "res://icon.svg";
+    public override string? PackedOutlinePath => "res://icon.svg";
+
+    // 打出时的效果逻辑，这里是创造3张灵魂到手牌中。
+    protected override async Task OnUse(PlayerChoiceContext choiceContext, Creature? target)
+    {
+        // 这里的DynamicVars.Cards.IntValue就是我们在CanonicalVars中定义的CardsVar的数值，也就是3。
+        await Soul.CreateInHand(Owner, DynamicVars.Cards.IntValue, Owner.Creature.CombatState!);
+    }
+}
+```
+
+然后创建`{modId}/localization/{Language}/potions.json`。
+
+```json
+{
+    "TEST-TEST_POTION.title": "戈多药水",
+    "TEST-TEST_POTION.description": "将[blue]{Cards}[/blue]张[gold]灵魂[/gold]加入你的[gold]手牌[/gold]。"
+}
+```
 
 ## 添加新附魔
-TODO
-
-## 添加先古卡
-TODO
+TODO:虽然可以加，但是最好等一个baselib
 
 ## 添加先古之民
-TODO
+
+> 目前（Baselib 0.2.1）有点小bug（场景路径只能用游戏自带）
+
+首先创建类：
+
+```csharp
+using BaseLib.Abstracts;
+using BaseLib.Extensions;
+using BaseLib.Utils;
+using Godot;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Relics;
+
+namespace Test.Scripts;
+
+public class TestAncient : CustomAncientModel
+{
+    // 选项按钮颜色
+    public override Color ButtonColor => new(0.12f, 0.2f, 0.8f, 0.5f);
+    // 对话框颜色
+    public override Color DialogueColor => new(0.12f, 0.2f, 0.8f);
+
+    // 出现条件。这里是只能在第二幕出现
+    public override bool IsValidForAct(ActModel act) => act.ActNumber() == 2;
+    // 自定义场景的路径。目前不能使用自定义路径，只能使用"scenes/events/background_scenes/{id}.tscn"这个路径。
+    // public override string? CustomScenePath => "res://test/scenes/test_ancient.tscn";
+    public override string? CustomScenePath => "res://scenes/events/background_scenes/test-test_ancient.tscn";
+    // 自定义地图图标和轮廓的路径
+    public override string? CustomMapIconPath => "res://icon.svg";
+    public override string? CustomMapIconOutlinePath => "res://icon.svg";
+    // 历史记录图标路径
+    public override Texture2D? CustomRunHistoryIcon => GD.Load<Texture2D>("res://icon.svg");
+    public override Texture2D? CustomRunHistoryIconOutline => GD.Load<Texture2D>("res://icon.svg");
+
+    // 生成选项。每个选项有自己的池子。
+    protected override OptionPools MakeOptionPools { get; } = new OptionPools(
+        MakePool(
+            AncientOption<Akabeko>(),
+            AncientOption<Anchor>()
+        ),
+        MakePool(
+            AncientOption<LizardTail>(),
+            AncientOption<ArcaneScroll>()
+        ),
+        MakePool(
+            AncientOption<YummyCookie>(weight: 2), // 加权重，权重越高越容易取到
+            AncientOption<WingCharm>()
+        )
+    );
+}
+```
+
+然后创建`{modId}/localization/{Language}/ancients.json`。已经有的话继续添加内容即可。
+
+此处id为`{命名空间第一段大写}-{类名的大写SNAKE_CASE}`。编写规则参考`先古对话`一章。
+
+```json
+{
+  "TEST-TEST_ANCIENT.title": "戈多",
+  "TEST-TEST_ANCIENT.epithet": "等待者",
+  "TEST-TEST_ANCIENT.talk.firstVisitEver.0-0.ancient": "……有人推开了这扇门。\n别急。坐。时间在这里走得很慢，慢到够你想起自己究竟在等什么。",
+  "TEST-TEST_ANCIENT.talk.ANY.0-0r.ancient": "不必报名字。排队的人太多，名字会互相踩到。",
+  "TEST-TEST_ANCIENT.talk.ANY.1-0r.ancient": "你又来了？门没锁。我也没走。我们只是……还在。",
+  "TEST-TEST_ANCIENT.talk.IRONCLAD.0-0.ancient": "战士，你的火太亮。要不要先把它搁在门边，再进来等？",
+  "TEST-TEST_ANCIENT.talk.IRONCLAD.1-0r.ancient": "你还在。很好。愤怒也可以等——等累了，就会坐下。",
+  "TEST-TEST_ANCIENT.talk.IRONCLAD.2-0.ancient": "你若一定要走……带上这个。不是礼物，是“下次还来”的凭证。",
+  "TEST-TEST_ANCIENT.talk.IRONCLAD.2-0.next": "继续",
+  "TEST-TEST_ANCIENT.talk.IRONCLAD.2-1.char": "……我收下。但我仍会赶路。",
+  "TEST-TEST_ANCIENT.talk.IRONCLAD.2-1.next": "继续",
+  "TEST-TEST_ANCIENT.talk.IRONCLAD.2-2.ancient": "很好。赶路的人最需要一种东西：知道自己还会回到某个门口。",
+  "TEST-TEST_ANCIENT.talk.SILENT.0-0.ancient": "猎手，我不问你来历。你只要不说话，我们就算谈妥了。",
+  "TEST-TEST_ANCIENT.talk.SILENT.1-0r.ancient": "……还在。",
+  "TEST-TEST_ANCIENT.talk.SILENT.2-0.ancient": "沉默很贵。你付得起，我就替你留着这把椅子。",
+  "TEST-TEST_ANCIENT.talk.SILENT.2-0.next": "继续",
+  "TEST-TEST_ANCIENT.talk.SILENT.2-1.char": "……",
+  "TEST-TEST_ANCIENT.talk.SILENT.2-1.next": "继续",
+  "TEST-TEST_ANCIENT.talk.SILENT.2-2.ancient": "很好。最响的声音，往往是什么都不说。",
+  "TEST-TEST_ANCIENT.talk.DEFECT.0-0.ancient": "构装体……滴答声很均匀。像钟。钟最懂等待。",
+  "TEST-TEST_ANCIENT.talk.DEFECT.1-0r.ancient": "<平稳的嘀嘀声>",
+  "TEST-TEST_ANCIENT.talk.DEFECT.2-0.ancient": "你若在找“被修好”的答案……先学会把问题悬着。悬着，就不会碎。",
+  "TEST-TEST_ANCIENT.talk.DEFECT.2-0.next": "继续",
+  "TEST-TEST_ANCIENT.talk.DEFECT.2-1.char": "[i][font_size=22]<迟疑的嘀嘀声>[/font_size][/i]",
+  "TEST-TEST_ANCIENT.talk.DEFECT.2-1.next": "继续",
+  "TEST-TEST_ANCIENT.talk.DEFECT.2-2.ancient": "去吧。带着你的节拍走——别让它催你，让它陪你等。",
+  "TEST-TEST_ANCIENT.talk.NECROBINDER.0-0.ancient": "女士，复仇也会排队。你要不要领个号？",
+  "TEST-TEST_ANCIENT.talk.NECROBINDER.1-0r.ancient": "号还没叫到你。别急。恨意放得越久，刃口越利。",
+  "TEST-TEST_ANCIENT.talk.NECROBINDER.2-0.ancient": "你若一定要见血……至少别让血溅到“还没来”的东西上。",
+  "TEST-TEST_ANCIENT.talk.NECROBINDER.2-0.next": "继续",
+  "TEST-TEST_ANCIENT.talk.NECROBINDER.2-1.char": "……我会等。等到该清算的那一刻。",
+  "TEST-TEST_ANCIENT.talk.NECROBINDER.2-1.next": "继续",
+  "TEST-TEST_ANCIENT.talk.NECROBINDER.2-2.ancient": "那就对了。等待不是软弱，是把刀磨到只挥一次。",
+  "TEST-TEST_ANCIENT.talk.REGENT.0-0.ancient": "殿下，王位可以急，但茶要凉一会儿才好喝。",
+  "TEST-TEST_ANCIENT.talk.REGENT.1-0r.ancient": "欢迎回来，殿下。今天的等待和昨天一样贵——但您付得起。",
+  "TEST-TEST_ANCIENT.talk.REGENT.2-0.ancient": "若您要命令我……我只有一个命令回敬：坐下。等。",
+  "TEST-TEST_ANCIENT.talk.REGENT.2-0.next": "继续",
+  "TEST-TEST_ANCIENT.talk.REGENT.2-1.char": "……本王可以等。但臣民不能等太久！",
+  "TEST-TEST_ANCIENT.talk.REGENT.2-1.next": "继续",
+  "TEST-TEST_ANCIENT.talk.REGENT.2-2.ancient": "臣民等的是结果，而王座等的是时机。您两样都想要，就得学两样都等。"
+}
+```
+
+![alt text](../../images/image27.png)
+
+场景示例`test-test_ancient.tscn`：
+```
+[gd_scene load_steps=5 format=3 uid="uid://4i1v2d2h07n5"]
+
+[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_xjdov"]
+
+[sub_resource type="Shader" id="Shader_8eo3w"]
+code = "shader_type canvas_item;
+
+group_uniforms Colors;
+uniform vec4 color_a : source_color = vec4(0.18, 0.22, 0.38, 1.0);
+uniform vec4 color_b : source_color = vec4(0.42, 0.28, 0.38, 1.0);
+uniform vec4 color_c : source_color = vec4(0.12, 0.32, 0.36, 1.0);
+
+group_uniforms Timing;
+uniform float cycle_seconds : hint_range(4.0, 120.0, 0.5) = 22.0;
+uniform float phase_offset : hint_range(0.0, 6.283, 0.01) = 1.57;
+
+group_uniforms Layout;
+uniform float vertical_mix : hint_range(0.0, 1.0, 0.01) = 0.22;
+
+void fragment() {
+	float t = TIME / max(cycle_seconds, 0.001);
+	float w_ab = sin(t * TAU) * 0.5 + 0.5;
+	float w_c = sin(t * TAU + phase_offset) * 0.5 + 0.5;
+	vec3 rgb = mix(color_a.rgb, color_b.rgb, w_ab);
+	rgb = mix(rgb, color_c.rgb, w_c);
+
+	float v = clamp(UV.y, 0.0, 1.0);
+	vec3 top_bias = mix(rgb, color_a.rgb, (1.0 - v) * vertical_mix);
+	vec3 bot_bias = mix(top_bias, color_b.rgb, v * vertical_mix);
+	rgb = bot_bias;
+
+	vec4 tex = texture(TEXTURE, UV);
+	vec4 out_c = vec4(rgb, color_a.a * tex.a) * tex * COLOR;
+	COLOR = out_c;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_n064g"]
+shader = SubResource("Shader_8eo3w")
+shader_parameter/color_a = Color(0.18, 0.22, 0.38, 1)
+shader_parameter/color_b = Color(0.42, 0.28, 0.38, 1)
+shader_parameter/color_c = Color(0.12, 0.32, 0.36, 1)
+shader_parameter/cycle_seconds = 22.0
+shader_parameter/phase_offset = 1.57
+shader_parameter/vertical_mix = 0.22
+
+[sub_resource type="Gradient" id="Gradient_wmiru"]
+offsets = PackedFloat32Array(0, 0.258845, 1)
+colors = PackedColorArray(0.847059, 0.803922, 0.301961, 0, 1, 1, 1, 1, 0.780392, 0.65098, 0.403922, 0)
+
+[node name="TestAncient" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_group_ = true
+metadata/_edit_lock_ = true
+
+[node name="TimeColorBackground" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_n064g")
+layout_mode = 1
+offset_left = -329.0
+offset_top = -49.0
+offset_right = 2253.0
+offset_bottom = 1172.0
+
+[node name="stars" type="CPUParticles2D" parent="."]
+position = Vector2(925, 626)
+scale = Vector2(1.01, 1.01)
+amount = 300
+lifetime = 3.0
+preprocess = 5.0
+local_coords = true
+emission_shape = 3
+emission_rect_extents = Vector2(1500, 1000)
+gravity = Vector2(0, -10)
+scale_amount_min = 5.0
+scale_amount_max = 10.0
+color = Color(0.878431, 0.498039, 0.392157, 0.611765)
+color_ramp = SubResource("Gradient_wmiru")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+offset_left = 694.0
+offset_top = 165.0
+offset_right = 1044.0
+offset_bottom = 515.0
+texture = ExtResource("1_xjdov")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 217.0
+offset_bottom = 248.0
+```
+
+## 添加充能球
+
+先创建类：
+
+```csharp
+using BaseLib.Abstracts;
+using Godot;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+
+namespace Test.Scripts;
+
+public class TestOrb : CustomOrbModel
+{
+    // 被动效果数值，ModifyOrbValue表示是否吃集中等
+    public override decimal PassiveVal => ModifyOrbValue(1);
+
+    // 激发效果数值
+    public override decimal EvokeVal => ModifyOrbValue(2);
+
+    // 暗色，使用球的主体色的暗色调
+    public override Color DarkenedColor => new(0.1f, 0.2f, 0.5f);
+
+    // 不出现在随机球池中
+    // public override bool IncludeInRandomPool => false;
+
+    // 提示图标路径
+    public override string? CustomIconPath => "res://icon.svg";
+    // 球的场景的路径。如果你使用这个，你必须要有一个名称为SpineSkeleton并且是SpineSprite类型的节点
+    // public override string? CustomSpritePath => "res://test/scenes/test_orb.tscn";
+
+    // 可以继承这个并自行搭建场景，这样就没有上述限制。代码上优先使用这个
+    public override Node2D? CreateCustomSprite()
+    {
+        return PreloadManager.Cache.GetScene("res://test/scenes/test_orb.tscn").Instantiate<Node2D>();
+    }
+
+    // 回合开始时触发被动
+    public override async Task AfterTurnStartOrbTrigger(PlayerChoiceContext choiceContext)
+    {
+        await Passive(choiceContext, null);
+    }
+
+    // 触发被动
+    public override async Task Passive(PlayerChoiceContext choiceContext, Creature? target)
+    {
+        Trigger();
+        await CardPileCmd.Draw(choiceContext, PassiveVal, Owner);
+    }
+
+    // 触发激发，返回受影响的角色
+    public override async Task<IEnumerable<Creature>> Evoke(PlayerChoiceContext playerChoiceContext)
+    {
+        PlayEvokeSfx();
+        await CardPileCmd.Draw(playerChoiceContext, EvokeVal, Owner);
+        return [Owner.Creature];
+    }
+}
+```
+
+然后创建`{modId}/localization/{Language}/orbs.json`。
+
+```json
+{
+    "TEST-TEST_ORB.description": "充能球：回合开始时抽牌。",
+    "TEST-TEST_ORB.smartDescription": "[gold]被动：[/gold]回合开始时，抽[blue]{Passive}[/blue]张牌。\n[gold]激发：[/gold]抽[blue]{Evoke}[/blue]张牌。",
+    "TEST-TEST_ORB.title": "戈多球"
+}
+```
+
+![alt text](../../images/image28.png)

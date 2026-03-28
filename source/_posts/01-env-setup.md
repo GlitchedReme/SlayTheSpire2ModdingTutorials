@@ -12,8 +12,6 @@ categories:
 
 ## 其他教程和mod模板
 
-https://github.com/Cany0udance/EarlyStS2ModdingGuides/wiki/Getting-Started-With-Modding
-
 https://github.com/Alchyr/ModTemplate-StS2
 
 https://github.com/freude916/sts2-quickRestart/blob/main/README.md
