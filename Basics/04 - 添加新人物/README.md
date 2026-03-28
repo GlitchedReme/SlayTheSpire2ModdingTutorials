@@ -309,6 +309,110 @@ theme_override_fonts/font = SubResource("FontVariation_kreon_bold_shared_font")
 }
 ```
 
+同时还需要先古对话的json。创建`{modId}/localization/{Language}/ancients.json`。详见`先古对话`一章。
+
+```json
+{
+  "DARV.talk.TEST-TEST_CHARACTER.0-0.char": "你这里……很吵。但东西很多。我在等的时候，顺便看一眼。",
+  "DARV.talk.TEST-TEST_CHARACTER.0-0.next": "继续",
+  "DARV.talk.TEST-TEST_CHARACTER.0-1.ancient": "那是自然！在这无聊的等待里，随便挑一块被遗忘的宝石去吧！",
+  "DARV.talk.TEST-TEST_CHARACTER.1-0r.ancient": "你还在等啊？我不急——那堆东西你慢挑。你等得起，我也等得起！",
+  "DARV.talk.TEST-TEST_CHARACTER.2-0.ancient": "我这里有无数宝石，但好像没见着你在等的那件啊……",
+  "DARV.talk.TEST-TEST_CHARACTER.2-0.next": "回应",
+  "DARV.talk.TEST-TEST_CHARACTER.2-1.char": "若你真有我要的那一件……它不必闪亮。只要它会在该来的时候出现。\n[i][font_size=22]戈多只是站着，像一根被时间磨钝的钉子。[/font_size][/i]",
+  "DARV.talk.TEST-TEST_CHARACTER.2-1.next": "继续",
+  "DARV.talk.TEST-TEST_CHARACTER.2-2.ancient": "……罢了。把选择留到下次吧。看来你习惯把“下次”等得很久。",
+
+  "NEOW.talk.TEST-TEST_CHARACTER.0-0.char": "你又把我从沉默里捞起来……这次，要我去哪里等？",
+  "NEOW.talk.TEST-TEST_CHARACTER.0-0.next": "继续",
+  "NEOW.talk.TEST-TEST_CHARACTER.0-1.ancient": "[sine]...去... 塔里... ..继续... 等待.....[/sine]",
+  "NEOW.talk.TEST-TEST_CHARACTER.1-0r.ancient": "[sine]...我听见了... ..你的脚步..... \n...等待... ..从不赶路.....[/sine]",
+  "NEOW.talk.TEST-TEST_CHARACTER.2-0.ancient": "[sine]...你.. 还缺... ..什么...？[/sine]",
+  "NEOW.talk.TEST-TEST_CHARACTER.2-0.next": "祈求",
+  "NEOW.talk.TEST-TEST_CHARACTER.2-1.char": "若你赐我什么……请赐我“还能再等一次”的力气。别的，我都不缺。",
+  "NEOW.talk.TEST-TEST_CHARACTER.2-1.next": "继续",
+  "NEOW.talk.TEST-TEST_CHARACTER.2-2.ancient": "[sine]...去吧... \n..我会... 在你...回头的地方... ..还在.....[/sine]",
+
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.0-0.char": "华丽的房间。耀眼的你。可我……只是一件还没被取走的旧外套。",
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.0-0.next": "继续",
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.0-1.ancient": "哎呀，就算是旧外套，接受了我的赐福也能变得光彩照人呢。",
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.1-0r.ancient": "你是在等迟到的胜利么？快过来，让我把你打扮得更像一个赢家。",
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.2-0.ancient": "哪怕你要将自己系在某个永远不会到来的时刻上，也不该如此灰头土脸呀。",
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.2-0.next": "婉拒",
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.2-1.char": "……我不需要好看。我只需要“还没结束”。",
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.2-1.next": "继续",
+  "NONUPEIPE.talk.TEST-TEST_CHARACTER.2-2.ancient": "真是不懂情趣。拿去吧。让我看着你继续等——穿着我的光，也穿着你的耐心。",
+
+  "OROBAS.talk.TEST-TEST_CHARACTER.0-0.char": "你在跳。我在等。我们谁更疯一点？",
+  "OROBAS.talk.TEST-TEST_CHARACTER.0-0.next": "继续",
+  "OROBAS.talk.TEST-TEST_CHARACTER.0-1.ancient": "都不疯！！都不疯！！试试这个打发时间！！",
+  "OROBAS.talk.TEST-TEST_CHARACTER.1-0r.ancient": "别急别急！你不要急！等待是……是……很长的闪电！！",
+  "OROBAS.talk.TEST-TEST_CHARACTER.2-0.ancient": "送你东西！！想要什么？“明天还会响”的声音！？",
+  "OROBAS.talk.TEST-TEST_CHARACTER.2-0.next": "回应",
+  "OROBAS.talk.TEST-TEST_CHARACTER.2-1.char": "……我把沉默放在口袋里了。你要不要摸摸看？",
+  "OROBAS.talk.TEST-TEST_CHARACTER.2-1.next": "继续",
+  "OROBAS.talk.TEST-TEST_CHARACTER.2-2.ancient": "好！好！那我们说定了：我继续吵，你继续等！！",
+
+  "PAEL.talk.TEST-TEST_CHARACTER.0-0.char": "你的鼾声像潮汐……我在潮水里等，不会淹死，只会更安静。",
+  "PAEL.talk.TEST-TEST_CHARACTER.0-0.next": "继续",
+  "PAEL.talk.TEST-TEST_CHARACTER.0-1.ancient": "[thinky_dots]安静的旅人……拿走我的一部分，在潮水里寻找安宁吧……[/thinky_dots]",
+  "PAEL.talk.TEST-TEST_CHARACTER.1-0r.ancient": "[thinky_dots]醒着的人总想赶路，睡着的人才懂停留……你也睡一会儿吧……[/thinky_dots]",
+  "PAEL.talk.TEST-TEST_CHARACTER.2-0.ancient": "[thinky_dots]拿走我的血肉吧……一点“不会催促你”的血肉……[/thinky_dots]",
+  "PAEL.talk.TEST-TEST_CHARACTER.2-0.next": "回答",
+  "PAEL.talk.TEST-TEST_CHARACTER.2-1.char": "……我不怕痛。只怕痛把我从等待里拽走。",
+  "PAEL.talk.TEST-TEST_CHARACTER.2-1.next": "继续",
+  "PAEL.talk.TEST-TEST_CHARACTER.2-2.ancient": "[thinky_dots]收下吧……让你继续躺在这里……等那条还没来的路……[/thinky_dots]",
+
+  "TANX.talk.TEST-TEST_CHARACTER.0-0.char": "你要战斗。我要等待。我们能不能……各做各的？",
+  "TANX.talk.TEST-TEST_CHARACTER.0-0.next": "继续",
+  "TANX.talk.TEST-TEST_CHARACTER.0-1.ancient": "[b]不能！！拿着这把武器！去变强！！！[/b]",
+  "TANX.talk.TEST-TEST_CHARACTER.1-0r.ancient": "[b]你的血早就凉了！但战斗能让耐心也沸腾起来！！[/b]",
+  "TANX.talk.TEST-TEST_CHARACTER.2-0.ancient": "[b]不要再等那个人了！与我一战，这就是你现在的命运！！[/b]",
+  "TANX.talk.TEST-TEST_CHARACTER.2-0.next": "退让",
+  "TANX.talk.TEST-TEST_CHARACTER.2-1.char": "若一定要打……等我等到那个人来。他会替我还手。\n[i][font_size=22]戈多退半步，像把战场让给未来。[/font_size][/i]",
+  "TANX.talk.TEST-TEST_CHARACTER.2-1.next": "继续",
+  "TANX.talk.TEST-TEST_CHARACTER.2-2.ancient": "[b]懦弱！！但你有无尽的耐心！！收下这把武器去等待吧！[/b]",
+
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.0-0.char": "火很暖。可我在等的不是暖，是“到点”。",
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.0-0.next": "继续",
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.0-1.ancient": "没到点也没关系呀。快进来吧，让我在等待中把你[jitter][b]温暖[/b][/jitter]一下。",
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.1-0r.ancient": "你背着的唯一行李就是那点[jitter][b]犹豫[/b][/jitter]么？要不要让我帮你烧掉呀？",
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.2-0.ancient": "亲爱的，尝尝我给你做的[jitter][b]点心[/b][/jitter]吧。是那种要慢慢凉、慢慢等的点心哦。",
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.2-0.next": "推辞",
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.2-1.char": "……我不饿。我只是空。空和饿很像。",
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.2-1.next": "继续",
+  "TEZCATARA.talk.TEST-TEST_CHARACTER.2-2.ancient": "好吧，那就尝一口吧。然后我们继续等——等苦味[jitter][b]散尽[/b][/jitter]。",
+
+  "VAKUU.talk.TEST-TEST_CHARACTER.0-0.char": "恶魔也做交易。那你要我的什么？我的时间？它本来就不值钱。",
+  "VAKUU.talk.TEST-TEST_CHARACTER.0-0.next": "继续",
+  "VAKUU.talk.TEST-TEST_CHARACTER.0-1.ancient": "不值钱的[sine]时间[/sine]积攒起来，也是很可观的呢……",
+  "VAKUU.talk.TEST-TEST_CHARACTER.1-0r.ancient": "我通常把“立刻”卖得很贵。可面对你，我连[sine]“以后”[/sine]都想标上高价。",
+  "VAKUU.talk.TEST-TEST_CHARACTER.2-0.ancient": "如果在契约的底端写上一行小字：允许你[sine]永远等下去[/sine]——你就签么？",
+  "VAKUU.talk.TEST-TEST_CHARACTER.2-0.next": "回应",
+  "VAKUU.talk.TEST-TEST_CHARACTER.2-1.char": "……我的名字不重要。重要的是我还没被叫到。",
+  "VAKUU.talk.TEST-TEST_CHARACTER.2-1.next": "继续",
+  "VAKUU.talk.TEST-TEST_CHARACTER.2-2.ancient": "拿去你的代价。我绝不会叫醒你——除非[sine]那一刻[/sine]真的来临。",
+
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.0-0r.ancient": "你站在这里，却像哪里都不在。你在等什么？塔顶？结局？还是一句许可？",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.0-0r.next": "回答",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.0-1r.char": "……我在等一个名字被念出来。念到之前，我哪儿都不去。",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.0-1r.next": "继续",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.0-2r.ancient": "许可？你从来不需要。你只是害怕“等了却等错”。",
+
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.1-0r.ancient": "你又回来。时间对你而言像走廊——你走不完，是因为你不想走完。",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.1-0r.next": "继续",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.1-1r.char": "走廊很好。尽头不好。尽头意味着……不用再等。",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.1-1r.next": "继续",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.1-2r.ancient": "愚蠢。你若不走向尽头，就永远只是回声。",
+
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.2-0r.ancient": "那就站着吧。塔会替你记住：你来过，很多次，却什么也没拿走。",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.2-0r.next": "继续",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.2-1r.char": "拿走什么……会让我不等吗？",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.2-1r.next": "继续",
+  "THE_ARCHITECT.talk.TEST-TEST_CHARACTER.2-2r.ancient": "会。所以别拿。继续等——这是你唯一擅长的武器。"
+}
+```
+
 不要忘记在你的`Init`初始化函数中添加`ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);`这一行。
 
 * 打开`项目→项目设置`，把`将文本资源转换为二进制`禁用。
