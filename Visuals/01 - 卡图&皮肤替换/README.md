@@ -44,7 +44,7 @@
 
 ![3](../../images/image16.png)
 
-然后可以参考这段替换角色：
+然后可以参考这段替换角色：（此处仅替换战斗人物且不播放初始动画，仅供参考）
 
 ```csharp
 using System;
@@ -90,9 +90,9 @@ public static class Entry
                 return;
 
             var visuals = __instance.Visuals;
-            if (visuals?.Body == null || !visuals.HasSpineAnimation) return;
+            if (visuals?.SpineBody == null || !visuals.HasSpineAnimation) return;
 
-            new MegaSprite(visuals.Body).SetSkeletonDataRes(new MegaSkeletonDataResource(_skinData));
+            new MegaSprite(visuals.SpineBody).SetSkeletonDataRes(new MegaSkeletonDataResource(_skinData));
         }
     }
 }
