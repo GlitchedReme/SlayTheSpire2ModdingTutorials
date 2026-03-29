@@ -175,8 +175,6 @@ TestCharacter (Node2D)
 
 <b>其中`Visuals`，`Bounds`，`IntentPos`，`CenterPos`需要右键勾选`作为唯一名称访问`，出现`%`即可。名字不要改。</b>
 
-~~创建一个`NTestCharacter.cs`，继承`CreatureVisuals`。然后把它挂载到`TestCharacter`节点上。~~现在不需要了。
-
 `Bounds`就是你的人物hitbox的大小，如果你觉得血条太短调整一下它的大小。
 
 * 人物显示在x轴上方。
@@ -186,15 +184,15 @@ TestCharacter (Node2D)
 
 ### 人物动画
 
-* 其中`Visuals`可以更改成任意继承了`Node2D`的类型，例如`SpineSprite`，`Sprite2D`或是`AnimatedSprite2D`，或者在它之下新建节点都可。
+* 其中`Visuals`可以更改成任意继承了`Node2D`的类型，例如`SpineSprite`，`Sprite2D`，`AnimatedSprite2D`或是`AnimationPlayer`，或者在它之下新建节点都可。
 
 * 如果要自然支持Spine播放，需要把`Visuals`改成`SpineSprite`，且你的战斗人物模型需要有`idle_loop`（待机循环），`attack`（攻击动作），`cast`（能力卡动作），`hurt`（受伤），`die`（死亡）这些动画名。（如果你没有`SpineSprite`，参考`卡图&皮肤替换`一章先下载`Spine Godot Extension`。）
 
 * 如果你只有一张图，那么把`Visuals`改成`Sprite2D`类型更改图片即可。
 
-* 此外`baselib`支持使用`AnimationPlayer`控制动画，例如你使用`AnimatedSprite2D`或者是3D模型。虽然`AnimationPlayer`放在任意位置都可以，但推荐把根节点之下。动画名和上方设置的一致即可自动播放动画。
+* 如果你使用`AnimatedSprite2D`，确保动画名和上方一致。
 
-* 例如：如果是使用`AnimatedSprite2D`，设置好`临近FPS`（例如0.2秒），然后前往`Visuals`节点点击属性`Frame`右侧的钥匙插入关键帧，重复修改当前帧和插入关键帧即可。参考：https://docs.godotengine.org/en/stable/tutorials/2d/2d_sprite_animation.html#sprite-sheet-with-animationplayer
+* 此外`baselib`支持使用`AnimationPlayer`控制动画。虽然`AnimationPlayer`放在任意位置都可以，但推荐把根节点之下。动画名和上方设置的一致即可自动播放动画。
 
 ## 自定义能量表盘
 
@@ -218,65 +216,7 @@ TestEnergyCounter (Control)
 
 ![alt text](../../images/image19.png)
 
-然后创建一个继承`NEnergyCounter`的类，挂载到父节点上。
-
-```csharp
-public partial class NTestEnergyCounter : NEnergyCounter
-{
-}
-```
-
-然后创建一个继承`NParticlesContainer`的类，挂载到`EnergyVfxBack`和`EnergyVfxFront`上。
-
-其中的`_particles`无法使用`Export`设置，所以需要反射设置。当然你也可以往里添加`GpuParticles2D`以添加粒子动画效果。具体参考原版。
-
-```csharp
-public partial class NTestParticlesContainer : NParticlesContainer
-{
-    public override void _Ready()
-    {
-        base._Ready();
-        Traverse.Create(this).Field("_particles").SetValue(new Array<GpuParticles2D>());
-    }
-}
-```
-
-然后创建一个继承`MegaLabel`的类，挂载到`Label`上。
-
-```csharp
-public partial class TestMegaLabel : MegaLabel
-{
-}
-```
-
-保存一下然后关闭这个场景，然后开始<b>神秘操作</b>。在本地，或者是你的ide里打开这个tscn文件，先修改开头，
-* 在`ext_resource`这一组下添加`kreon_bold_shared_font`这一行。
-* 在`ext_resource`这一组下添加`FontVariation_kreon_bold_shared_font`，`base_font`，`spacing_glyph`这三行。
-* 修改`load_steps`，改为原来的数字+2。（ext数量+sub数量+1）
-
-```tscn
-[gd_scene load_steps=7 format=3 uid="uid://cs3a5onikvhi4"]
-
-[ext_resource type="Texture2D" path="res://icon.svg" id="1_85qf2"]
-[ext_resource type="Script" path="res://Scripts/NTestEnergyCounter.cs" id="1_tmfxn"]
-[ext_resource type="Script" path="res://Scripts/NTestParticlesContainer.cs" id="2_1ytbd"]
-[ext_resource type="Script" path="res://Scripts/TestMegaLabel.cs" id="4_6cpd0"]
-
-[ext_resource type="FontVariation" path="res://themes/kreon_bold_shared.tres" id="kreon_bold_shared_font"]
-
-[sub_resource type="FontVariation" id="FontVariation_kreon_bold_shared_font"]
-base_font = ExtResource("kreon_bold_shared_font")
-spacing_glyph = 2
-```
-
-* 然后往下，找到`[node name="Label" type="Label" parent="."]`这一行，添加以下这一行。
-
-```tscn
-theme_override_fonts/font = SubResource("FontVariation_kreon_bold_shared_font")
-```
-
-* 然后如果你想修改这个能量表盘，打开场景后需要重复以上工作。
-* 或者你也可以把反编译的字体资源复制到本地以省去以上工作。
+由于`BaseLib`做了工作，你的节点现在不需要挂载脚本了。
 
 ## 本地化文件
 
@@ -517,13 +457,11 @@ color = Color(0.121879734, 0.15283081, 0.33476263, 1)
 
 `test_character.tscn`:
 ```tscn
-[gd_scene load_steps=3 format=3 uid="uid://c4dnpxxd6ldei"]
+[gd_scene load_steps=2 format=3 uid="uid://c4dnpxxd6ldei"]
 
-[ext_resource type="Script" uid="uid://6m0cydgurd52" path="res://Scripts/NTestCharacter.cs" id="creature_visuals"]
 [ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_hxav6"]
 
 [node name="TestCharacter" type="Node2D"]
-script = ExtResource("creature_visuals")
 
 [node name="Visuals" type="Sprite2D" parent="."]
 unique_name_in_owner = true
@@ -550,30 +488,20 @@ position = Vector2(0, -72)
 `test_energy_counter.tscn`:
 
 ```tscn
-[gd_scene load_steps=7 format=3 uid="uid://cs3a5onikvhi4"]
+[gd_scene load_steps=2 format=3 uid="uid://cs3a5onikvhi4"]
 
 [ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_85qf2"]
-[ext_resource type="Script" uid="uid://b4eaf7kin174o" path="res://Scripts/NTestEnergyCounter.cs" id="1_tmfxn"]
-[ext_resource type="Script" uid="uid://b8vmh6070x38m" path="res://Scripts/NTestParticlesContainer.cs" id="2_1ytbd"]
-[ext_resource type="Script" uid="uid://camgj4bhk5dps" path="res://Scripts/TestMegaLabel.cs" id="4_6cpd0"]
-
-[ext_resource type="FontVariation" path="res://themes/kreon_bold_shared.tres" id="kreon_bold_shared_font"]
-
-[sub_resource type="FontVariation" id="FontVariation_kreon_bold_shared_font"]
-spacing_glyph = 2
 
 [node name="TestEnergyCounter" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 128.0
 offset_bottom = 128.0
-script = ExtResource("1_tmfxn")
 metadata/_edit_lock_ = true
 
 [node name="EnergyVfxBack" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(64, 64)
-script = ExtResource("2_1ytbd")
 
 [node name="Layers" type="Control" parent="."]
 unique_name_in_owner = true
@@ -603,7 +531,6 @@ expand_mode = 1
 [node name="EnergyVfxFront" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(64, 64)
-script = ExtResource("2_1ytbd")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -623,10 +550,8 @@ theme_override_constants/shadow_offset_x = 3
 theme_override_constants/shadow_offset_y = 2
 theme_override_constants/outline_size = 16
 theme_override_constants/shadow_outline_size = 16
-theme_override_fonts/font = SubResource("FontVariation_kreon_bold_shared_font")
 theme_override_font_sizes/font_size = 36
 text = "3/3"
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("4_6cpd0")
 ```
