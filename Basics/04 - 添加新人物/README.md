@@ -52,6 +52,14 @@ public class TestPotionPool : CustomPotionPoolModel
 }
 ```
 
+<b>当你创建你自己人物的池子时，不要忘了把你的卡牌药水遗物等（比如打击）的`Pool`改成你的池子</b>，例如：
+
+```csharp
+// 加入哪个卡池
+[Pool(typeof(TestCardPool))]
+public class TestCard : CustomCardModel
+```
+
 ## 创建人物
 
 人物需要极其大量的资源，推荐新建类继承`PlaceholderCharacterModel`而不是`CustomCharacterModel`。你没有的资源直接注释掉以使用原版。教程提供的资源在最下方。
@@ -210,6 +218,33 @@ TestEnergyCounter (Control)
 
 由于`BaseLib`做了工作，你的节点现在不需要挂载脚本了。
 
+## 自定义商店模型
+
+`public override string CustomMerchantAnimPath => "res://test/scenes/test_character_merchant.tscn";`
+
+创建一个`Node2D`类型的新场景，设定以下结构：
+
+```
+TestCharacterMerchant (Node2D)
+```
+
+* 如果你使用Spine模型，第一个子节点放置`SpineSprite`，且动画名是`relaxed_loop`。
+
+* 如果你使用其他动画，创建一个继承了`NMerchantCharacter`的节点，并在`_ready`函数里播放你自己的动画。
+
+* 静态图就不需要了。
+
+```csharp
+using MegaCrit.Sts2.Core.Nodes.Screens.Shops;
+
+namespace Test.Scripts;
+
+public partial class TestCharacterMerchant : NMerchantCharacter
+{
+    public override void _Ready() { }
+}
+```
+
 ## 本地化文件
 
 创建`{modId}/localization/{Language}/characters.json`，填写以下内容：
@@ -363,13 +398,12 @@ TestEnergyCounter (Control)
 
 ## 附赠资源
 
-![alt text](../../images/image21.png)
-
-![alt text](../../images/image22.png)
-
-![alt text](../../images/energy_test.png)
-
-![alt text](../../images/energy_test_big.png)
+<div style="display:flex; gap:8px; flex-wrap:nowrap;">
+    <img src="../../images/image21.png" alt="image21" style="width:24%;" />
+    <img src="../../images/image22.png" alt="image22" style="width:24%;" />
+    <img src="../../images/energy_test.png" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../images/energy_test_big.png" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+</div>
 
 `test_bg.tscn`:
 ```tscn

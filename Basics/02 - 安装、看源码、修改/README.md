@@ -45,6 +45,8 @@ https://github.com/GDRETools/gdsdecomp
 
 开启了模组，按下`~`（tab上方那个键）即可打开控制台。输入`help`即可查看命令。例如`card SURVIVOR`是把一张生存者加入手中。
 
+你可以查询一个命令的帮助，使用`help card`等。
+
 ## DEBUG
 
 尖塔根目录有许多`launch_xxx.bat`，选择一个合适的，右键记事本编辑，在其中加一个`--log`，例如`@echo off
@@ -55,3 +57,19 @@ https://github.com/GDRETools/gdsdecomp
 ## 本地联机测试
 
 复制出两个新的`bat`，其中一个添加`--fastmp=host`参数，作为主机，另一个添加`--fastmp=join -clientId=1001`参数，作为非主机玩家。当然你可以添加更多，记得修改`clientId`。
+
+如果你打完一层遇到保存问题，记得以管理员模式启动bat。
+
+## 项目改名
+
+<b>以下修改的都建议使用一个名字</b>。
+
+* 打开`project.godot`，修改`config/name`以及`project/assembly_name`。
+
+* 把`{modid}.csproj`的名字修改成你想要的。
+
+* 把`{modid}.json`的名字修改成你想要的。以及里面的`id`部分。
+
+* 把`{modid}.sln`的名字修改成你想要的。
+
+* 然后重新打包。不要忘记把你之前名字的mod删了。
