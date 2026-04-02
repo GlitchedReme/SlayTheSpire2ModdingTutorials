@@ -89,6 +89,10 @@ docsTree:
                         path: /docs/05-variable-and-description/,
                     },
                     { title: 06 先古对话, path: /docs/08-ancient-dialogue/ },
+                    {
+                        title: 07 快速调试&热重载,
+                        path: /docs/07-quick-debug-and-hot-reload/,
+                    },
                 ],
         },
         {

@@ -33,11 +33,13 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 ## 选择文本编辑器
 
-选择一个文本编辑器。可以使用[Visual Studio Code](https://code.visualstudio.com/)或者[Rider](https://www.jetbrains.com/zh-cn/rider/download/?section=windows)（推荐新手使用Rider）。另外也可以使用 Visual Studio等其他 IDE。以下只介绍 VS Code 的配置方法。
+选择一个文本编辑器。可以使用[Visual Studio Code](https://code.visualstudio.com/)或者[Rider](https://www.jetbrains.com/zh-cn/rider/download/?section=windows)（<b>强烈推荐</b>新手使用Rider）。另外也可以使用Visual Studio等其他 IDE。以下只介绍 VS Code 的配置方法。
 
-## 安装VS Code插件
+## 安装VS Code插件（可选）
 
 安装[C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)。你还可以安装[Godot Tools](https://marketplace.visualstudio.com/items?itemName=geequlim.godot-tools)等插件。
+
+记得打开设置把自动保存开了。
 
 ![alt text](../../images/image2.png)
 
@@ -84,6 +86,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 ```xml
 <Project Sdk="Godot.NET.Sdk/4.5.1">
   <PropertyGroup>
+    <!-- 如果你安装了10.0并遇到问题，改下这里 -->
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>true</ImplicitUsings>
     <LangVersion>12.0</LangVersion>
@@ -181,4 +184,54 @@ public class Entry
 
 ## 不启动Godot打包（可选）
 
-Godot支持命令行导出pck（首先你需要添加一个导出配置），例如使用终端命令：`"{你的godot.exe的路径}" --headless --export-pack "{你的导出配置的名字，例如Windows Desktop}" "{杀戮尖塔根目录}/mods/{你的modid}/{你的modid}.pck"`，参考 https://docs.godotengine.org/zh-cn/4.x/tutorials/editor/command_line_tutorial.html#exporting 。你可以把这个命令保存成一个cmd或者csproj里的target，自行搜索相关配置说明。
+Godot支持命令行导出pck（首先你需要添加一个导出配置），例如使用终端命令：`"{你的godot.exe的路径}" --headless --export-pack "{你的导出配置的名字，例如Windows Desktop}" "{杀戮尖塔根目录}/mods/{你的modid}/{你的modid}.pck"`，参考 https://docs.godotengine.org/zh-cn/4.x/tutorials/editor/command_line_tutorial.html#exporting 。你可以把这个命令保存成一个cmd或者csproj里的target。
+
+例如在你的`.csproj`文件里添加`GodoExe`和`ExportPck`的内容：
+
+```xml
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>true</ImplicitUsings>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <Sts2Dir>D:/Files/Softwares/Steam/steamapps/common/Slay the Spire 2</Sts2Dir>
+      <!-- 新增 -->
+    <GodotExe>D:/Files/Projects/godot/Godot_v4.5.1-stable_mono_win64/Godot_v4.5.1-stable_mono_win64/Godot_v4.5.1-stable_mono_win64.exe</GodotExe>
+    <Sts2DataDir>$(Sts2Dir)/data_sts2_windows_x86_64</Sts2DataDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="sts2">
+      <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <Reference Include="0Harmony">
+      <HintPath>$(Sts2DataDir)/0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
+    <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high" />
+    <MakeDir Directories="$(Sts2Dir)/mods/" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
+    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
+  </Target>
+
+  <!-- 新增 -->
+  <Target Name="ExportPck">
+    <Message Text="Copying PCK to Slay the Spire 2 mods folder..." Importance="high" />
+    <Exec Command="&quot;$(GodotExe)&quot; --headless --export-pack &quot;Windows Desktop&quot; &quot;$(Sts2Dir)/mods/$(MSBuildProjectName)/$(MSBuildProjectName).pck&quot;"
+      EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1"
+      ContinueOnError="WarnAndContinue" />
+  </Target>
+</Project>
+```
+
+然后控制台输入`dotnet build -t:ExportPck`即可连PCK一起导出。输入`dotnet build`仅编译dll。
+
+方法不限。你也可以使用`tasks.json`。
