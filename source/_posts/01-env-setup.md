@@ -178,3 +178,7 @@ public class Entry
 ## 运行并验证
 
 运行游戏。第一次会提示是否开启mod，选择是，然后游戏会关闭，打开第二次即可，如果右下角显示“已加载模组”即加载成功。如果发现存档丢失，看下一章。
+
+## 不启动Godot打包（可选）
+
+Godot支持命令行导出pck（首先你需要添加一个导出配置），例如使用终端命令：`"{你的godot.exe的路径}" --headless --export-pack "{你的导出配置的名字，例如Windows Desktop}" "{杀戮尖塔根目录}/mods/{你的modid}/{你的modid}.pck"`，参考 https://docs.godotengine.org/zh-cn/4.x/tutorials/editor/command_line_tutorial.html#exporting 。你可以把这个命令保存成一个cmd或者csproj里的target，自行搜索相关配置说明。

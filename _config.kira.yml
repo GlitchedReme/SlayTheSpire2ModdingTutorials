@@ -32,10 +32,57 @@ docsTree:
                 [
                     { title: 01 环境配置, path: /docs/01-env-setup/ },
                     {
-                        title: 02 安装、看源码、修改,
+                        title: 02 常见问题,
                         path: /docs/02-install-view-source-and-patch/,
                     },
-                    { title: 03 BaseLib, path: /docs/03-baselib/ },
+                    {
+                        title: 03 BaseLib,
+                        open: true,
+                        children:
+                            [
+                                { title: 00 总览, path: /docs/03-baselib/ },
+                                {
+                                    title: 01 添加卡牌,
+                                    path: /docs/03-01-add-card/,
+                                },
+                                {
+                                    title: 02 自定义模组配置,
+                                    path: /docs/03-02-mod-config/,
+                                },
+                                {
+                                    title: 03 添加新遗物,
+                                    path: /docs/03-03-add-relic/,
+                                },
+                                {
+                                    title: 04 添加卡牌属性,
+                                    path: /docs/03-04-card-properties/,
+                                },
+                                {
+                                    title: 05 添加新能力,
+                                    path: /docs/03-05-add-power/,
+                                },
+                                {
+                                    title: 06 添加新药水,
+                                    path: /docs/03-06-add-potion/,
+                                },
+                                {
+                                    title: 07 添加先古之民,
+                                    path: /docs/03-07-add-ancient/,
+                                },
+                                {
+                                    title: 08 添加充能球,
+                                    path: /docs/03-08-add-orb/,
+                                },
+                                {
+                                    title: 09 局内保存,
+                                    path: /docs/03-09-run-save/,
+                                },
+                                {
+                                    title: 10 mod联动,
+                                    path: /docs/03-10-mod-integration/,
+                                },
+                            ],
+                    },
                     { title: 04 添加新人物, path: /docs/04-add-new-character/ },
                     {
                         title: 05 变量与描述,

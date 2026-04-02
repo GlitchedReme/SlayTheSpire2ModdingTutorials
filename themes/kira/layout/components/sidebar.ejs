@@ -22,62 +22,74 @@
 		</div>
 		<div id="kira-search-results" class="kira-search-results" hidden></div>
 	</div>
-	<div class="kira-list kira-docs-tree">
+	<div class="kira-list kira-docs-tree kira-explorer">
 		<% if (theme.docsTree && theme.docsTree.length) { %>
-			<% theme.docsTree.forEach(function(section) { %>
-				<% if (section.path) { %>
-					<% var sectionPath=section.path==='/' ? section.path : section.path.replace(/^\/+/, '' ); %>
-						<a class="kira-list-item mdui-ripple <%= is_current(section.path) %>"
-							href="<%- url_for(sectionPath, { relative: true }) -%>" title="<%= section.title %>">
-							<i class="kirafont <%= section.icon || 'icon-home' %>"></i>
-							<div class="kira-list-item-content">
-								<%= section.title %>
+			<ul class="kira-explorer-list kira-explorer-root">
+				<% var nodeCounter=0; function renderExplorer(nodes, level) { (nodes || []).forEach(function(node) { var
+					hasChildren=!!(node.children && node.children.length); var isOpen=node.open !==false; nodeCounter
+					+=1; var nodeId='tree-node-' + level + '-' + nodeCounter; var nodePath=node.path ? (node.path==='/'
+					? node.path : node.path.replace(/^\/+/, '' )) : '' ; var isActive=node.path &&
+					String(is_current(node.path))==='true' ; %>
+					<li class="kira-explorer-node <%= hasChildren ? 'is-folder' : 'is-file' %> <%= isOpen ? 'is-open' : '' %> <%= isActive ? 'is-active' : '' %>"
+						data-level="<%= level %>" data-node-id="<%= nodeId %>" style="--node-order:<%= nodeCounter %>;">
+						<div class="kira-explorer-row">
+							<% if (hasChildren) { %>
+								<button class="kira-explorer-toggle" type="button"
+									aria-expanded="<%= isOpen ? 'true' : 'false' %>" aria-controls="<%= nodeId %>">
+									<span class="kira-explorer-caret"></span>
+								</button>
+								<% } else { %>
+									<span class="kira-explorer-toggle-spacer"></span>
+									<% } %>
+
+										<% if (node.path) { %>
+											<a class="kira-explorer-link mdui-ripple"
+												href="<%- url_for(nodePath, { relative: true }) -%>"
+												title="<%= node.title %>">
+												<i
+													class="kirafont <%= node.icon || (hasChildren ? 'icon-folder' : 'icon-file') %>"></i>
+												<span class="kira-explorer-text">
+													<%= node.title %>
+												</span>
+											</a>
+											<% } else { %>
+												<span class="kira-explorer-link is-label" title="<%= node.title %>">
+													<i
+														class="kirafont <%= node.icon || (level === 0 ? 'icon-book' : 'icon-folder') %>"></i>
+													<span class="kira-explorer-text">
+														<%= node.title %>
+													</span>
+												</span>
+												<% } %>
+						</div>
+
+						<% if (hasChildren) { %>
+							<div class="kira-explorer-children" id="<%= nodeId %>">
+								<ul class="kira-explorer-list">
+									<% renderExplorer(node.children, level + 1); %>
+								</ul>
 							</div>
-						</a>
-						<% } else { %>
-							<% var sectionOpen=section.open===false ? '' : 'open' ; %>
-								<details class="kira-tree-group" <%- sectionOpen %>>
-									<summary class="kira-tree-summary">
-										<i class="kirafont icon-book"></i>
-										<span>
-											<%= section.title %>
-										</span>
-									</summary>
-									<div class="kira-tree-children">
-										<div class="kira-tree-children-inner">
-											<% (section.children || []).forEach(function(item) { %>
-												<% var itemPath=item.path==='/' ? item.path :
-													item.path.replace(/^\/+/, '' ); %>
-													<a class="kira-list-item mdui-ripple <%= is_current(item.path) %>"
-														href="<%- url_for(itemPath, { relative: true }) -%>"
-														title="<%= item.title %>">
-														<i class="kirafont icon-file"></i>
-														<div class="kira-list-item-content">
-															<%= item.title %>
-														</div>
-													</a>
-													<% }) %>
-										</div>
-									</div>
-								</details>
-								<% } %>
-									<% }) %>
-										<% } else { %>
-											<% for (name in theme.menu) { %>
-												<a class="kira-list-item mdui-ripple <%= is_current(theme.menu[name][0]) %>"
-													href="<%- url_for(theme.menu[name][0]) -%>" title="<%= name %>">
-													<i class="kirafont
+							<% } %>
+					</li>
+					<% }); } renderExplorer(theme.docsTree, 0); %>
+			</ul>
+			<div class="kira-explorer-hover-indicator" aria-hidden="true"></div>
+			<% } else { %>
+				<% for (name in theme.menu) { %>
+					<a class="kira-list-item mdui-ripple <%= is_current(theme.menu[name][0]) %>"
+						href="<%- url_for(theme.menu[name][0]) -%>" title="<%= name %>">
+						<i class="kirafont
 						<% if (theme.menu[name][1]) { %>
 							<%= theme.menu[name][1] %>
 						<% } else { %>
 							<%= 'icon-unordered-list' %>
 						<% } %>"></i>
-													<div class="kira-list-item-content">
-														<%= name %>
-													</div>
-												</a>
-												<% } %>
-													<% } %>
+						<div class="kira-list-item-content">
+							<%= name %>
+						</div>
+					</a>
+					<% } %>
+						<% } %>
 	</div>
 	<aside id="kira-sidebar">
 		<% theme.widgets.forEach(function(widget) {%>
@@ -126,6 +138,178 @@
 		self.classList.remove('show');
 		document.querySelector('.kira-sidebar.show#sidebar').classList.remove('show');
 	})(this)"></div>
+<script>
+	(function () {
+		var tree = document.querySelector('.kira-docs-tree.kira-explorer');
+		if (!tree) return;
+
+		var folders = tree.querySelectorAll('.kira-explorer-node.is-folder');
+		var indicator = tree.querySelector('.kira-explorer-hover-indicator');
+		var foldAnimTimer = null;
+
+		function getChildrenBox(folder) {
+			return folder.querySelector(':scope > .kira-explorer-children');
+		}
+
+		function updateChildrenHeight(folder) {
+			var box = getChildrenBox(folder);
+			if (!box) return;
+			box.style.setProperty('--children-height', box.scrollHeight + 'px');
+		}
+
+		function refreshAncestorHeights(fromNode) {
+			var cursor = fromNode;
+			while (cursor && cursor !== tree) {
+				if (cursor.classList && cursor.classList.contains('kira-explorer-node') && cursor.classList.contains('is-folder')) {
+					updateChildrenHeight(cursor);
+				}
+				cursor = cursor.parentElement;
+			}
+		}
+
+		function refreshAllFolderHeights() {
+			Array.prototype
+				.slice.call(folders)
+				.sort(function (a, b) {
+					return Number(b.getAttribute('data-level') || 0) - Number(a.getAttribute('data-level') || 0);
+				})
+				.forEach(function (folder) {
+					updateChildrenHeight(folder);
+				});
+		}
+
+		function scheduleHeightSync() {
+			refreshAllFolderHeights();
+			requestAnimationFrame(function () {
+				refreshAllFolderHeights();
+				requestAnimationFrame(function () {
+					refreshAllFolderHeights();
+				});
+			});
+			setTimeout(refreshAllFolderHeights, 120);
+			setTimeout(refreshAllFolderHeights, 360);
+		}
+
+		function triggerFoldAnimationWindow() {
+			tree.classList.add('is-fold-animating');
+			if (foldAnimTimer) clearTimeout(foldAnimTimer);
+			foldAnimTimer = setTimeout(function () {
+				tree.classList.remove('is-fold-animating');
+				foldAnimTimer = null;
+			}, 520);
+		}
+
+		function setFolderOpen(folder, shouldOpen, animate) {
+			if (!folder) return;
+			if (animate) triggerFoldAnimationWindow();
+			updateChildrenHeight(folder);
+			folder.classList.toggle('is-open', shouldOpen);
+			var btn = folder.querySelector(':scope > .kira-explorer-row .kira-explorer-toggle');
+			if (btn) btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+			requestAnimationFrame(function () {
+				refreshAncestorHeights(folder);
+				requestAnimationFrame(function () {
+					refreshAncestorHeights(folder);
+				});
+			});
+		}
+
+		function openAncestors(node) {
+			var parent = node ? node.parentElement : null;
+			while (parent && parent !== tree) {
+				if (parent.classList && parent.classList.contains('kira-explorer-children')) {
+					var folderNode = parent.closest('.kira-explorer-node.is-folder');
+					if (folderNode) setFolderOpen(folderNode, true, false);
+				}
+				parent = parent.parentElement;
+			}
+		}
+
+		folders.forEach(function (folder) {
+			updateChildrenHeight(folder);
+			var children = getChildrenBox(folder);
+			if (children) {
+				Array.prototype.forEach.call(children.querySelectorAll(':scope > .kira-explorer-list > .kira-explorer-node'), function (child, index) {
+					child.style.setProperty('--child-index', index);
+				});
+			}
+		});
+
+		tree.querySelectorAll('.kira-explorer-toggle').forEach(function (btn) {
+			btn.addEventListener('click', function (event) {
+				event.preventDefault();
+				event.stopPropagation();
+				var folder = btn.closest('.kira-explorer-node.is-folder');
+				if (!folder) return;
+				setFolderOpen(folder, !folder.classList.contains('is-open'), true);
+			});
+		});
+
+		var activeNode = tree.querySelector('.kira-explorer-node.is-active');
+		if (activeNode) openAncestors(activeNode);
+		scheduleHeightSync();
+
+		function moveIndicatorTo(link, visible) {
+			if (!indicator) return;
+			if (!link || visible === false) {
+				indicator.classList.remove('is-visible');
+				return;
+			}
+
+			var rootRect = tree.getBoundingClientRect();
+			var rect = link.getBoundingClientRect();
+			indicator.style.setProperty('--hover-x', (rect.left - rootRect.left) + 'px');
+			indicator.style.setProperty('--hover-y', (rect.top - rootRect.top) + 'px');
+			indicator.style.setProperty('--hover-w', rect.width + 'px');
+			indicator.style.setProperty('--hover-h', rect.height + 'px');
+			indicator.classList.add('is-visible');
+		}
+
+		var activeLink = activeNode ? activeNode.querySelector(':scope > .kira-explorer-row .kira-explorer-link') : null;
+		if (activeLink) moveIndicatorTo(activeLink, true);
+
+		tree.querySelectorAll('.kira-explorer-link').forEach(function (link) {
+			link.addEventListener('mouseenter', function () {
+				moveIndicatorTo(link, true);
+			});
+		});
+
+		tree.addEventListener('mouseleave', function () {
+			if (activeLink) {
+				moveIndicatorTo(activeLink, true);
+				return;
+			}
+			moveIndicatorTo(null, false);
+		});
+
+		window.addEventListener('resize', function () {
+			refreshAllFolderHeights();
+			if (indicator && indicator.classList.contains('is-visible')) {
+				moveIndicatorTo(activeLink, !!activeLink);
+			}
+		});
+
+		window.addEventListener('load', function () {
+			scheduleHeightSync();
+		});
+
+		if (document.fonts && document.fonts.ready) {
+			document.fonts.ready.then(function () {
+				scheduleHeightSync();
+			});
+		}
+
+		if (window.ResizeObserver) {
+			var resizeObserver = new ResizeObserver(function () {
+				refreshAllFolderHeights();
+			});
+			folders.forEach(function (folder) {
+				var box = getChildrenBox(folder);
+				if (box) resizeObserver.observe(box);
+			});
+		}
+	})();
+</script>
 <script>
 	(function () {
 		var input = document.getElementById('kira-search-input');

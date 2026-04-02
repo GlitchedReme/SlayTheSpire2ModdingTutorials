@@ -46,29 +46,30 @@ categories:
 
 会被model中的dynamicvars中的对应数值替换。
 
-| 名称 | 说明 | 示例 |
-|-----------|------|------|
-| `{Damage}` | 伤害 | `造成{Damage:diff()}点伤害。` |
-| `{Block}` | 格挡 | `获得{Block:diff()}点格挡。` |
-| `{Cards}` | 卡牌数量 | `抽{Cards:diff()}张牌。` |
-| `{Energy}` | 能量（动态值） | `获得{Energy:energyIcons()}。` |
-| `{energyPrefix}` | 能量（固定数值） | `获得{energyPrefix:energyIcons(1)}。` |
-| `{Repeat}` | 重复次数 | `造成{Damage:diff()}点伤害{Repeat:diff()}次。` |
-| `{Heal}` | 治疗 | `回复{Heal:diff()}点生命。` |
-| `{HpLoss}` | 失去生命 | `失去{HpLoss:Diff()}点生命。` |
-| `{MaxHp}` | 最大生命 | `获得{MaxHp:diff()}点最大生命。` |
-| `{Gold}` | 金币 | `获得{Gold:diff()}金币。` |
-| `{Summon}` | 召唤 | `召唤{Summon:diff()}。` |
-| `{Forge}` | 铸造 | `铸造{Forge:diff()}。` |
-| `{Stars}` | 辉星 | `获得{Stars:starIcons()}。` |
-| `{StrengthPower}` | 力量 | `获得{StrengthPower:diff()}点力量。` |
-| `{DexterityPower}` | 敏捷 | `获得{DexterityPower:diff()}点敏捷。` |
-| `{WeakPower}` | 虚弱 | `给予{WeakPower:diff()}层虚弱。` |
-| `{VulnerablePower}` | 易伤 | `给予{VulnerablePower:diff()}层易伤。` |
-| `{PoisonPower}` | 中毒 | `给予{PoisonPower:diff()}层中毒。` |
-| `{DoomPower}` | 灾厄 | `给予{DoomPower:diff()}层灾厄。` |
-| `{CalculatedDamage}` | 计算出的伤害量 | `（造成{CalculatedDamage:diff()}点伤害）` |
-| `{CalculatedBlock}` | 计算出的格挡值 | `（获得{CalculatedBlock:diff()}点格挡）` |
+| 名称 | 对应类 | 说明 | 示例 |
+|------|--------|------|------|
+| `{Damage}` | `DamageVar` | 伤害 | `造成{Damage:diff()}点伤害。` |
+| `{Block}` | `BlockVar` | 格挡 | `获得{Block:diff()}点格挡。` |
+| `{Cards}` | `CardsVar` | 卡牌数量 | `抽{Cards:diff()}张牌。` |
+| `{Energy}` | `EnergyVar` | 能量（动态值） | `获得{Energy:energyIcons()}。` |
+| `{energyPrefix}` | - | 能量（固定数值） | `获得{energyPrefix:energyIcons(1)}。` |
+| `{Repeat}` | `RepeatVar` | 重复次数 | `造成{Damage:diff()}点伤害{Repeat:diff()}次。` |
+| `{Heal}` | `HealVar` | 治疗 | `回复{Heal:diff()}点生命。` |
+| `{HpLoss}` | `HpLossVar` | 失去生命 | `失去{HpLoss:diff()}点生命。` |
+| `{MaxHp}` | `MaxHpVar` | 最大生命 | `获得{MaxHp:diff()}点最大生命。` |
+| `{Gold}` | `GoldVar` | 金币 | `获得{Gold:diff()}金币。` |
+| `{Summon}` | `SummonVar` | 召唤 | `召唤{Summon:diff()}。` |
+| `{Forge}` | `ForgeVar` | 铸造 | `铸造{Forge:diff()}。` |
+| `{Stars}` | `StarsVar` | 辉星 | `获得{Stars:starIcons()}。` |
+| `{StrengthPower}` | `PowerVar<StrengthPower>` | 力量 | `获得{StrengthPower:diff()}点力量。` |
+| `{DexterityPower}` | `PowerVar<DexterityPower>` | 敏捷 | `获得{DexterityPower:diff()}点敏捷。` |
+| `{WeakPower}` | `PowerVar<WeakPower>` | 虚弱 | `给予{WeakPower:diff()}层虚弱。` |
+| `{VulnerablePower}` | `PowerVar<VulnerablePower>` | 易伤 | `给予{VulnerablePower:diff()}层易伤。` |
+| `{PoisonPower}` | `PowerVar<PoisonPower>` | 中毒 | `给予{PoisonPower:diff()}层中毒。` |
+| `{DoomPower}` | `PowerVar<DoomPower>` | 灾厄 | `给予{DoomPower:diff()}层灾厄。` |
+| `{CalculatedDamage}` | `CalculatedDamageVar` | 计算出的伤害量 | `（造成{CalculatedDamage:diff()}点伤害）` |
+| `{CalculatedBlock}` | `CalculatedBlockVar` | 计算出的格挡值 | `（获得{CalculatedBlock:diff()}点格挡）` |
+
 
 ## formatter
 

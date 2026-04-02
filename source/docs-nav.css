@@ -28,6 +28,214 @@
     gap: 8px;
 }
 
+.kira-docs-tree.kira-explorer {
+    display: block;
+    gap: 0;
+    padding: 6px 0;
+    background: rgba(32, 38, 46, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.kira-explorer-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.kira-explorer-root {
+    padding: 4px 0;
+}
+
+.kira-explorer-node {
+    --indent-step: 16px;
+    position: relative;
+}
+
+.kira-explorer-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-height: 30px;
+    padding-right: 6px;
+    padding-left: calc(8px + var(--indent-step) * var(--level, 0));
+    transition: transform 0.25s ease;
+}
+
+.kira-explorer-node[data-level="0"] {
+    --level: 0;
+}
+
+.kira-explorer-node[data-level="1"] {
+    --level: 1;
+}
+
+.kira-explorer-node[data-level="2"] {
+    --level: 2;
+}
+
+.kira-explorer-node[data-level="3"] {
+    --level: 3;
+}
+
+.kira-explorer-node[data-level="4"] {
+    --level: 4;
+}
+
+.kira-explorer-node[data-level="5"] {
+    --level: 5;
+}
+
+.kira-explorer-node[data-level="6"] {
+    --level: 6;
+}
+
+.kira-explorer-toggle,
+.kira-explorer-toggle-spacer {
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kira-explorer-toggle {
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: #d7e0ea;
+    transition: color 0.22s ease;
+}
+
+.kira-explorer-caret {
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 6px solid currentColor;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.kira-explorer-node.is-open>.kira-explorer-row .kira-explorer-caret {
+    transform: rotate(90deg);
+}
+
+.kira-explorer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    width: 100%;
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: #dbe5f2;
+    text-decoration: none;
+    position: relative;
+    z-index: 2;
+    transition: transform 0.24s ease, background-color 0.24s ease, box-shadow 0.24s ease, color 0.2s ease;
+}
+
+.kira-explorer-link i {
+    width: 14px;
+    min-width: 14px;
+    font-size: 13px;
+    color: #a8b7cb;
+}
+
+.kira-explorer-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.92rem;
+    line-height: 1.2;
+    transition: transform 0.24s ease;
+}
+
+.kira-explorer-link:hover {
+    background: rgba(187, 101, 22, 0.24);
+    transform: translateX(4px);
+}
+
+.kira-explorer-link.is-label {
+    cursor: default;
+    font-weight: 600;
+}
+
+.kira-explorer-node.is-active>.kira-explorer-row .kira-explorer-link {
+    background: #bb6516 !important;
+    box-shadow: 0 2px 14px rgba(187, 101, 22, 0.55) !important;
+}
+
+.kira-explorer-node.is-active>.kira-explorer-row .kira-explorer-link i,
+.kira-explorer-node.is-active>.kira-explorer-row .kira-explorer-text {
+    color: #fff4e8 !important;
+}
+
+.kira-explorer-children {
+    --children-height: 0px;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-6px);
+}
+
+.kira-explorer-node.is-open>.kira-explorer-children {
+    max-height: var(--children-height);
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.kira-explorer-children>.kira-explorer-list>.kira-explorer-node {
+    opacity: 0;
+    transform: translateY(-5px);
+}
+
+.kira-explorer-node.is-open>.kira-explorer-children>.kira-explorer-list>.kira-explorer-node {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.kira-docs-tree.kira-explorer.is-fold-animating .kira-explorer-children {
+    transition: max-height 0.42s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.28s ease, transform 0.36s ease;
+}
+
+.kira-docs-tree.kira-explorer.is-fold-animating .kira-explorer-children>.kira-explorer-list>.kira-explorer-node {
+    transition: opacity 0.28s ease, transform 0.34s ease;
+}
+
+.kira-docs-tree.kira-explorer.is-fold-animating .kira-explorer-node.is-open>.kira-explorer-children>.kira-explorer-list>.kira-explorer-node {
+    transition-delay: calc(var(--child-index, 0) * 18ms);
+}
+
+.kira-explorer-hover-indicator {
+    --hover-x: 0px;
+    --hover-y: 0px;
+    --hover-w: 0px;
+    --hover-h: 0px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--hover-w);
+    height: var(--hover-h);
+    border-radius: 6px;
+    transform: translate3d(var(--hover-x), var(--hover-y), 0);
+    background: rgba(187, 101, 22, 0.24);
+    box-shadow: none;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1;
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), width 0.28s cubic-bezier(0.22, 1, 0.36, 1), height 0.28s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.18s ease;
+}
+
+.kira-explorer-hover-indicator.is-visible {
+    opacity: 1;
+}
+
 .kira-search-panel {
     margin: 8px 0 10px;
 }
@@ -108,6 +316,10 @@
     overflow: hidden;
 }
 
+.kira-docs-tree .kira-tree-node {
+    --tree-indent-step: 16px;
+}
+
 .kira-tree-summary {
     list-style: none;
     display: flex;
@@ -118,6 +330,7 @@
     font-size: 0.95rem;
     font-weight: 600;
     user-select: none;
+    padding-left: calc(14px + var(--tree-level, 0) * var(--tree-indent-step));
 }
 
 .kira-tree-summary::-webkit-details-marker {
@@ -154,12 +367,20 @@
 .kira-tree-children-inner {
     overflow: hidden;
     padding: 0 8px 8px;
+    margin-left: calc(12px + var(--tree-level, 0) * var(--tree-indent-step));
+    border-left: 1px dashed rgba(217, 117, 25, 0.28);
 }
 
 .kira-docs-tree .kira-list-item {
     margin: 2px 0;
     border-radius: 8px;
     overflow: hidden;
+    padding-left: calc(6px + var(--tree-level, 0) * var(--tree-indent-step));
+}
+
+.kira-docs-tree .kira-list-item i {
+    width: 16px;
+    min-width: 16px;
 }
 
 .kira-docs-tree .kira-list-item .kira-list-item-content {
@@ -453,7 +674,7 @@
         overflow: hidden !important;
         justify-content: flex-start !important;
         box-sizing: border-box;
-        padding: 8px 16px;
+        padding: 8px 14px;
         gap: 14px;
     }
 
@@ -476,9 +697,9 @@
     }
 
     .kira-right-column {
-        width: 250px !important;
-        min-width: 250px !important;
-        flex: 0 0 250px !important;
+        width: 220px !important;
+        min-width: 220px !important;
+        flex: 0 0 220px !important;
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -580,6 +801,11 @@
     .kira-header>a:first-child {
         width: 42px;
         min-width: 42px;
+        color: #fff !important;
+    }
+
+    .kira-header>a:first-child i {
+        color: #fff !important;
     }
 
     .kira-right-column .kira-chapters-panel {
