@@ -52,4 +52,11 @@ public static class TestInterop
 }
 ```
 
-然后在合适的时机调用即可：`TestInterop.Register("JustAnotherModId");`
+然后在合适的时机调用即可：
+
+```csharp
+if (ModManager.GetLoadedMods().Any(m => string.Equals(m.manifest?.id, "test")))
+{
+    TestInterop.Register("JustAnotherModId");
+}
+```

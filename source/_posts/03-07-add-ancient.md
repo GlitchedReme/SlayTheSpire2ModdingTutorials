@@ -197,9 +197,4 @@ offset_right = 1044.0
 offset_bottom = 515.0
 texture = ExtResource("1_xjdov")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 217.0
-offset_bottom = 248.0
 ```
-

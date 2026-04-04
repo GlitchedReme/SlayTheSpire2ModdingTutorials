@@ -81,6 +81,10 @@ docsTree:
                                     title: 10 mod联动,
                                     path: /docs/03-10-mod-integration/,
                                 },
+                                {
+                                    title: 11 添加新怪物,
+                                    path: /docs/03-11-add-monster/,
+                                },
                             ],
                     },
                     { title: 04 添加新人物, path: /docs/04-add-new-character/ },
