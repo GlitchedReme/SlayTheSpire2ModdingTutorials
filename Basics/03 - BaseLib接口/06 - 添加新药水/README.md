@@ -31,8 +31,9 @@ public class TestPotion : CustomPotionModel
     // 这里显示预览卡牌灵魂。或者你可以添加提示关键词
     public override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromCard<Soul>()];
 
-    public override string? PackedImagePath => "res://icon.svg";
-    public override string? PackedOutlinePath => "res://icon.svg";
+    // 药水图片。不一定svg，只要最终能变成Texture的格式就行。
+    public override string? CustomPackedImagePath => "res://icon.svg";
+    public override string? CustomPackedOutlinePath => "res://icon.svg";
 
     // 打出时的效果逻辑，这里是创造3张灵魂到手牌中。
     protected override async Task OnUse(PlayerChoiceContext choiceContext, Creature? target)

@@ -119,20 +119,20 @@ group_uniforms Layout;
 uniform float vertical_mix : hint_range(0.0, 1.0, 0.01) = 0.22;
 
 void fragment() {
-    float t = TIME / max(cycle_seconds, 0.001);
-    float w_ab = sin(t * TAU) * 0.5 + 0.5;
-    float w_c = sin(t * TAU + phase_offset) * 0.5 + 0.5;
-    vec3 rgb = mix(color_a.rgb, color_b.rgb, w_ab);
-    rgb = mix(rgb, color_c.rgb, w_c);
+	float t = TIME / max(cycle_seconds, 0.001);
+	float w_ab = sin(t * TAU) * 0.5 + 0.5;
+	float w_c = sin(t * TAU + phase_offset) * 0.5 + 0.5;
+	vec3 rgb = mix(color_a.rgb, color_b.rgb, w_ab);
+	rgb = mix(rgb, color_c.rgb, w_c);
 
-    float v = clamp(UV.y, 0.0, 1.0);
-    vec3 top_bias = mix(rgb, color_a.rgb, (1.0 - v) * vertical_mix);
-    vec3 bot_bias = mix(top_bias, color_b.rgb, v * vertical_mix);
-    rgb = bot_bias;
+	float v = clamp(UV.y, 0.0, 1.0);
+	vec3 top_bias = mix(rgb, color_a.rgb, (1.0 - v) * vertical_mix);
+	vec3 bot_bias = mix(top_bias, color_b.rgb, v * vertical_mix);
+	rgb = bot_bias;
 
-    vec4 tex = texture(TEXTURE, UV);
-    vec4 out_c = vec4(rgb, color_a.a * tex.a) * tex * COLOR;
-    COLOR = out_c;
+	vec4 tex = texture(TEXTURE, UV);
+	vec4 out_c = vec4(rgb, color_a.a * tex.a) * tex * COLOR;
+	COLOR = out_c;
 }
 "
 
@@ -190,8 +190,4 @@ offset_right = 1044.0
 offset_bottom = 515.0
 texture = ExtResource("1_xjdov")
 
-[node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 217.0
-offset_bottom = 248.0
 ```

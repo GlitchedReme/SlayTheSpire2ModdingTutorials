@@ -9,6 +9,7 @@
 由于游戏目前处于抢先体验阶段，教程可能不是最优解，且代码更改频繁，如有错误请指正。
 
 点击上方文件夹或者打开https://glitchedreme.github.io/SlayTheSpire2ModdingTutorials/ 查看文档。
+如果浏览太卡，请尝试打开图形加速。
 
 个人mod交流群：542370192
 
