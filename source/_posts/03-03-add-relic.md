@@ -30,6 +30,9 @@ public class TestRelic : CustomRelicModel
         // 这里的DynamicVars.Cards.IntValue为上面设置的CardsVar的数值。
         await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, player);
     }
+
+    // 初始遗物的升级可以写这里
+    // public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<Circlet>().ToMutable();
 }
 ```
 
@@ -46,4 +49,3 @@ public class TestRelic : CustomRelicModel
   "TEST-TEST_RELIC.flavor": "觉得很眼熟？"
 }
 ```
-
