@@ -1,6 +1,6 @@
 ## VSCode
 
-在`csproj`文件里添加这段：（放在`Project`里面即可）
+在`csproj`文件里添加以下内容：
 
 ```xml
   <!-- 其余内容省略 -->
@@ -24,6 +24,17 @@
       <Private>false</Private>
     </Reference>
   <!-- 其余内容省略 -->
+
+  <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
+    <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high"/>
+    <MakeDir Directories="$(Sts2Dir)/mods/"/>
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/"/>
+    <!-- 新增 -->
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb"
+              DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/"
+              Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/"/>
+    </Target>
 ```
 
 在项目根目录创建一个`.vscode`文件夹。
@@ -92,6 +103,57 @@
 
 * 如果你进不了游戏提示不通过steam，记得在根目录创建一个`steam_appid.txt`，里面写`2868840`。
 
+* 你还可以进行断点调试。点击一行代码左侧小红点即可。
+
 ## Rider
 
-TODO:我没有Rider
+在`csproj`文件里添加以下内容：
+
+```xml
+  <!-- 其余内容省略 -->
+    <Sts2DataDir>$(Sts2Dir)/data_sts2_windows_x86_64</Sts2DataDir>
+  </PropertyGroup>
+
+  <!-- 新增 -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PathMap>$(AppOutputBase)=.\</PathMap>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="sts2">
+      <HintPath>$(Sts2DataDir)/sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  <!-- 其余内容省略 -->
+
+  <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
+    <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high"/>
+    <MakeDir Directories="$(Sts2Dir)/mods/"/>
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/"/>
+    <!-- 新增 -->
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb"
+              DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/"
+              Condition="Exists('$(TargetDir)$(TargetName).pdb')" />
+    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/"/>
+    </Target>
+```
+
+点击右上角`Add Configuration`，点击`Edit Configuration`，创建一个`.NET Executable`的配置文件，进行如下配置。
+
+![alt text](../../images/image31.png)
+
+* 然后按`Debug`模式启动就可以。（不要点击绿三角直接run）
+
+* 当你修改代码后，点击测试表盘中的火焰图标（🔥），或者旧版本上方`Apply Changes`应用热重载。<b>热重载功能有限，不能有增删函数等过大改动。</b>
+
+* 资源PCK不能通过这个方式热重载。
+
+* 如果你进不了游戏提示不通过steam，记得在根目录创建一个`steam_appid.txt`，里面写`2868840`。
+
+* 你还可以进行断点调试。点击一行代码左侧小红点即可。

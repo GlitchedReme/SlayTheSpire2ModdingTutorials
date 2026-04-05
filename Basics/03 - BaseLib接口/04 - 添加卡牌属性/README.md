@@ -124,7 +124,7 @@ public class TestCard : CustomCardModel
 
 ## 添加卡牌tag
 
-使用`CustomEnum`可以为枚举添加新的值。新建一个类：
+tag是指`打击` `防御`这种。如果有打击tag会被打击木偶增伤。使用`CustomEnum`可以为枚举添加新的值。新建一个类：
 
 ```csharp
 public class MyCardTags
