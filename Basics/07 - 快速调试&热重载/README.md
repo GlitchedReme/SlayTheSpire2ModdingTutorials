@@ -53,6 +53,9 @@
       "program": "${config:sts2.installDir}/${config:sts2.gameExeName}",
       "cwd": "${config:sts2.installDir}",
       "console": "internalConsole",
+      "sourceFileMap": {
+        ".\\": "${workspaceFolder}/"
+      },
       "stopAtEntry": false
     }
   ]
