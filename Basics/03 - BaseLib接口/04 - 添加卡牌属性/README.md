@@ -134,7 +134,7 @@ public class MyCardTags
 }
 ```
 
-然后在卡牌类中重载`Tags`即可：
+然后在卡牌类中重载`CanonicalTags`即可：
 
 ```csharp
 [Pool(typeof(TestCardPool))]
@@ -143,7 +143,7 @@ public class TestCard : CustomCardModel
     // 其余省略
 
     // 添加tag
-    public override IEnumerable<CardTag> Tags => [MyCardTags.Test];
+    protected override HashSet<CardTag> CanonicalTags => [MyCardTags.Test];
 }
 ```
 
