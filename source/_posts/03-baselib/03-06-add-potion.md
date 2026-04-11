@@ -1,7 +1,7 @@
 ---
 title: 03-06 添加新药水
 date: 2026-04-02 00:00:00
-permalink: docs/03-06-add-potion/
+permalink: docs/03-baselib/03-06-add-potion/
 categories:
 - Basics
 ---

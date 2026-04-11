@@ -1,7 +1,7 @@
 ---
 title: 03-04 添加卡牌属性
 date: 2026-04-02 00:00:00
-permalink: docs/03-04-card-properties/
+permalink: docs/03-baselib/03-04-card-properties/
 categories:
 - Basics
 ---
@@ -37,7 +37,7 @@ public class MyKeywords
     public override IEnumerable<CardKeyword> CanonicalKeywords => [MyKeywords.Unique];
 ```
 
-![alt text](../../images/image23.png)
+![alt text](../../../images/image23.png)
 
 ## 添加新动态变量
 
@@ -96,7 +96,7 @@ public class TestDynamicVar : DynamicVar
 `:diff()`表示这个值一旦和基础值不同，就会变红色或绿色（例如升级时增加数值，预览变成绿色）。
 
 
-![alt text](../../images/image26.png)
+![alt text](../../../images/image26.png)
 
 当然如果你只是个简单的数值，这样就行：
 

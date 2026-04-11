@@ -1,7 +1,7 @@
 ---
 title: 03-02 自定义模组配置
 date: 2026-04-02 00:00:00
-permalink: docs/03-02-mod-config/
+permalink: docs/03-baselib/03-02-mod-config/
 categories:
 - Basics
 ---
@@ -64,7 +64,8 @@ public sealed class TestModConfig : SimpleModConfig
 
 ```
 
-![示例配置](../../images/image12.png)
+![示例配置](../../../images/image12.png)
 
 更多请参考`baselib`的`BaseLib.Config`下的类。
+
 

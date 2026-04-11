@@ -1,7 +1,7 @@
 ---
 title: 03-05 添加新能力
 date: 2026-04-02 00:00:00
-permalink: docs/03-05-add-power/
+permalink: docs/03-baselib/03-05-add-power/
 categories:
 - Basics
 ---
@@ -15,7 +15,7 @@ public class TestPower : CustomPowerModel
     // 叠加类型，Counter表示可叠加，Single表示不可叠加
     public override PowerStackType StackType => PowerStackType.Counter;
 
-    // 自定义图标路径，自己指定，或者创建一个基类来统一指定图标路径
+    // 自定义图标路径。1:1即可。原版游戏大图256x256，小图64x64。
     public override string? CustomPackedIconPath => "res://test/powers/test_power.png";
     public override string? CustomBigIconPath => "res://test/powers/test_power.png";
 
@@ -38,5 +38,4 @@ public class TestPower : CustomPowerModel
 
 然后使用`PowerCmd.Apply<TestPower>(...)`给予即可。或者使用控制台`power TEST-TEST_POWER 1 0`。
 
-![alt text](../../images/image25.png)
-
+![alt text](../../../images/image25.png)

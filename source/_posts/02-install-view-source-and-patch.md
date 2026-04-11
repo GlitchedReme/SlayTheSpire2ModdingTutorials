@@ -55,16 +55,18 @@ https://github.com/GDRETools/gdsdecomp
 
 你可以查询一个命令的帮助，使用`help card`等。
 
-## DEBUG
+## 查看log
 
-尖塔根目录有许多`launch_xxx.bat`，选择一个合适的，右键记事本编辑，在其中加一个`--log`，例如`@echo off
-"%~dp0SlayTheSpire2.exe" --log --rendering-driver opengl3 %*`。
+方法任选：
 
-然后在根目录创建一个`steam_appid.txt`，里面写`2868840`，然后双击修改的bat文件运行即可以一个能输出log的命令行的方式打开游戏。或者添加`--force-steam=off`参数。
+* 按下`~`（tab上方那个键）打开控制台，输入`open logs`或者`showlog`（没有baselib的话无效）。
+
+* 尖塔根目录有许多`launch_xxx.bat`，选择一个合适的，右键记事本编辑，在其中加一个`--log`，例如`@echo off
+"%~dp0SlayTheSpire2.exe" --log --rendering-driver opengl3 %*`。然后在根目录创建一个`steam_appid.txt`，里面写`2868840`，然后双击修改的bat文件运行即可以一个能输出log的命令行的方式打开游戏。或者添加`--force-steam=off`参数。
 
 ## 本地联机测试
 
-复制出两个新的`bat`，其中一个添加`--fastmp=host`参数，作为主机，另一个添加`--fastmp=join -clientId=1001`参数，作为非主机玩家。当然你可以添加更多，记得修改`clientId`。
+复制出两个新的`bat`，其中一个添加`--fastmp=host`参数，作为主机，另一个添加`--fastmp=join --clientId=1001`参数，作为非主机玩家。当然你可以添加更多，记得修改`clientId`。
 
 如果你打完一层遇到保存问题，记得以管理员模式启动bat。
 

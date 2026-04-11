@@ -6,9 +6,17 @@ categories:
 - Basics
 ---
 
-## 环境配置
-
 以防你有网络问题下载工具：https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar
+
+## 编程基础
+
+阅读本教程你至少需要：
+
+* C#语言基础（或者其他语言的基础）
+* json文本基础
+* 使用Godot编辑器的简单功能
+* 图片编辑处理能力
+* 懂得使用电脑
 
 ## 其他教程和mod模板
 

@@ -1,7 +1,7 @@
 ---
 title: 03-09 局内保存
 date: 2026-04-02 00:00:00
-permalink: docs/03-09-run-save/
+permalink: docs/03-baselib/03-09-run-save/
 categories:
 - Basics
 ---
@@ -90,3 +90,4 @@ public class TestRelic : CustomRelicModel
 ```
 
 此外你也可以使用`SpireField<TType, TVal>`为一个类添加新的变量，无法保存。
+

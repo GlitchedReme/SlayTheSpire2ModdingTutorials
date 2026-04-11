@@ -44,7 +44,7 @@ public class TestCardPool : CustomCardPoolModel
     //         _ => PreloadManager.Cache.GetAsset<Texture2D>("res://test/images/card_frame_skill.png"),
     //     };
     // }
-    
+
     // 卡池是否是无色。例如事件、状态等卡池就是无色的。
     public override bool IsColorless => false;
 }
@@ -81,6 +81,34 @@ public class TestPotionPool : CustomPotionPoolModel
 [Pool(typeof(TestCardPool))]
 public class TestCard : CustomCardModel
 ```
+
+## 初始遗物和卡牌升级
+
+`古老牙齿`可以把一张初始卡变成先古升级。需要实现`ITranscendenceCard`接口，在你的卡牌类添加以下代码：
+
+```csharp
+[Pool(typeof(TestCardPool))]
+public class TestCard : CustomCardModel, ITranscendenceCard // 实现接口
+{
+    // 其余省略
+
+    public CardModel GetTranscendenceTransformedCard() => ModelDb.Card<TestCard2>().ToMutable(); // 实现方法。自己更改类型。
+}
+```
+
+`欧洛巴斯之触`可以把初始遗物升级。
+
+```csharp
+[Pool(typeof(TestRelicPool))]
+public class TestRelic : CustomRelicModel
+{
+    // 其余省略
+
+    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<TestRelic2>().ToMutable(); // 实现方法。自己更改类型。
+}
+```
+
+`尘封魔典`可以获得一张先古卡。这个结果是从你池子里选出所有先古卡，然后去除`古老牙齿`的那张得到的。所以只需再创建一张先古卡即可。
 
 ## 创建人物
 

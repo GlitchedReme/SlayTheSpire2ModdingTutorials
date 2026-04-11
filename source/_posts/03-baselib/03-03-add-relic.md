@@ -1,7 +1,7 @@
 ---
 title: 03-03 添加新遗物
 date: 2026-04-02 00:00:00
-permalink: docs/03-03-add-relic/
+permalink: docs/03-baselib/03-03-add-relic/
 categories:
 - Basics
 ---
@@ -18,11 +18,11 @@ public class TestRelic : CustomRelicModel
     // 遗物的数值。替换本地化中的{Cards}。
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
 
-    // 小图标
+    // 小图标（原版85x85）
     public override string PackedIconPath => $"res://test/images/relics/{Id.Entry.ToLowerInvariant()}.png";
-    // 轮廓图标
+    // 轮廓图标（原版85x85）
     protected override string PackedIconOutlinePath => $"res://test/images/relics/{Id.Entry.ToLowerInvariant()}.png";
-    // 大图标
+    // 大图标（原版256x256）
     protected override string BigIconPath => $"res://test/images/relics/{Id.Entry.ToLowerInvariant()}.png";
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
@@ -38,7 +38,7 @@ public class TestRelic : CustomRelicModel
 
 然后放一张图片`test/images/relics/test_relic.png`。路径不一定是`test`，组织风格自定义，参考上面卡图部分。这里偷懒三张图片用了一样的，可以自己修改。
 
-![示例遗物](../../images/image13.png)
+![示例遗物](../../../images/image13.png)
 
 然后写一个本地化文件，`{modId}/localization/{Language}/relics.json`。
 

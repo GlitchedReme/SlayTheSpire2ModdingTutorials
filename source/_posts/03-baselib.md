@@ -48,12 +48,3 @@ https://github.com/Alchyr/BaseLib-StS2
 ```json
   "dependencies": ["BaseLib"],
 ```
-
-## 添加新怪物
-TODO:虽然可以加，但是最好等一个baselib
-
-## 添加新事件
-TODO:不方便添加，等一个baselib
-
-## 添加新附魔
-TODO:虽然可以加，但是最好等一个baselib
