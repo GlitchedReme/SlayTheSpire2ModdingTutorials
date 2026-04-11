@@ -11,7 +11,7 @@ categories:
 https://github.com/Alchyr/BaseLib-StS2
 
 > 由于目前`BaseLib`尚处于开发阶段，如果只打patch不添加新内容可以不使用。
-> 以下内容使用baselib0.2.3，游戏测试分支。
+> 以下内容使用baselib0.3.0，游戏测试分支。
 
 先依赖baselib才能查看这里里面的文章。
 
