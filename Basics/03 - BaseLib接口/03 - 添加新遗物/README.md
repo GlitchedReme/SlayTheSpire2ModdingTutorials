@@ -11,11 +11,11 @@ public class TestRelic : CustomRelicModel
     // 遗物的数值。替换本地化中的{Cards}。
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
 
-    // 小图标
+    // 小图标（原版85x85）
     public override string PackedIconPath => $"res://test/images/relics/{Id.Entry.ToLowerInvariant()}.png";
-    // 轮廓图标
+    // 轮廓图标（原版85x85）
     protected override string PackedIconOutlinePath => $"res://test/images/relics/{Id.Entry.ToLowerInvariant()}.png";
-    // 大图标
+    // 大图标（原版256x256）
     protected override string BigIconPath => $"res://test/images/relics/{Id.Entry.ToLowerInvariant()}.png";
 
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
