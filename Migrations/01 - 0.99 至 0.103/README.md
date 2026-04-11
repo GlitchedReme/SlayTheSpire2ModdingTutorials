@@ -1,4 +1,4 @@
-主要是关于人物能量表盘的问题。
+如果你在正式版开发，注意能量表盘问题。
 
 结构从：
 
@@ -12,7 +12,7 @@ TestEnergyCounter (Control)
 └── Label (Label)
 ```
 
-改成：
+改成了：
 
 ```
 TestEnergyCounter (Control)
@@ -24,17 +24,6 @@ TestEnergyCounter (Control)
 └── Label (Label)
 ```
 
-同时需要反射设置`_particles`的值，因为其是export，无法在自己的编辑器修改。
-
-```csharp
-public partial class NTestParticlesContainer : NParticlesContainer
-{
-    public override void _Ready()
-    {
-        base._Ready();
-        Traverse.Create(this).Field("_particles").SetValue(new Array<GpuParticles2D>());
-    }
-}
-```
+所以如果你在正式版添加人物，需要添加`BurstBack (CPUParticles2D) %`和`BurstFront (CPUParticles2D) %`这两个节点。（未测试）
 
 如有遗漏，查看`添加新人物`这一章。
