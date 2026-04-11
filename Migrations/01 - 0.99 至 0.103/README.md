@@ -24,6 +24,6 @@ TestEnergyCounter (Control)
 └── Label (Label)
 ```
 
-所以如果你在正式版添加人物，需要添加`BurstBack (CPUParticles2D) %`和`BurstFront (CPUParticles2D) %`这两个节点。（未测试）
+所以如果你在正式版添加人物，需要添加`EnergyVfxBack (Node2D) %`和`EnergyVfxFront (Node2D) %`这两个节点。
 
 如有遗漏，查看`添加新人物`这一章。
