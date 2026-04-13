@@ -84,7 +84,7 @@ public class TestCard : CustomCardModel, ITranscendenceCard // 实现接口
 {
     // 其余省略
 
-    public CardModel GetTranscendenceTransformedCard() => ModelDb.Card<TestCard2>().ToMutable(); // 实现方法。自己更改类型。
+    public CardModel GetTranscendenceTransformedCard() => ModelDb.Card<TestCard2>(); // 实现方法。自己更改类型。
 }
 ```
 
@@ -96,7 +96,7 @@ public class TestRelic : CustomRelicModel
 {
     // 其余省略
 
-    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<TestRelic2>().ToMutable(); // 实现方法。自己更改类型。
+    public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<TestRelic2>(); // 实现方法。自己更改类型。
 }
 ```
 
