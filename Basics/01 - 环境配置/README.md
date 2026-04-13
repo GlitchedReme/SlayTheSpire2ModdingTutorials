@@ -235,3 +235,7 @@ Godot支持命令行导出pck（首先你需要添加一个导出配置），例
 然后控制台输入`dotnet build -t:ExportPck`即可连PCK一起导出。输入`dotnet build`仅编译dll。
 
 方法不限。你也可以使用`tasks.json`。
+
+## mac支持（可选）
+
+用文本编辑器打开`export_presets.cfg`，将`binary_format/architecture="x86_64"`改为`binary_format/architecture="msil"`。
