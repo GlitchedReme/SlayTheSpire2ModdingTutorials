@@ -147,7 +147,7 @@ public class Entry
         harmony.PatchAll();
         // 使得tscn可以加载自定义脚本
         ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).Assembly);
-        Log.Debug("Mod initialized!");
+        Log.Info("Mod initialized!");
     }
 }
 
