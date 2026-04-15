@@ -102,7 +102,7 @@ public class TestCard : TestCardModel
 你也可以通过新增一个`abstract`类，避免每张卡都写一遍卡图路径，并且方便管理一些自定义功能。
 
 ```csharp
-public abstract class TestCardModel : CardModel
+public abstract class TestCardModel : CustomCardModel
 {
     public override string PortraitPath => $"res://test/images/cards/{GetType().Name}.png";
 
