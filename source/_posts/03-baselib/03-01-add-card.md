@@ -82,7 +82,7 @@ public class TestCard : CustomCardModel
 `modId`即为你`{modId}.json`中填写的。<b>不是你的根目录，而是一个新文件夹。</b>
 
 
-卡图任意尺寸都可，且不需要裁剪，官方使用的尺寸是普通卡1000x760，先古卡606x852。
+卡图任意尺寸都可，且不需要裁剪，官方使用的尺寸是普通卡250x190，先古卡250x351。
 
 ```csharp
 public class TestCard : TestCardModel

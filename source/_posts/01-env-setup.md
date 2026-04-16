@@ -63,7 +63,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 ## 创建C#解决方案
 
-点击右上角的“创建C#解决方案”按钮。
+点击左上角的“创建C#解决方案”按钮。
 
 ![alt text](../../images/image4.png)
 
