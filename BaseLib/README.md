@@ -1,9 +1,9 @@
-`BaseLib`是统一添加新内容行为的基础mod，类似于塔1的`basemod`和`stslib`。
+`BaseLib`是统一添加新内容行为的基础mod，类似于塔1的`basemod`加上`stslib`。
 
 https://github.com/Alchyr/BaseLib-StS2
 
 > 由于目前`BaseLib`尚处于开发阶段，如果只打patch不添加新内容可以不使用。
-> 以下内容使用baselib0.3.0，游戏测试分支。
+> 以下内容使用baselib3.0.6。
 
 先依赖baselib才能查看这里里面的文章。
 
@@ -11,7 +11,7 @@ https://github.com/Alchyr/BaseLib-StS2
 
 * 前往 https://github.com/Alchyr/BaseLib-StS2/releases 下载`dll`，`pck`和`json`三个文件，把他们放在`mods`文件夹里。记住你下载的版本。
 
-* 在`csproj`文件中相应位置引用`BaseLib.dll`，如下，两种方式都可。
+* 在`csproj`文件中相应位置引用`BaseLib.dll`，如下，两种方式都可。现在推荐使用nuget。
 
 ```xml
   <ItemGroup>
