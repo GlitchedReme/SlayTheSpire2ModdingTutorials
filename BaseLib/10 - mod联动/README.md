@@ -7,7 +7,7 @@
 ```csharp
 namespace Test.Scripts;
 
-[ModInitializer("Init")]
+[ModInitializer(nameof(Init))]
 public class Entry {
     public static void Init() {}
 

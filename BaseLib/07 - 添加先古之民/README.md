@@ -97,7 +97,7 @@ public class TestAncient : CustomAncientModel
 
 ![alt text](../../../images/image27.png)
 
-场景示例`test-test_ancient.tscn`：
+场景示例`test_ancient.tscn`：
 ```
 [gd_scene load_steps=5 format=3 uid="uid://4i1v2d2h07n5"]
 
