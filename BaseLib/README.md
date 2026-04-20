@@ -26,12 +26,12 @@ https://github.com/Alchyr/BaseLib-StS2
     </Reference>
 
     <!-- 本地引用，注意路径是否正确 -->
-    <Reference Include="BaseLib">
+    <!-- <Reference Include="BaseLib">
       <HintPath>$(Sts2Dir)/mods/BaseLib/BaseLib.dll</HintPath>
       <Private>false</Private>
-    </Reference>
+    </Reference> -->
     <!-- NuGet获取，注意版本是否一致，不一致手动更改Version -->
-    <!-- <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" /> -->
+    <PackageReference Include="Alchyr.Sts2.BaseLib" Version="*" />
   </ItemGroup>
 ```
 

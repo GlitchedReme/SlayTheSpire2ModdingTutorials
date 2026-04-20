@@ -56,7 +56,7 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 
 namespace Test.Scripts;
 
-[ModInitializer("Init")]
+[ModInitializer(nameof(Init))]
 public static class Entry
 {
     // 替换哪个角色

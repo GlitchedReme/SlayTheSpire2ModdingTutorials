@@ -67,10 +67,8 @@ public class TestCard : CustomCardModel
 
 ## 卡图
 
-可以通过在卡牌类中添加一个表达式属性来添加卡牌，这样的话可以任意指定位置：`public override string PortraitPath => $"res://{modid}/images/cards/{Id.Entry.ToLowerInvariant()}.png";`，
-如果这样，那么路径就是`test/images/cards/test-test_card.png`（是你类名的`snake_case`命名风格加前缀，例如`TestCard`即为`test-test_card`）。当然按你的喜好组织资源路径也可。
-
-> 或者你也可以使用`public override string PortraitPath => $"res://{modid}/images/cards/{nameof(TestCard)}.png";`，这样更方便，卡图名字设置为`TestCard.png`就行。
+可以通过在卡牌类中添加一个表达式属性来添加卡牌，这样的话可以任意指定位置：`public override string PortraitPath => $"res://{modid}/images/cards/{GetType().Name}.png";`，
+如果这样，那么路径就是`test/images/cards/TestCard.png`。当然按你的喜好组织资源路径也可。
 
 `modId`即为你`{modId}.json`中填写的。<b>不是你的根目录，而是一个新文件夹。</b>
 
@@ -127,6 +125,8 @@ public class TestCard : TestCardModel {}
 }
 ```
 
+* `{Damage:diff()}`对应前面的`DamageVar`。
+
 编译打包`dll`和`pck`后打开游戏。如果你在对应池子中看到卡牌说明成功了。如果没有任何卡牌（或者一张在左上角的卡牌）说明出问题了。
 
 按`~`打开控制台输入`card TEST-TEST_CARD`获得这张卡。
@@ -145,7 +145,7 @@ Test (你的项目文件夹)
 └── Test (不要忘了这一层文件夹，是你的modid)
     ├── images
     │   └── cards
-    │       └── test-test_card.png
+    │       └── TestCard.png
     └── localization
         └── zhs
             └── cards.json

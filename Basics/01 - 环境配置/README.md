@@ -135,7 +135,7 @@ using MegaCrit.Sts2.Core.Modding;
 namespace Test.Scripts;
 
 // 必须要加的属性，用于注册Mod。字符串和初始化函数命名一致。
-[ModInitializer("Init")]
+[ModInitializer(nameof(Init))]
 public class Entry
 {
     // 初始化函数
@@ -155,7 +155,7 @@ public class Entry
 
 ## 构建DLL
 
-按下`ctrl+shift+b`选择`dotnet: build`，或者终端命令行输入`dotnet build`创建dll文件。由于之前`.csproj`文件的配置，dll文件自动复制到游戏根目录的`mods`文件夹里了。
+终端命令行输入`dotnet build`（或者vscode按下`ctrl+shift+b`选择`dotnet: build`，rider点击构建）创建dll文件。由于之前`.csproj`文件的配置，dll文件自动复制到游戏根目录的`mods`文件夹里了。
 
 ## 导出PCK
 
@@ -234,7 +234,7 @@ Godot支持命令行导出pck（首先你需要添加一个导出配置），例
 
 然后控制台输入`dotnet build -t:ExportPck`即可连PCK一起导出。输入`dotnet build`仅编译dll。
 
-方法不限。你也可以使用`tasks.json`。
+方法不限。你也可以使用`tasks.json`和`publish`（modtemplate使用的）。
 
 ## mac支持（可选）
 

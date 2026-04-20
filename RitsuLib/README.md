@@ -25,12 +25,12 @@ https://github.com/BAKAOLC/STS2-RitsuLib
     </Reference>
 
     <!-- 本地引用，注意路径是否正确 -->
-    <Reference Include="STS2-RitsuLib">
+    <!-- <Reference Include="STS2-RitsuLib">
       <HintPath>$(Sts2Dir)/mods/RitsuLib/STS2-RitsuLib.dll</HintPath>
       <Private>false</Private>
-    </Reference>
+    </Reference> -->
     <!-- NuGet获取，注意版本是否一致，不一致手动更改Version -->
-    <!-- <PackageReference Include="STS2.RitsuLib" Version="*" /> -->
+    <PackageReference Include="STS2.RitsuLib" Version="*" />
   </ItemGroup>
 ```
 
@@ -39,3 +39,37 @@ https://github.com/BAKAOLC/STS2-RitsuLib
 ```json
   "dependencies": ["STS2-RitsuLib"],
 ```
+
+下面展示`RitsuLib`的各种功能。如果你想马上做出一张卡牌，先看`初始化函数`就行。
+
+## 初始化函数
+
+```csharp
+using System.Reflection;
+using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Modding;
+using STS2RitsuLib;
+using STS2RitsuLib.Interop;
+
+namespace Test.Scripts;
+
+[ModInitializer(nameof(Init))]
+public class Entry
+{
+    // 你的modid
+    public const string ModId = "test";
+    public static readonly Logger Logger = RitsuLibFramework.CreateLogger(ModId);
+
+    public static void Init()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
+        // 自动注册内容
+        ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
+    }
+}
+```
+
+## 注册内容
+
+`RitsuLib`同时支持显式和自动注册。
