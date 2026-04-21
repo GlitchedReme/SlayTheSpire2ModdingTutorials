@@ -5,7 +5,6 @@ permalink: docs/07-quick-debug-and-hot-reload/
 categories:
 - Basics
 ---
-
 ## VSCode
 
 在`csproj`文件里添加以下内容：

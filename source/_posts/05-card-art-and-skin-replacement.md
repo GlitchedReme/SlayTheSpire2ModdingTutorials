@@ -5,7 +5,6 @@ permalink: docs/05-card-art-and-skin-replacement/
 categories:
 - Visuals
 ---
-
 ## 卡图替换
 
 一个简单的方式是直接打patch，如下。这样只能替换原版卡图。
@@ -64,7 +63,7 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 
 namespace Test.Scripts;
 
-[ModInitializer("Init")]
+[ModInitializer(nameof(Init))]
 public static class Entry
 {
     // 替换哪个角色

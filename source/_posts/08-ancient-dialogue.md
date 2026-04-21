@@ -5,7 +5,6 @@ permalink: docs/08-ancient-dialogue/
 categories:
 - Basics
 ---
-
 ## 创建文件
 
 创建`{modId}/localization/{Language}/ancients.json`。

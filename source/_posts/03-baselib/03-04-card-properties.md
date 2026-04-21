@@ -37,7 +37,7 @@ public class MyKeywords
     public override IEnumerable<CardKeyword> CanonicalKeywords => [MyKeywords.Unique];
 ```
 
-![alt text](../../../images/image23.png)
+![alt text](../../../../../images/image23.png)
 
 ## 添加新动态变量
 
@@ -45,25 +45,14 @@ public class MyKeywords
 
 通过`baselib`的`WithTooltip`可以添加tooltip。<b>如果不需要添加本地化文本，就不添加这行。</b>
 
-先创建新的类：
+如果你只是个简单的数值，这样就行：
+
 ```csharp
-using BaseLib.Extensions;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
-
-namespace Test.Scripts;
-
-public class TestDynamicVar : DynamicVar
-{
-    // 在描述中用作占位符的键，推荐添加前缀避免撞车
-    public const string Key = "Test-Leech";
-    // 本地化键，这里设置为大写的Key，也就是"TEST-LEECH"
-    public static readonly string LocKey = Key.ToUpperInvariant();
-
-    public TestDynamicVar(decimal baseValue) : base(Key, baseValue)
-    {
-        this.WithTooltip(LocKey);
-    }
-}
+    protected override IEnumerable<DynamicVar> CanonicalVars => [
+        new DamageVar(12, ValueProp.Move),
+        new DynamicVar("Leech", 1m)
+        // .WithTooltip("TEST-LEECH") // 如果要加本地化
+    ];
 ```
 
 （可选）然后添加一个新的本地化文件`{modId}/localization/{Language}/static_hover_tips.json`。
@@ -75,42 +64,25 @@ public class TestDynamicVar : DynamicVar
 }
 ```
 
-如果要使用这个变量，在卡牌类的`CanonicalVars`中添加你新建的变量即可。
-
-```csharp
-    protected override IEnumerable<DynamicVar> CanonicalVars => [
-        new DamageVar(12, ValueProp.Move),
-        new TestDynamicVar(3)
-    ];
-```
-
-然后在卡牌的描述写上`{Test-Leech}`以使用：
+然后在卡牌的描述写上`{Leech}`以使用：
 
 ```json
 {
     "TEST-TEST_CARD.title": "测试卡牌",
-    "TEST-TEST_CARD.description": "[gold]汲取[/gold]{Test-Leech:diff()}。\n造成{Damage:diff()}点伤害。"
+    "TEST-TEST_CARD.description": "[gold]汲取[/gold]{Leech:diff()}。\n造成{Damage:diff()}点伤害。"
 }
 ```
 
 `:diff()`表示这个值一旦和基础值不同，就会变红色或绿色（例如升级时增加数值，预览变成绿色）。
 
 
-![alt text](../../../images/image26.png)
-
-当然如果你只是个简单的数值，这样就行：
-
-```csharp
-    protected override IEnumerable<DynamicVar> CanonicalVars => [
-        new DamageVar(12, ValueProp.Move),
-        new DynamicVar("Test-Leech", 1m)
-        // .WithTooltip("TEST-LEECH") // 如果要加本地化
-    ];
-```
+![alt text](../../../../../images/image26.png)
 
 ## 添加卡牌提示文本
 
 指的是卡牌旁出现的提示方框，或预览卡牌。在描述里的关键词一般是添加提示文本和染色搭配，例如`易伤`，`激发`等。
+
+和塔1不同，关键词提示是通过描述染色（`[gold]易伤[/gold]`）然后添加卡牌提示文本实现的。
 
 仅需在卡牌类中重载`ExtraHoverTips`即可：
 

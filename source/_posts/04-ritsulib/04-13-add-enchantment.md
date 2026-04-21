@@ -1,14 +1,13 @@
 ---
-title: 03-13 添加新附魔
-date: 2026-04-11 16:00:00
-permalink: docs/03-baselib/03-13-add-enchantment/
+title: 04-13 添加新附魔
+date: 2026-04-21 00:00:00
+permalink: docs/04-ritsulib/04-13-add-enchantment/
 categories:
 - Basics
 ---
 首先创建附魔类：
 
 ```csharp
-using BaseLib.Abstracts;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Enchantments;
@@ -17,10 +16,13 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace Test.Scripts;
 
-public class TestEnchantment : CustomEnchantmentModel
+[RegisterEnchantment]
+public class TestEnchantment : ModEnchantmentTemplate
 {
     // 是否在卡牌上显示数值
     public override bool ShowAmount => true;
@@ -36,7 +38,9 @@ public class TestEnchantment : CustomEnchantmentModel
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromKeyword(CardKeyword.Retain)];
 
     // 图标位置。大小1:1就行，原版是64x64
-    protected override string? CustomIconPath => "res://icon.svg";
+    public override EnchantmentAssetProfile AssetProfile => new(
+        IconPath: "res://icon.svg"
+    );
 
     // 决定是否可以附魔到某张卡牌上，这里我们让它只能附魔到获得格挡的卡牌上。
     public override bool CanEnchant(CardModel card)
@@ -83,14 +87,14 @@ public class TestEnchantment : CustomEnchantmentModel
 
 ```json
 {
-    "TEST-TEST_ENCHANTMENT.title": "戈多",
-    "TEST-TEST_ENCHANTMENT.extraCardText": "你第一次打出这张牌时，抽{Cards}张牌。", // 额外添加在卡牌上的文本
-    "TEST-TEST_ENCHANTMENT.description": "这张牌获得[gold]保留[/gold]。\n这张牌获得的[gold]格挡[/gold]值增加[blue]{Amount}[/blue]点。\n第一次打出时抽{Cards}张牌。" // 附魔介绍
+    "TEST_ENCHANTMENT_TEST_ENCHANTMENT.title": "戈多",
+    "TEST_ENCHANTMENT_TEST_ENCHANTMENT.extraCardText": "你第一次打出这张牌时，抽{Cards}张牌。", // 额外添加在卡牌上的文本
+    "TEST_ENCHANTMENT_TEST_ENCHANTMENT.description": "这张牌获得[gold]保留[/gold]。\n这张牌获得的[gold]格挡[/gold]值增加[blue]{Amount}[/blue]点。\n第一次打出时抽{Cards}张牌。" // 附魔介绍
 }
 ```
 
 如何使用：
-* 控制台里输入`enchant TEST-TEST_ENCHANTMENT [数量] [给予手牌的编号]`。
-* 在效果里，使用`CardCmd.Enchant<TestEhchantment>(card, 2m)`。第二个参数用于修改Amount。
+* 控制台里输入`enchant TEST_ENCHANTMENT_TEST_ENCHANTMENT [数量] [给予手牌的编号]`。
+* 在效果里，使用`CardCmd.Enchant<TestEnchantment>(card, 2m)`。第二个参数用于修改Amount。
 
-![alt text](../../../../../images/image32.png)
+![alt text](../../../../images/image32.png)

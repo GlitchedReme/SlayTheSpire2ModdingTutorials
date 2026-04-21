@@ -1,22 +1,26 @@
 ---
-title: 03-08 添加充能球
-date: 2026-04-02 00:00:00
-permalink: docs/03-baselib/03-08-add-orb/
+title: 04-08 添加充能球
+date: 2026-04-21 00:00:00
+permalink: docs/04-ritsulib/04-08-add-orb/
 categories:
 - Basics
 ---
+> 该教程暂时无效。正在更新中。
+
 先创建类：
 
 ```csharp
-using BaseLib.Abstracts;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 namespace Test.Scripts;
 
-public class TestOrb : CustomOrbModel
+[RegisterOrb]
+public class TestOrb : ModOrbTemplate
 {
     // 被动效果数值，ModifyOrbValue表示是否吃集中等
     public override decimal PassiveVal => ModifyOrbValue(1);
@@ -27,19 +31,12 @@ public class TestOrb : CustomOrbModel
     // 暗色，使用球的主体色的暗色调
     public override Color DarkenedColor => new(0.1f, 0.2f, 0.5f);
 
-    // 不出现在随机球池中
-    // public override bool IncludeInRandomPool => false;
-
-    // 提示图标路径
-    public override string? CustomIconPath => "res://icon.svg";
-    // 球的场景的路径。如果你使用这个，你必须要有一个名称为SpineSkeleton并且是SpineSprite类型的节点
-    // public override string? CustomSpritePath => "res://test/scenes/test_orb.tscn";
-
-    // 可以继承这个并自行搭建场景，只需父节点是Node2D即可。这样就没有上述限制。代码上优先使用这个
-    public override Node2D? CreateCustomSprite()
-    {
-        return PreloadManager.Cache.GetScene("res://test/scenes/test_orb.tscn").Instantiate<Node2D>();
-    }
+    public override OrbAssetProfile AssetProfile => new(
+        // 提示文本小图标路径
+        IconPath: "res://icon.svg",
+        // 充能球场景路径
+        VisualsScenePath: "res://Test/scenes/test_orb.tscn"
+    );
 
     // 回合开始时触发被动
     public override async Task AfterTurnStartOrbTrigger(PlayerChoiceContext choiceContext)
@@ -68,15 +65,15 @@ public class TestOrb : CustomOrbModel
 
 ```json
 {
-    "TEST-TEST_ORB.description": "充能球：回合开始时抽牌。",
-    "TEST-TEST_ORB.smartDescription": "[gold]被动：[/gold]回合开始时，抽[blue]{Passive}[/blue]张牌。\n[gold]激发：[/gold]抽[blue]{Evoke}[/blue]张牌。",
-    "TEST-TEST_ORB.title": "戈多球"
+    "TEST_ORB_TEST_ORB.description": "充能球：回合开始时抽牌。",
+    "TEST_ORB_TEST_ORB.smartDescription": "[gold]被动：[/gold]回合开始时，抽[blue]{Passive}[/blue]张牌。\n[gold]激发：[/gold]抽[blue]{Evoke}[/blue]张牌。",
+    "TEST_ORB_TEST_ORB.title": "戈多球"
 }
 ```
 
 使用`await OrbCmd.Channel<TestOrb>(choiceContext, cardPlay.Card.Owner)`以生成。
 
-![alt text](../../../../../images/image28.png)
+![alt text](../../../../images/image28.png)
 
 `test_orb.tscn`:
 

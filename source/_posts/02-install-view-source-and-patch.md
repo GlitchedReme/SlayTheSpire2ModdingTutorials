@@ -5,7 +5,6 @@ permalink: docs/02-install-view-source-and-patch/
 categories:
 - Basics
 ---
-
 # 安装模组
 
 在尖塔2游戏根目录下的`mods`文件夹里（`xxx\Steam\steamapps\common\Slay the Spire 2\mods`），放置模组提供的`dll`，`pck`和`json`文件各一个。可以套一个文件夹方便管理。

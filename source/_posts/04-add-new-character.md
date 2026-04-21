@@ -5,7 +5,6 @@ permalink: docs/04-add-new-character/
 categories:
 - Basics
 ---
-
 添加新人物过于麻烦了，于是单开一章。
 
 ## 依赖BaseLib

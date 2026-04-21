@@ -90,4 +90,3 @@ public class TestRelic : CustomRelicModel
 ```
 
 此外你也可以使用`SpireField<TType, TVal>`为一个类添加新的变量，无法保存。
-

@@ -5,7 +5,6 @@ permalink: docs/05-variable-and-description/
 categories:
 - Basics
 ---
-
 这里介绍如何编写塔2的卡牌、遗物、药水、能力等的描述。
 
 ## Godot原生
