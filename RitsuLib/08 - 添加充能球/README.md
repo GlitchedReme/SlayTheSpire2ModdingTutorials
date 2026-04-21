@@ -1,4 +1,4 @@
-> 由于没有场景转换，不挂脚本的写法无效。正在更新中。
+> 该教程暂时无效。正在更新中。
 
 先创建类：
 
@@ -24,11 +24,12 @@ public class TestOrb : ModOrbTemplate
     // 暗色，使用球的主体色的暗色调
     public override Color DarkenedColor => new(0.1f, 0.2f, 0.5f);
 
-    // 提示文本小图标路径
-    public override string? CustomIconPath => "res://icon.svg";
-
-    // 充能球场景路径
-    public override string? CustomVisualsScenePath => "res://Test/scenes/test_orb.tscn";
+    public override OrbAssetProfile AssetProfile => new(
+        // 提示文本小图标路径
+        IconPath: "res://icon.svg",
+        // 充能球场景路径
+        VisualsScenePath: "res://Test/scenes/test_orb.tscn"
+    );
 
     // 回合开始时触发被动
     public override async Task AfterTurnStartOrbTrigger(PlayerChoiceContext choiceContext)

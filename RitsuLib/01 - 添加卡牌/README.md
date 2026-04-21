@@ -42,7 +42,9 @@ public class TestCard : ModCardTemplate
     // 是否在卡牌图鉴中显示
     private const bool shouldShowInCardLibrary = true;
 
-    public override string PortraitPath => $"res://Test/images/cards/{GetType().Name}.png";
+    public override CardAssetProfile AssetProfile => new(
+        PortraitPath: $"res://Test/images/cards/{GetType().Name}.png"
+    );
 
     // 卡牌基础数值
     protected override IEnumerable<DynamicVar> CanonicalVars => [
@@ -87,10 +89,12 @@ public class TestCard : ModCardTemplate
 
 ## 卡图
 
-和`BaseLib`一样，可以直接重写`PortraitPath`指定路径：
+可以在`AssetProfile`里指定卡图路径：
 
 ```csharp
-public override string PortraitPath => $"res://Test/images/cards/{GetType().Name}.png";
+public override CardAssetProfile AssetProfile => new(
+    PortraitPath: $"res://Test/images/cards/{GetType().Name}.png"
+);
 ```
 
 如果你按这行代码写，文件名就对应`Test/images/cards/TestCard.png`。这里的`res://Test/...`是Godot资源路径，对应的是你的资源文件夹名字。
@@ -111,7 +115,9 @@ namespace Test.Scripts;
 
 public abstract class TestCardModel : ModCardTemplate
 {
-    public override string PortraitPath => $"res://Test/images/cards/{GetType().Name}.png";
+    public override CardAssetProfile AssetProfile => new(
+        PortraitPath: $"res://Test/images/cards/{GetType().Name}.png"
+    );
 
     public TestCardModel(int energyCost, CardType type, CardRarity rarity, TargetType targetType, bool shouldShowInCardLibrary)
         : base(energyCost, type, rarity, targetType, shouldShowInCardLibrary)

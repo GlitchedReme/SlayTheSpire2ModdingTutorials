@@ -20,6 +20,14 @@ public class TestCard : CustomCardModel {} // 其他内容同等换成CustomXXXM
 public class TestCard : ModCardTemplate {} // 其他内容同等换成ModXXXTemplate
 ```
 
+## ID
+
+除了关键词，
+
+`baselib`使用`{命名空间第一段大写}-{原卡牌id}`的写法，例如`TEST-TEST_CARD`。
+
+`ritsulib`使用`{ModId}_{类别}_{原卡牌id}`的写法，例如`TEST_CARD_TEST_CARD`。
+
 ## 变量对照
 
 ### 注册与基类

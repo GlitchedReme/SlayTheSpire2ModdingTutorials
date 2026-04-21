@@ -15,6 +15,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Test.Scripts;
 
 [RegisterRelic(typeof(TestRelicPool))]
+// [RegisterCharacterStarterRelic(typeof(TestCharacter))] // 注册起始遗物
 public class TestRelic : ModRelicTemplate
 {
     // 稀有度
@@ -23,12 +24,14 @@ public class TestRelic : ModRelicTemplate
     // 遗物的数值。这里会替换本地化中的{Cards}。
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CardsVar(1)];
 
-    // 小图标（原版85x85）
-    public override string PackedIconPath => $"res://Test/images/relics/{GetType().Name}.png";
-    // 轮廓图标（原版85x85）
-    protected override string PackedIconOutlinePath => $"res://Test/images/relics/{GetType().Name}.png";
-    // 大图标（原版256x256）
-    protected override string BigIconPath => $"res://Test/images/relics/{GetType().Name}.png";
+    public override RelicAssetProfile AssetProfile => new(
+        // 小图标（原版85x85）
+        IconPath: $"res://Test/images/relics/{GetType().Name}.png",
+        // 轮廓图标（原版85x85）
+        IconOutlinePath: $"res://Test/images/relics/{GetType().Name}.png",
+        // 大图标（原版256x256）
+        BigIconPath: $"res://Test/images/relics/{GetType().Name}.png"
+    );
 
     // 每回合开始时，抽一张牌
     public override async Task AfterPlayerTurnStart(PlayerChoiceContext choiceContext, Player player)
@@ -41,6 +44,7 @@ public class TestRelic : ModRelicTemplate
 * `[RegisterRelic(typeof(TestRelicPool))]`会把遗物自动注册到指定遗物池。示例用的是自定义池；如果你要放到别的池子里，就把这里的类型改掉。
 
 * 继承的是`ModRelicTemplate`。
+* 图片资源统一放在`AssetProfile`里配置。
 
 然后放一张图片`Test/images/relics/TestRelic.png`。这里偷懒三张图片用了一样的，可以自己修改路径。
 

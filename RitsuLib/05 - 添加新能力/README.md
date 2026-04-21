@@ -23,8 +23,10 @@ public class TestPower : ModPowerTemplate
     public override PowerStackType StackType => PowerStackType.Counter;
 
     // 自定义图标路径。1:1即可。原版游戏大图256x256，小图64x64。
-    public override string? CustomIconPath => "res://Test/images/powers/test_power.png";
-    public override string? CustomBigIconPath => "res://Test/images/powers/test_power.png";
+    public override PowerAssetProfile AssetProfile => new(
+        IconPath: "res://Test/images/powers/test_power.png",
+        BigIconPath: "res://Test/images/powers/test_power.png"
+    );
 
     // 抽牌后给予玩家力量
     public override async Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
@@ -36,7 +38,7 @@ public class TestPower : ModPowerTemplate
 
 * `[RegisterPower]`会自动注册能力。
 * 继承的是`ModPowerTemplate`。
-* `CustomIconPath`和`CustomBigIconPath`分别对应能力的小图和大图。
+* `AssetProfile`里的`IconPath`和`BigIconPath`分别对应能力的小图和大图。
 * 示例演示了`AfterCardDrawn`钩子，你想监听别的时机时，直接继续重写对应方法即可。
 
 ## 文本

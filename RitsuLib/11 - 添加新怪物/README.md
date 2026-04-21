@@ -1,5 +1,3 @@
-> 由于没有场景转换，不挂脚本的写法无效。正在更新中。
-
 ## 怪物
 
 首先找地方创建你的怪物类：
@@ -40,7 +38,9 @@ public class TestMonster : ModMonsterTemplate
     private int HeavyDamage => AscensionHelper.GetValueIfAscension(AscensionLevel.DeadlyEnemies, 8, 6);
 
     // 怪物场景
-    public override string? CustomVisualsPath => "res://Test/scenes/test_monster.tscn";
+    public override MonsterAssetProfile AssetProfile => new(
+        VisualsScenePath: "res://Test/scenes/test_monster.tscn"
+    );
 
     // 如果你挂载了自己的自定义脚本，使用这个即可，不需要上面的
     // public override string? CustomVisualPath => "res://Test/scenes/test_monster.tscn";
@@ -89,7 +89,7 @@ public class TestMonster : ModMonsterTemplate
     private async Task BasicAttackMove(IReadOnlyList<Creature> targets)
     {
         // 说话
-        TalkCmd.Play(L10NMonsterLookup("TEST-TEST_MONSTER.moves.BASIC_ATTACK.banter"), Creature, VfxColor.Blue);
+        TalkCmd.Play(L10NMonsterLookup("TEST_MONSTER_TEST_MONSTER.moves.BASIC_ATTACK.banter"), Creature, VfxColor.Blue);
         await DamageCmd
             .Attack(BasicDamage)
             .FromMonster(this)
@@ -106,26 +106,38 @@ public class TestMonster : ModMonsterTemplate
 然后在你指定的位置创建`tscn`场景文件。要求和人物场景类似。底部附赠一个示例场景。
 
 > ```
-> TestCharacter (Node2D)
+> TestCharacter (NCreatureVisuals)
 > ├── Visuals (Node2D) %
 > ├── Bounds (Control) %
 > ├── IntentPos (Marker2D) %
-> └── CenterPos (Marker2D) %
+> ├── CenterPos (Marker2D) %
+> └── TalkPos (Marker2D) %
 > ```
-> <b>其中`Visuals`，`Bounds`，`IntentPos`，`CenterPos`需要右键勾选`作为唯一名称访问`，出现`%`即可。名字不要改。</b>
->
+> 
+> `(NCreatureVisuals)`表示写一个继承`NCreatureVisuals`的脚本，挂载在`TestCharacter`根节点下。如果之后写的类型你在godot里找不到，就这么做。
+> 
+> ```csharp
+> using MegaCrit.Sts2.Core.Nodes.Combat;
+> namespace Test.Scripts;
+> public partial class NTestCharacter : NCreatureVisuals
+> {
+> }
+> ```
+> 
+> <b>其中`Visuals`，`Bounds`，`IntentPos`，`CenterPos`，`TalkPos`需要右键勾选`作为唯一名称访问`，出现`%`即可。名字不要改。</b>
+> 
 > `Bounds`就是你的人物hitbox的大小，如果你觉得血条太短调整一下它的大小。
->
-> 人物显示在x轴上方。
+> 
+> * 人物显示在x轴上方。
 
 然后创建`{modId}/localization/{Language}/monsters.json`。
 
 ```json
 {
-    "TEST-TEST_MONSTER.name": "戈多", // 怪物名字
-    "TEST-TEST_MONSTER.moves.BASIC_ATTACK.title": "基础攻击", // 意图名字
-    "TEST-TEST_MONSTER.moves.BASIC_ATTACK.banter": "[jitter]接下这招！[/jitter]", // 对话文本，在意图中使用了。不用删除即可。
-    "TEST-TEST_MONSTER.moves.HEAVY_ATTACK.title": "重击"
+    "TEST_MONSTER_TEST_MONSTER.name": "戈多", // 怪物名字
+    "TEST_MONSTER_TEST_MONSTER.moves.BASIC_ATTACK.title": "基础攻击", // 意图名字
+    "TEST_MONSTER_TEST_MONSTER.moves.BASIC_ATTACK.banter": "[jitter]接下这招！[/jitter]", // 对话文本，在意图中使用了。不用删除即可。
+    "TEST_MONSTER_TEST_MONSTER.moves.HEAVY_ATTACK.title": "重击"
 }
 ```
 
@@ -186,7 +198,9 @@ public class TestMultiEncounter : ModEncounterTemplate
     public override bool IsWeak => false;
 
     // 遭遇场景（用来指定每个怪物站哪）
-    public override string? CustomEncounterScenePath => "res://Test/scenes/test_multi_encounter.tscn";
+    public override EncounterAssetProfile AssetProfile => new(
+        EncounterScenePath: "res://Test/scenes/test_multi_encounter.tscn"
+    );
 
     // 怪物槽位的名字
     public override IReadOnlyList<string> Slots => [
