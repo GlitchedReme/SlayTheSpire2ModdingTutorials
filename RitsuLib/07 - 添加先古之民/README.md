@@ -21,13 +21,17 @@ public class TestAncient : ModAncientEventTemplate
     public override Color DialogueColor => new(0.12f, 0.2f, 0.8f);
 
     // 自定义场景的路径
-    public override string? CustomBackgroundScenePath => "res://Test/scenes/test_ancient.tscn";
+    public override EventAssetProfile AssetProfile => new(
+        BackgroundScenePath: "res://Test/scenes/test_ancient.tscn"
+    );
 
     // 自定义地图图标和轮廓的路径
-    public override string? CustomMapIconPath => "res://icon.svg";
-    public override string? CustomMapIconOutlinePath => "res://icon.svg";
-    public override string? CustomRunHistoryIconPath => "res://icon.svg";
-    public override string? CustomRunHistoryIconOutlinePath => "res://icon.svg";
+    public override AncientEventPresentationAssetProfile AncientPresentationAssetProfile => new(
+        MapIconPath: "res://icon.svg",
+        MapIconOutlinePath: "res://icon.svg",
+        RunHistoryIconPath: "res://icon.svg",
+        RunHistoryIconOutlinePath: "res://icon.svg"
+    );
 
     // 固定池一和二
     private IReadOnlyList<EventOption> Pool1 => [

@@ -33,8 +33,10 @@ public class TestPotion : ModPotionTemplate
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromCard<Soul>()];
 
     // 药水图片。不一定非得是png，只要最终能被Godot当成Texture读取即可。
-    public override string? CustomImagePath => "res://icon.svg";
-    public override string? CustomOutlinePath => "res://icon.svg";
+    public override PotionAssetProfile AssetProfile => new(
+        ImagePath: "res://icon.svg",
+        OutlinePath: "res://icon.svg"
+    );
 
     // 使用时的效果逻辑，这里是创造3张灵魂到手牌中。
     protected override async Task OnUse(PlayerChoiceContext choiceContext, Creature? target)
@@ -47,7 +49,7 @@ public class TestPotion : ModPotionTemplate
 * `[RegisterPotion(typeof(TestPotionPool))]`会把药水自动注册到指定药水池。示例里用的是自定义角色药水池。
 * 继承的是`ModPotionTemplate`。
 * `CanonicalVars`、`AdditionalHoverTips`这些写法和卡牌类似。
-* `CustomImagePath`和`CustomOutlinePath`分别对应药水本体和轮廓图。
+* `AssetProfile`里的`ImagePath`和`OutlinePath`分别对应药水本体和轮廓图。
 
 然后创建`{ModId}/localization/{Language}/potions.json`。
 

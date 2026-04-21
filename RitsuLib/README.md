@@ -72,4 +72,23 @@ public class Entry
 
 ## 注册内容
 
-`RitsuLib`同时支持显式和自动注册。
+`RitsuLib`同时支持显式和自动注册。例如自动注册卡牌：
+
+```csharp
+// 注册卡牌
+[RegisterCard(typeof(TestCardPool))]
+// 注册成人物起始卡。不需要删除即可。
+[RegisterCharacterStarterCard(typeof(TestCharacter), 5)]
+public class TestCard : ModCardTemplate {}
+```
+
+或是在初始化函数中显式注册：
+
+```csharp
+RitsuLibFramework.CreateContentPack(ModId)
+    .Card<TestCardPool, TestCard>()
+    .Relic<TestRelicPool, TestRelic>()
+    .Character<TestCharacter>()
+    .ActEncounter<Glory, TestEncounter>()
+    .Apply();
+```

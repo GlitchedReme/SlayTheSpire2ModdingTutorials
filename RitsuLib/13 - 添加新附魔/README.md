@@ -31,7 +31,9 @@ public class TestEnchantment : ModEnchantmentTemplate
     protected override IEnumerable<IHoverTip> ExtraHoverTips => [HoverTipFactory.FromKeyword(CardKeyword.Retain)];
 
     // 图标位置。大小1:1就行，原版是64x64
-    public override string? CustomIconPath => "res://icon.svg";
+    public override EnchantmentAssetProfile AssetProfile => new(
+        IconPath: "res://icon.svg"
+    );
 
     // 决定是否可以附魔到某张卡牌上，这里我们让它只能附魔到获得格挡的卡牌上。
     public override bool CanEnchant(CardModel card)
