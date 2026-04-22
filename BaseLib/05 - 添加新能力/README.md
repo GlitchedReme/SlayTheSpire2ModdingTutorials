@@ -31,4 +31,4 @@ public class TestPower : CustomPowerModel
 
 然后使用`PowerCmd.Apply<TestPower>(...)`给予即可。或者使用控制台`power TEST-TEST_POWER 1 0`。
 
-![alt text](../../../images/image25.png)
+![alt text](../../images/image25.png)

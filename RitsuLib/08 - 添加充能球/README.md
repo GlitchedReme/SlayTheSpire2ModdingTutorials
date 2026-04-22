@@ -1,5 +1,3 @@
-> 该教程暂时无效。正在更新中。
-
 先创建类：
 
 ```csharp
@@ -30,6 +28,9 @@ public class TestOrb : ModOrbTemplate
         // 充能球场景路径
         VisualsScenePath: "res://Test/scenes/test_orb.tscn"
     );
+
+    // 让你不需要手动挂脚本。复制即可。
+    protected override Node2D? TryCreateOrbSprite() => RitsuGodotNodeFactories.CreateFromScenePath<Node2D>(AssetProfile.VisualsScenePath!);
 
     // 回合开始时触发被动
     public override async Task AfterTurnStartOrbTrigger(PlayerChoiceContext choiceContext)

@@ -40,7 +40,7 @@
 
 ![2](../../images/image15.png)
 
-* 打开`项目→项目设置`，把`将文本资源转换为二进制`禁用。
+* 如果遇到问题，打开`项目→项目设置`，把`将文本资源转换为二进制`禁用。
 
 ![3](../../images/image16.png)
 
@@ -92,7 +92,7 @@ public static class Entry
             var visuals = __instance.Visuals;
             if (visuals?.SpineBody == null || !visuals.HasSpineAnimation) return;
 
-            new MegaSprite(visuals.SpineBody).SetSkeletonDataRes(new MegaSkeletonDataResource(_skinData));
+            visuals.SpineBody.SetSkeletonDataRes(new MegaSkeletonDataResource(_skinData));
         }
     }
 }

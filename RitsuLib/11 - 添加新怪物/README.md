@@ -114,16 +114,6 @@ public class TestMonster : ModMonsterTemplate
 > └── TalkPos (Marker2D) %
 > ```
 > 
-> `(NCreatureVisuals)`表示写一个继承`NCreatureVisuals`的脚本，挂载在`TestCharacter`根节点下。如果之后写的类型你在godot里找不到，就这么做。
-> 
-> ```csharp
-> using MegaCrit.Sts2.Core.Nodes.Combat;
-> namespace Test.Scripts;
-> public partial class NTestCharacter : NCreatureVisuals
-> {
-> }
-> ```
-> 
 > <b>其中`Visuals`，`Bounds`，`IntentPos`，`CenterPos`，`TalkPos`需要右键勾选`作为唯一名称访问`，出现`%`即可。名字不要改。</b>
 > 
 > `Bounds`就是你的人物hitbox的大小，如果你觉得血条太短调整一下它的大小。
