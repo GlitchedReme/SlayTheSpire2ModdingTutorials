@@ -95,7 +95,7 @@ public class TestAncient : CustomAncientModel
 }
 ```
 
-![alt text](../../../images/image27.png)
+![alt text](../../images/image27.png)
 
 场景示例`test_ancient.tscn`：
 ```

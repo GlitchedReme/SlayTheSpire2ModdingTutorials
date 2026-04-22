@@ -42,6 +42,7 @@ public class TestCard : ModCardTemplate
     // 是否在卡牌图鉴中显示
     private const bool shouldShowInCardLibrary = true;
 
+    // 卡图资源
     public override CardAssetProfile AssetProfile => new(
         PortraitPath: $"res://Test/images/cards/{GetType().Name}.png"
     );
@@ -85,11 +86,12 @@ public class TestCard : ModCardTemplate
 * 想做什么样的卡牌，看原版代码哪张有类似的效果，参考即可。
 
 * 继承`ModCardTemplate`而不是`CardModel`。
-* <b>注意</b>：通过`ritsulib`添加卡牌，其id会变成`{modid}_CARD_{原卡牌id}`，例如原始卡牌id为`TEST_CARD`，是`TestCard`的大写snake-case，最后变成`TEST_TEST_CARD`。
+
+* <b>注意</b>：通过`ritsulib`添加卡牌，其id会变成`{modid}_CARD_{原卡牌id}`，例如原始卡牌id为`TEST_CARD`，是`TestCard`的大写snake-case，最后变成`TEST_CARD_TEST_CARD`。
 
 ## 卡图
 
-可以在`AssetProfile`里指定卡图路径：
+可以在`AssetProfile`变量里指定卡图路径：
 
 ```csharp
 public override CardAssetProfile AssetProfile => new(

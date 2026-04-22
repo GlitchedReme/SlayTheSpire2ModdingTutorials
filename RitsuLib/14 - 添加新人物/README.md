@@ -122,7 +122,7 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
     // 角色名称颜色
     public override Color NameColor => new(0.5f, 0.5f, 1f);
     // 能量图标轮廓颜色
-    public override Color EnergyLabelOutlineColor => new(1f, 0.1f, 0.1f);
+    public override Color EnergyLabelOutlineColor => new(0.5f, 0.5f, 1f);
 
     // 人物性别（男女中立）
     public override CharacterGender Gender => CharacterGender.Masculine;
@@ -187,9 +187,12 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
                 // ArmScissorsTexturePath: null
             )));
 
-    // 攻击和施法动画延迟
+    // 攻击和施法动画延迟，以对齐动画
     public override float AttackAnimDelay => 0f;
     public override float CastAnimDelay => 0f;
+
+    // 自动转换人物场景，让你不需要手动挂脚本。复制即可。
+    protected override NCreatureVisuals? TryCreateCreatureVisuals() => RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!);
 
     // 初始卡组，或者在卡牌类上用RegisterCharacterStarterCard就不用写这个
     // protected override IEnumerable<StartingDeckEntry> StartingDeckEntries => [
@@ -229,24 +232,12 @@ Scenes: new(
 新建一个`Node2D`类型的场景，如下：
 
 ```
-TestCharacter (NCreatureVisuals)
+TestCharacter (Node2D)
 ├── Visuals (Node2D) %
 ├── Bounds (Control) %
 ├── IntentPos (Marker2D) %
 ├── CenterPos (Marker2D) %
 └── TalkPos (Marker2D) %
-```
-
-`(NCreatureVisuals)`表示写一个继承`NCreatureVisuals`的脚本，挂载在`TestCharacter`根节点下。如果之后写的类型你在godot里找不到，就这么做。
-
-```csharp
-using MegaCrit.Sts2.Core.Nodes.Combat;
-
-namespace Test.Scripts;
-
-public partial class NTestCharacter : NCreatureVisuals
-{
-}
 ```
 
 <b>其中`Visuals`，`Bounds`，`IntentPos`，`CenterPos`，`TalkPos`需要右键勾选`作为唯一名称访问`，出现`%`即可。名字不要改。</b>
@@ -280,62 +271,13 @@ Scenes: new(
 创建一个`Control`类型的新场景，设定以下结构（*名字不能改变*）：
 
 ```
-TestEnergyCounter (NEnergyCounter)
-├── EnergyVfxBack (NParticlesContainer) %
+TestEnergyCounter (Control)
+├── EnergyVfxBack (Node2D) %
 ├── Layers (Control) %
 │   ├── Layer1 (TextureRect，或任意)
 │   └── RotationLayers (Control) %
-├── EnergyVfxFront (NParticlesContainer) %
-└── Label (MegaLabel)
-```
-
-`NTestEnergyCounter`的脚本：
-
-```csharp
-using MegaCrit.Sts2.Core.Nodes.Combat;
-
-namespace Test.Scripts;
-
-public partial class NTestEnergyCounter : NEnergyCounter
-{
-}
-```
-
-`NTestParticlesContainer`的脚本：
-
-```csharp
-using Godot;
-using Godot.Collections;
-using HarmonyLib;
-using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
-
-namespace Test.Scripts;
-
-public partial class NTestParticlesContainer : NParticlesContainer
-{
-    public override void _Ready()
-    {
-        base._Ready();
-        Traverse.Create(this).Field("_particles").SetValue(new Array<GpuParticles2D>()); // 因为原版用了Export，编辑器里无法设置，只能反射更改。
-    }
-}
-```
-
-`TestMegaLabel`脚本（给`Label`节点用）：
-
-```csharp
-using MegaCrit.Sts2.addons.mega_text;
-
-namespace Test.Scripts;
-
-public partial class TestMegaLabel : MegaLabel
-{
-    public override void _Ready()
-    {
-        MaxFontSize = 36; // 自主设置能量表盘字体大小
-        MinFontSize = 30;
-    }
-}
+├── EnergyVfxFront (Node2D) %
+└── Label (Label)
 ```
 
 * 后面标`%`的需要作为唯一名称访问。名字不要改，label也是。
