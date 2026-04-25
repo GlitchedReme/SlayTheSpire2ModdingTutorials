@@ -44,6 +44,8 @@ public class TestCard : ModCardTemplate {} // 其他内容同等换成ModXXXTemp
 | 卡牌注册 | `[Pool(typeof(TestCardPool))]` | `[RegisterCard(typeof(TestCardPool))]` |
 | 遗物注册 | `[Pool(typeof(TestRelicPool))]` | `[RegisterRelic(typeof(TestRelicPool))]` |
 | 药水注册 | `[Pool(typeof(TestPotionPool))]` | `[RegisterPotion(typeof(TestPotionPool))]` |
+| 事件注册 | 不用 | `[RegisterSharedEvent]` `[RegisterActEvent(typeof(XXX))]` |
+| 先古之民注册 | 不用 | `[RegisterSharedAncient]` `[RegisterActAncient(typeof(XXX))]` |
 | 卡牌基类 | `CustomCardModel` | `ModCardTemplate` |
 | 遗物基类 | `CustomRelicModel` | `ModRelicTemplate` |
 | 药水基类 | `CustomPotionModel` | `ModPotionTemplate` |
@@ -131,7 +133,21 @@ public class TestCard : ModCardTemplate {} // 其他内容同等换成ModXXXTemp
 
 `ritsulib`:
 
-在你的`Init`初始化函数中加上：
+给你待变化的卡牌类或者遗物类加上这两个特性：
+
+```csharp
+[RegisterCard(typeof(TestCardPool))]
+[RegisterArchaicToothTranscendence(typeof(Shiv))] // 让古老牙齿把这张牌变化成指定类型
+public class TestCard : ModCardTemplate {}
+```
+
+```csharp
+[RegisterRelic(typeof(TestRelicPool))]
+[RegisterTouchOfOrobasRefinement(typeof(Akabeko))] // 让欧洛巴斯之触把这个遗物变化成指定类型
+public class TestRelic : ModRelicTemplate {}
+```
+
+或者在你的`Init`初始化函数中加上：
 
 ```csharp
 public static void Init()

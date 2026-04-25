@@ -34,7 +34,7 @@ namespace Test.Scripts;
 
 // 注册卡牌
 [RegisterCard(typeof(TestCardPool))]
-// 注册成人物起始卡。不需要删除即可。
+// 注册成人物起始卡，后面是数量。不需要删除即可。
 [RegisterCharacterStarterCard(typeof(TestCharacter), 5)]
 public class TestCard : ModCardTemplate
 {
@@ -122,6 +122,8 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Test.Scripts;
 
+// 设置Inherit为true允许自动注册该类的所有子类
+[RegisterCard(typeof(TestCardPool), Inherit = true)]
 public abstract class TestCardModel : ModCardTemplate
 {
     public override CardAssetProfile AssetProfile => new(

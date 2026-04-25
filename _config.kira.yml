@@ -78,6 +78,10 @@ docsTree:
                                     path: /docs/04-ritsulib/04-08-add-orb/,
                                 },
                                 {
+                                    title: 09 添加时间线,
+                                    path: /docs/04-ritsulib/04-09-add-timeline/,
+                                },
+                                {
                                     title: 11 添加新怪物,
                                     path: /docs/04-ritsulib/04-11-add-monster/,
                                 },

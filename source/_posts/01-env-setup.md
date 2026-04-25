@@ -42,6 +42,12 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 选择一个文本编辑器。可以使用[Visual Studio Code](https://code.visualstudio.com/)或者[Rider](https://www.jetbrains.com/zh-cn/rider/download/?section=windows)（<b>强烈推荐</b>新手使用Rider）。另外也可以使用Visual Studio等其他 IDE。以下只介绍 VS Code 的配置方法。
 
+<b>强烈推荐</b>新手使用Rider
+
+<b>强烈推荐</b>新手使用Rider
+
+<b>强烈推荐</b>新手使用Rider
+
 ## 安装VS Code插件（可选）
 
 安装[C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)。你还可以安装[Godot Tools](https://marketplace.visualstudio.com/items?itemName=geequlim.godot-tools)等插件。
