@@ -5,8 +5,8 @@
 * 新建一个类：
 
 ```csharp
-[RegisterOwnedCardKeyword(nameof(Unique), LocKeyPrefix = "TEST_UNIQUE", IconPath = "res://icon.svg")]
-// [RegisterOwnedCardKeyword(nameof(Unique2), LocKeyPrefix = "TEST_UNIQUE2", IconPath = "res://icon.svg")] // 如果要加更多关键词，添加特性
+[RegisterOwnedCardKeyword(nameof(Unique), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
+// [RegisterOwnedCardKeyword(nameof(Unique2), IconPath = "res://icon.svg")] // 如果要加更多关键词，添加特性
 public class MyKeywords
 {
     public static readonly string Unique = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Unique));
@@ -14,12 +14,16 @@ public class MyKeywords
 }
 ```
 
-* 添加一个本地化文件，`{modId}/localization/{Language}/card_keywords.json`。使用的键是我们定义的`LocKeyPrefix`。
+* `CardDescriptionPlacement`代表这个关键词的描述加在卡牌的位置。`BeforeCardDescription`表示在描述之前。默认不显示。
+
+* `IconPath`和`CardDescriptionPlacement`都是可选的。
+
+* 添加一个本地化文件，`{modId}/localization/{Language}/card_keywords.json`。使用的键是`TEST_KEYWORD_{id大写}`。
 
 ```json
 {
-    "TEST_UNIQUE.description": "卡组中只能有一张同名牌。",
-    "TEST_UNIQUE.title": "唯一"
+    "TEST_KEYWORD_UNIQUE.description": "卡组中只能有一张同名牌。",
+    "TEST_KEYWORD_UNIQUE.title": "唯一"
 }
 ```
 
