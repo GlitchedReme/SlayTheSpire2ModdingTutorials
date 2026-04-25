@@ -20,7 +20,7 @@
 | 血条覆盖层(中毒灾厄) | ✅ | ✅ | - |
 | 不挂载脚本场景转换 | ✅ | ✅ | - |
 | 人物非spine动画兼容 | ✅ | ✅ | - |
-| customenum | ✅ | ❌ | baselib支持对任意enum扩展；ritsulib不支持，但统一管理（例如关键词） |
+| customenum | ✅ | ❌ | baselib支持对任意enum扩展；<br>ritsulib不支持，但统一管理（例如关键词） |
 | 一代本地化符号 | ✅ | ❌ | * |
 | FMOD音频 | 🚧 | ✅ | - |
 | 缺少资源时占位警告 | ❌ | ✅ | - |
@@ -32,7 +32,7 @@
 | 卡牌支持AnyPlayer | ❌ | ✅ | - |
 | 快捷键绑定 | ❌ | ✅ | - |
 | 新牌堆 | ❌ | ✅ | - |
-| 内容物ID | 命名空间第一段大写，例如`TEST-TEST_CARD` | modid与分类，例如`TEST_CARD_TEST_CARD` | - |
+| 内容物ID | 命名空间第一段大写，<br>例如`TEST-TEST_CARD` | modid与分类，<br>例如`TEST_CARD_TEST_CARD` | - |
 | patch | 原始`harmony` | 原始`harmony`以及封装patch系统 | - |
 | 非原生玩法内容 | 有 | 无 | 避免重复造轮子。但是会带来臃肿不兼容、抢占patch、抢占你的命名的问题。 |
 
