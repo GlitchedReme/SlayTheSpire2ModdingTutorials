@@ -126,6 +126,8 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
     public override Color NameColor => new(0.5f, 0.5f, 1f);
     // 能量图标轮廓颜色
     public override Color EnergyLabelOutlineColor => new(0.5f, 0.5f, 1f);
+    // 地图绘制颜色
+    public override Color MapDrawingColor => new(0.5f, 0.5f, 1f);
 
     // 人物性别（男女中立）
     public override CharacterGender Gender => CharacterGender.Masculine;
@@ -194,6 +196,9 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
     public override float AttackAnimDelay => 0f;
     public override float CastAnimDelay => 0f;
 
+    // 如果你的人物不需要时间线小故事，加上这句。
+    // public override bool RequiresEpochAndTimeline => false;
+
     // 自动转换人物场景，让你不需要手动挂脚本。复制即可。
     protected override NCreatureVisuals? TryCreateCreatureVisuals() => RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!);
 
@@ -252,6 +257,8 @@ TestCharacter (Node2D)
 
 ![alt text](../../images/image18.png)
 
+* 附赠资源提供了一个单图尽可能覆盖全屏的场景，只要把图片换成你的人物背景图即可。
+
 ### 人物动画
 
 * 其中`Visuals`可以更改成任意继承了`Node2D`的类型，例如`SpineSprite`，`Sprite2D`，`AnimatedSprite2D`或是`AnimationPlayer`，或者在它之下新建节点都可。
@@ -271,6 +278,7 @@ Scenes: new(
 ```
 
 * 建议从原版或者下面的附赠资源处复制一份tscn快速开始。
+
 创建一个`Control`类型的新场景，设定以下结构（*名字不能改变*）：
 
 ```
@@ -292,7 +300,7 @@ TestEnergyCounter (Control)
 
 ## 自定义商店模型
 
-`AssetProfile`里的：
+修改`AssetProfile`里的：
 
 ```csharp
 Scenes: new(
@@ -308,7 +316,7 @@ TestCharacterMerchant (Node2D)
 
 * 如果你使用Spine模型，第一个子节点放置`SpineSprite`，且动画名是`relaxed_loop`。
 
-* 如果你使用其他动画，创建一个继承了`NMerchantCharacter`的节点，并在`_Ready`函数里播放你自己的动画。
+* 如果你使用其他动画，创建一个继承了`NMerchantCharacter`的节点，并在`_Ready`函数里播放你自己的动画。静态图就不需要了。
 
 ```csharp
 using MegaCrit.Sts2.Core.Nodes.Screens.Shops;
@@ -322,6 +330,35 @@ public partial class NTestMerchantCharacter : NMerchantCharacter
     }
 }
 ```
+
+## 自定义火堆模型
+
+修改`AssetProfile`里的：
+
+```csharp
+Scenes: new(
+    RestSiteAnimPath: "res://RitsuTest/scenes/test_character_rest_site.tscn"
+)
+```
+* 建议从原版或者下面的附赠资源处复制一份tscn快速开始。
+
+创建一个`Node2D`类型的新场景，设定以下结构：
+
+```
+TestCharacterRestSite (Node2D)
+├── Node (任意)
+└── ControlRoot (Control) %
+    ├── SelectionReticle (Control) %
+    ├── Hitbox (Control) %
+    ├── ThoughtBubbleRight (Control) %
+    └── ThoughtBubbleLeft (Control) %
+```
+
+* 自行更换`Node`的类型制作动画，也可以添加更多节点。人物朝向右边。
+
+* 如果你使用spine模型，代码会找到所有是SpineSprite类型的节点，根据当前幕数播放`overgrowth_loop`、`hive_loop`或者`glory_loop`动画。这些动画的区别只是光照颜色不同。
+
+* 如果你使用其他动画，只要把Node换成你的类型就行了。可以创建一个自定义脚本（继承`NRestSiteCharacter`）然后自行播放动画。
 
 ## 本地化文件
 
@@ -477,11 +514,12 @@ public partial class NTestMerchantCharacter : NMerchantCharacter
     <img src="../../images/energy_test_big.png" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
 </div>
 
-`test_bg.tscn`:
+### test_bg.tscn
+
 ```tscn
 [gd_scene load_steps=2 format=3 uid="uid://cejqjeipgqe0n"]
 
-[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_c8lhi"]
+[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_c8lhi"]
 
 [node name="TestBg" type="Control"]
 layout_mode = 3
@@ -490,15 +528,29 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -1790.0
-offset_top = -1043.0
-offset_right = 1790.0
-offset_bottom = 1043.0
+offset_left = -960.0
+offset_top = -540.0
+offset_right = 1600.0
+offset_bottom = 660.0
 grow_horizontal = 2
 grow_vertical = 2
-metadata/_edit_lock_ = true
+pivot_offset = Vector2(1280, 600)
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="Control" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1280.0
+offset_top = -600.0
+offset_right = 640.0
+offset_bottom = 478.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -506,20 +558,21 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.44705883, 0.49803922, 1, 1)
-metadata/_edit_lock_ = true
 
-[node name="Icon" type="TextureRect" parent="."]
+[node name="Icon" type="TextureRect" parent="Control"]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1774.0
-offset_top = 792.0
-offset_right = -1259.0
-offset_bottom = -747.0
+offset_left = -28.0
+offset_top = 67.0
+offset_right = 612.0
+offset_bottom = 189.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.82, 0.82)
 texture = ExtResource("1_c8lhi")
+expand_mode = 1
 
 [node name="ash1" type="CPUParticles2D" parent="."]
 position = Vector2(1832, -17)
@@ -553,7 +606,8 @@ scale_amount_max = 10.0
 color = Color(0.121879734, 0.15283081, 0.33476263, 1)
 ```
 
-`test_character.tscn`:
+### test_character.tscn
+
 ```tscn
 [gd_scene load_steps=3 format=3 uid="uid://c4dnpxxd6ldei"]
 
@@ -589,7 +643,7 @@ unique_name_in_owner = true
 position = Vector2(0, -144)
 ```
 
-`test_energy_counter.tscn`:
+### test_energy_counter.tscn
 
 ```tscn
 [gd_scene load_steps=5 format=3 uid="uid://cs3a5onikvhi4"]
@@ -665,4 +719,69 @@ text = "3/3"
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("4_ea8ix")
+```
+
+### test_character_merchant.tscn
+```tscn
+[gd_scene load_steps=2 format=3 uid="uid://pdy0teckf4i"]
+
+[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_diepv"]
+
+[node name="IroncladMerchant" type="Node2D"]
+
+[node name="Icon" type="Sprite2D" parent="."]
+texture = ExtResource("1_diepv")
+```
+
+### test_character_rest_site.tscn
+```tscn
+[gd_scene load_steps=2 format=3 uid="uid://bkft7e41sjfud"]
+
+[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_74iws"]
+
+[node name="TestCharacterRestSite" type="Node2D"]
+
+[node name="Sprite" type="Sprite2D" parent="."]
+texture = ExtResource("1_74iws")
+
+[node name="Sprite2" type="Sprite2D" parent="."]
+position = Vector2(75, -58)
+texture = ExtResource("1_74iws")
+
+[node name="ControlRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="SelectionReticle" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -153.0
+offset_top = -350.0
+offset_right = 267.0
+offset_bottom = 320.0
+
+[node name="Hitbox" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -155.0
+offset_top = -165.0
+offset_right = 154.0
+offset_bottom = 166.0
+
+[node name="ThoughtBubbleRight" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 121.0
+offset_top = -125.0
+offset_right = 121.0
+offset_bottom = -125.0
+
+[node name="ThoughtBubbleLeft" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -113.0
+offset_top = -95.0
+offset_right = -113.0
+offset_bottom = -95.0
+
 ```

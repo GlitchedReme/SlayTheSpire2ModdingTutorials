@@ -24,7 +24,7 @@ Godot自带命令行参数： https://docs.godotengine.org/zh-cn/4.x/tutorials/e
 
 复制出两个新的`bat`，其中一个添加`--fastmp=host`参数，作为主机，另一个添加`--fastmp=join --clientId=1001`参数，作为非主机玩家。当然你可以添加更多，记得修改`clientId`。
 
-如果提示不是通过steam启动，在根目录创建一个`steam_appid.txt`，里面写`2868840`，然后双击修改的bat文件运行即可以一个能输出log的命令行的方式打开游戏。或者添加`--force-steam=off`参数。
+如果提示不是通过steam启动，在根目录创建一个`steam_appid.txt`，里面写`2868840`，然后双击修改的bat文件运行即可。或者添加`--force-steam=off`参数。
 
 如果你打完一层遇到保存问题，记得以管理员模式启动bat。
 
