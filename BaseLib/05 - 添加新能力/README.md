@@ -16,6 +16,7 @@ public class TestPower : CustomPowerModel
     public override async Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
     {
         await PowerCmd.Apply<StrengthPower>(Owner, Amount, Owner, null);
+        // await PowerCmd.Apply<StrengthPower>(choiceContext, Owner, Amount, Owner, null); // 测试版
     }
 }
 ```
