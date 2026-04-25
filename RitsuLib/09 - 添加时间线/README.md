@@ -156,6 +156,22 @@ public sealed class TestAscensionOneEpoch : PackDeclaredCardUnlockEpochTemplate
 }
 ```
 
+## 使用
+
+然后需要在你的人物类上加上这些特性用于注册：
+
+```csharp
+[RegisterCharacter]
+[RequireEpoch(typeof(TestEpoch))]
+[UnlockEpochAfterRunAs(typeof(TestCardEpoch))]
+[UnlockEpochAfterWinAs(typeof(TestVictoryEpoch))]
+[UnlockEpochAfterEliteVictories(typeof(TestEliteEpoch))]
+[UnlockEpochAfterBossVictories(typeof(TestBossEpoch))]
+[UnlockEpochAfterAscensionOneWin(typeof(TestAscensionOneEpoch))]
+[RevealAscensionAfterEpoch(typeof(TestVictoryEpoch))]
+public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, TestPotionPool> {}
+```
+
 ## 文本
 
 然后创建`{modId}/localization/{Language}/epochs.json`。
