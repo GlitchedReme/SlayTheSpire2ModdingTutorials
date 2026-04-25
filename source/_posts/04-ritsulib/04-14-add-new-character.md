@@ -41,6 +41,9 @@ public class TestCardPool : TypeListCardPoolModel
     public override Color DeckEntryCardColor => new(0.5f, 0.5f, 1f);
     // 能量表盘文字轮廓颜色
     public override Color EnergyOutlineColor => new(0.5f, 0.5f, 1f);
+    // 如果你想用原版卡框换色，加这两行。这里是hsv而不是rgb颜色
+    private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateHsvShaderMaterial(0.67f, 0.5f, 1f);
+    public override Material? PoolFrameMaterial => _poolFrameMaterial;
 
     // 卡池是否是无色。例如事件、状态等卡池就是无色的。
     public override bool IsColorless => false;
@@ -129,7 +132,7 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
     // 角色名称颜色
     public override Color NameColor => new(0.5f, 0.5f, 1f);
     // 能量图标轮廓颜色
-    public override Color EnergyLabelOutlineColor => new(1f, 0.1f, 0.1f);
+    public override Color EnergyLabelOutlineColor => new(0.5f, 0.5f, 1f);
 
     // 人物性别（男女中立）
     public override CharacterGender Gender => CharacterGender.Masculine;
@@ -194,9 +197,12 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
                 // ArmScissorsTexturePath: null
             )));
 
-    // 攻击和施法动画延迟
+    // 攻击和施法动画延迟，以对齐动画
     public override float AttackAnimDelay => 0f;
     public override float CastAnimDelay => 0f;
+
+    // 自动转换人物场景，让你不需要手动挂脚本。复制即可。
+    protected override NCreatureVisuals? TryCreateCreatureVisuals() => RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!);
 
     // 初始卡组，或者在卡牌类上用RegisterCharacterStarterCard就不用写这个
     // protected override IEnumerable<StartingDeckEntry> StartingDeckEntries => [
@@ -221,7 +227,7 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
 
 没什么要求，Godot里创建一个新的场景，类型为`Control`，自己搭建场景即可。参考：（根节点大小建议为2560x1200，可从最下方复制tscn资源）
 
-![人物背景](../../../../images/image17.png)
+![人物背景](../../images/image17.png)
 
 ## 自定义人物
 
@@ -236,24 +242,12 @@ Scenes: new(
 新建一个`Node2D`类型的场景，如下：
 
 ```
-TestCharacter (NCreatureVisuals)
+TestCharacter (Node2D)
 ├── Visuals (Node2D) %
 ├── Bounds (Control) %
 ├── IntentPos (Marker2D) %
 ├── CenterPos (Marker2D) %
 └── TalkPos (Marker2D) %
-```
-
-`(NCreatureVisuals)`表示写一个继承`NCreatureVisuals`的脚本，挂载在`TestCharacter`根节点下。如果之后写的类型你在godot里找不到，就这么做。
-
-```csharp
-using MegaCrit.Sts2.Core.Nodes.Combat;
-
-namespace Test.Scripts;
-
-public partial class NTestCharacter : NCreatureVisuals
-{
-}
 ```
 
 <b>其中`Visuals`，`Bounds`，`IntentPos`，`CenterPos`，`TalkPos`需要右键勾选`作为唯一名称访问`，出现`%`即可。名字不要改。</b>
@@ -263,7 +257,7 @@ public partial class NTestCharacter : NCreatureVisuals
 * 人物显示在x轴上方。
 * 如果想使用3d模型，新建`visuals→subviewportcontainer→subviewport`的层级结构，然后在`subviewport`中添加`camera3d`和任意3d模型，在3d视图中调整视角至2d视图正常显示。最后设置`subviewport`的`transparent`为`true`。
 
-![alt text](../../../../images/image18.png)
+![alt text](../../images/image18.png)
 
 ### 人物动画
 
@@ -287,68 +281,19 @@ Scenes: new(
 创建一个`Control`类型的新场景，设定以下结构（*名字不能改变*）：
 
 ```
-TestEnergyCounter (NEnergyCounter)
-├── EnergyVfxBack (NParticlesContainer) %
+TestEnergyCounter (Control)
+├── EnergyVfxBack (Node2D) %
 ├── Layers (Control) %
 │   ├── Layer1 (TextureRect，或任意)
 │   └── RotationLayers (Control) %
-├── EnergyVfxFront (NParticlesContainer) %
-└── Label (MegaLabel)
-```
-
-`NTestEnergyCounter`的脚本：
-
-```csharp
-using MegaCrit.Sts2.Core.Nodes.Combat;
-
-namespace Test.Scripts;
-
-public partial class NTestEnergyCounter : NEnergyCounter
-{
-}
-```
-
-`NTestParticlesContainer`的脚本：
-
-```csharp
-using Godot;
-using Godot.Collections;
-using HarmonyLib;
-using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
-
-namespace Test.Scripts;
-
-public partial class NTestParticlesContainer : NParticlesContainer
-{
-    public override void _Ready()
-    {
-        base._Ready();
-        Traverse.Create(this).Field("_particles").SetValue(new Array<GpuParticles2D>()); // 因为原版用了Export，编辑器里无法设置，只能反射更改。
-    }
-}
-```
-
-`TestMegaLabel`脚本（给`Label`节点用）：
-
-```csharp
-using MegaCrit.Sts2.addons.mega_text;
-
-namespace Test.Scripts;
-
-public partial class TestMegaLabel : MegaLabel
-{
-    public override void _Ready()
-    {
-        MaxFontSize = 36; // 自主设置能量表盘字体大小
-        MinFontSize = 30;
-    }
-}
+├── EnergyVfxFront (Node2D) %
+└── Label (Label)
 ```
 
 * 后面标`%`的需要作为唯一名称访问。名字不要改，label也是。
 * RotationLayers里放需要旋转的图层。没有也行。
 
-![alt text](../../../../images/image19.png)
+![alt text](../../images/image19.png)
 
 *仅供参考，我这没挂脚本，需要挂脚本*
 
@@ -528,15 +473,15 @@ public partial class NTestMerchantCharacter : NMerchantCharacter
 }
 ```
 
-![alt text](../../../../images/image20.png)
+![alt text](../../images/image20.png)
 
 ## 附赠资源
 
 <div style="display:flex; gap:8px; flex-wrap:nowrap;">
-    <img src="../../../../images/image21.png" alt="image21" style="width:24%;" />
-    <img src="../../../../images/image22.png" alt="image22" style="width:24%;" />
-    <img src="../../../../images/energy_test.png" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
-    <img src="../../../../images/energy_test_big.png" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../images/image21.png" alt="image21" style="width:24%;" />
+    <img src="../../images/image22.png" alt="image22" style="width:24%;" />
+    <img src="../../images/energy_test.png" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../images/energy_test_big.png" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
 </div>
 
 `test_bg.tscn`:

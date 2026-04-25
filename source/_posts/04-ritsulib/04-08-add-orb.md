@@ -5,8 +5,6 @@ permalink: docs/04-ritsulib/04-08-add-orb/
 categories:
 - Basics
 ---
-> 该教程暂时无效。正在更新中。
-
 先创建类：
 
 ```csharp
@@ -37,6 +35,9 @@ public class TestOrb : ModOrbTemplate
         // 充能球场景路径
         VisualsScenePath: "res://Test/scenes/test_orb.tscn"
     );
+
+    // 让你不需要手动挂脚本。复制即可。
+    protected override Node2D? TryCreateOrbSprite() => RitsuGodotNodeFactories.CreateFromScenePath<Node2D>(AssetProfile.VisualsScenePath!);
 
     // 回合开始时触发被动
     public override async Task AfterTurnStartOrbTrigger(PlayerChoiceContext choiceContext)
@@ -73,7 +74,7 @@ public class TestOrb : ModOrbTemplate
 
 使用`await OrbCmd.Channel<TestOrb>(choiceContext, cardPlay.Card.Owner)`以生成。
 
-![alt text](../../../../images/image28.png)
+![alt text](../../images/image28.png)
 
 `test_orb.tscn`:
 

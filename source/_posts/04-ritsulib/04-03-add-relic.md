@@ -55,7 +55,7 @@ public class TestRelic : ModRelicTemplate
 
 然后放一张图片`Test/images/relics/TestRelic.png`。这里偷懒三张图片用了一样的，可以自己修改路径。
 
-![示例遗物](../../../../images/image13.png)
+![示例遗物](../../images/image13.png)
 
 然后写一个本地化文件，`{modId}/localization/{Language}/relics.json`。
 

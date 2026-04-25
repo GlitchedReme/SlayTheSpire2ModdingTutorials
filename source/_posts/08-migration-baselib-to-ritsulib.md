@@ -146,4 +146,4 @@ public static void Init()
 
 `baselib`已支持大部分场景自动转换，即你不需要挂载任何脚本或唯一化命名。
 
-`ritsulib`不支持场景自动转换。你需要查看一个原版的场景，给你的挂上相同类型的脚本（继承对应类型然后挂上）。具体参考对应的章节。
+`ritsulib`支持半自动转换，例如角色类里重载`TryCreateCreatureVisuals`。能量表盘全自动转换。

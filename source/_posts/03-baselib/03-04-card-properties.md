@@ -37,7 +37,7 @@ public class MyKeywords
     public override IEnumerable<CardKeyword> CanonicalKeywords => [MyKeywords.Unique];
 ```
 
-![alt text](../../../../../images/image23.png)
+![alt text](../../images/image23.png)
 
 ## 添加新动态变量
 
@@ -76,7 +76,7 @@ public class MyKeywords
 `:diff()`表示这个值一旦和基础值不同，就会变红色或绿色（例如升级时增加数值，预览变成绿色）。
 
 
-![alt text](../../../../../images/image26.png)
+![alt text](../../images/image26.png)
 
 ## 添加卡牌提示文本
 

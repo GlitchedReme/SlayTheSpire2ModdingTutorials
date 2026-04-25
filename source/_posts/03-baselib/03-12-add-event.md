@@ -125,7 +125,7 @@ public sealed class TestEvent : CustomEventModel
 
 ```
 
-![alt text](../../../../../images/image33.png)
+![alt text](../../images/image33.png)
 
 ## 战斗事件
 

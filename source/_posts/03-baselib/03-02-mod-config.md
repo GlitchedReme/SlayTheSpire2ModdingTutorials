@@ -64,6 +64,6 @@ public sealed class TestModConfig : SimpleModConfig
 
 ```
 
-![示例配置](../../../../../images/image12.png)
+![示例配置](../../images/image12.png)
 
 更多请参考`baselib`的`BaseLib.Config`下的类。

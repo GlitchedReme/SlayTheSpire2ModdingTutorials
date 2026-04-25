@@ -131,7 +131,7 @@ public sealed class TestEvent : ModEventTemplate
 
 ```
 
-![alt text](../../../../images/image33.png)
+![alt text](../../images/image33.png)
 
 ## 战斗事件
 

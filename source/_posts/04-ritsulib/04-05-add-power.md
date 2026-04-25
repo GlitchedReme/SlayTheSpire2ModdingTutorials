@@ -39,6 +39,7 @@ public class TestPower : ModPowerTemplate
     public override async Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
     {
         await PowerCmd.Apply<StrengthPower>(Owner, Amount, Owner, null);
+        // await PowerCmd.Apply<StrengthPower>(choiceContext, Owner, Amount, Owner, null); // 测试版
     }
 }
 ```
@@ -64,7 +65,7 @@ public class TestPower : ModPowerTemplate
 
 然后使用`PowerCmd.Apply<TestPower>(...)`给予即可。或者使用控制台`power TEST_POWER_TEST_POWER 1 0`。
 
-![alt text](../../../../images/image25.png)
+![alt text](../../images/image25.png)
 
 ## 最终项目参考
 

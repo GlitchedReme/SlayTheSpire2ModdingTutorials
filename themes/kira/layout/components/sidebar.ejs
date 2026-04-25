@@ -146,6 +146,30 @@
 		var folders = tree.querySelectorAll('.kira-explorer-node.is-folder');
 		var indicator = tree.querySelector('.kira-explorer-hover-indicator');
 		var foldAnimTimer = null;
+		var storageKey = 'kira:docs-tree:open-state';
+		var storedFolderState = readFolderState();
+
+		function readFolderState() {
+			try {
+				var raw = window.localStorage ? localStorage.getItem(storageKey) : null;
+				return raw ? JSON.parse(raw) : null;
+			} catch (error) {
+				return null;
+			}
+		}
+
+		function writeFolderState() {
+			try {
+				if (!window.localStorage) return;
+				var state = {};
+				folders.forEach(function (folder) {
+					var nodeId = folder.getAttribute('data-node-id');
+					if (nodeId) state[nodeId] = folder.classList.contains('is-open');
+				});
+				localStorage.setItem(storageKey, JSON.stringify(state));
+			} catch (error) {
+			}
+		}
 
 		function getChildrenBox(folder) {
 			return folder.querySelector(':scope > .kira-explorer-children');
@@ -199,13 +223,14 @@
 			}, 520);
 		}
 
-		function setFolderOpen(folder, shouldOpen, animate) {
+		function setFolderOpen(folder, shouldOpen, animate, persist) {
 			if (!folder) return;
 			if (animate) triggerFoldAnimationWindow();
 			updateChildrenHeight(folder);
 			folder.classList.toggle('is-open', shouldOpen);
 			var btn = folder.querySelector(':scope > .kira-explorer-row .kira-explorer-toggle');
 			if (btn) btn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+			if (persist !== false) writeFolderState();
 			requestAnimationFrame(function () {
 				refreshAncestorHeights(folder);
 				requestAnimationFrame(function () {
@@ -219,13 +244,19 @@
 			while (parent && parent !== tree) {
 				if (parent.classList && parent.classList.contains('kira-explorer-children')) {
 					var folderNode = parent.closest('.kira-explorer-node.is-folder');
-					if (folderNode) setFolderOpen(folderNode, true, false);
+					if (folderNode) setFolderOpen(folderNode, true, false, false);
 				}
 				parent = parent.parentElement;
 			}
 		}
 
 		folders.forEach(function (folder) {
+			var nodeId = folder.getAttribute('data-node-id');
+			if (storedFolderState && Object.prototype.hasOwnProperty.call(storedFolderState, nodeId)) {
+				folder.classList.toggle('is-open', !!storedFolderState[nodeId]);
+				var btn = folder.querySelector(':scope > .kira-explorer-row .kira-explorer-toggle');
+				if (btn) btn.setAttribute('aria-expanded', storedFolderState[nodeId] ? 'true' : 'false');
+			}
 			updateChildrenHeight(folder);
 			var children = getChildrenBox(folder);
 			if (children) {

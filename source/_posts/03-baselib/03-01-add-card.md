@@ -69,7 +69,9 @@ public class TestCard : CustomCardModel
 * 想做什么样的卡牌，看原版代码哪张有类似的效果，参考即可。
 
 * 添加一个`Pool`的attribute，并指定要添加的颜色卡池，然后会自动注册。
+
 * 继承`CustomCardModel`而不是`CardModel`。
+
 * <b>注意</b>：通过`baselib`添加卡牌，其id会变成`{命名空间第一段大写}-{原卡牌id}`，例如`namespace Test.Scripts;`取`TEST`，原始卡牌id为`TEST-CARD`，是`TestCard`的大写snake-case，最后变成`TEST-TEST_CARD`。
 
 ## 卡图
@@ -102,7 +104,7 @@ public class TestCard : TestCardModel
 }
 ```
 
-![示例卡图](../../../../../images/image10.png)
+![示例卡图](../../images/image10.png)
 
 你也可以通过新增一个`abstract`类，避免每张卡都写一遍卡图路径，并且方便管理一些自定义功能。
 
@@ -138,7 +140,7 @@ public class TestCard : TestCardModel {}
 
 按`~`打开控制台输入`card TEST-TEST_CARD`获得这张卡。
 
-![示例卡牌](../../../../../images/image11.png)
+![示例卡牌](../../images/image11.png)
 
 ## 最终项目参考
 
