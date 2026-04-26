@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Cards.DynamicVars;
@@ -26,9 +27,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Test.Scripts;
 
 // 注册卡牌
-[RegisterCard(typeof(TestCardPool))]
+[RegisterCard(typeof(ColorlessCardPool))]
 // 注册成人物起始卡，后面是数量。不需要删除即可。
-[RegisterCharacterStarterCard(typeof(TestCharacter), 5)]
+// [RegisterCharacterStarterCard(typeof(TestCharacter), 5)]
 public class TestCard : ModCardTemplate
 {
     // 基础耗能
@@ -73,7 +74,7 @@ public class TestCard : ModCardTemplate
 }
 ```
 
-* `[RegisterCard(typeof(TestCardPool))]`会把这张卡自动注册进指定卡池。
+* `[RegisterCard(typeof(ColorlessCardPool))]`会把这张卡自动注册进指定卡池。这里是无色卡池。
 
 * `[RegisterCharacterStarterCard(typeof(TestCharacter), 5)]`会把它自动登记成该角色的起始卡组内容。如果你不是做起始卡，删掉这行即可。
 
