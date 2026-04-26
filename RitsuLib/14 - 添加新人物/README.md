@@ -265,7 +265,7 @@ TestCharacter (Node2D)
 
 * 如果要自然支持Spine播放，需要把`Visuals`改成`SpineSprite`，且你的战斗人物模型需要有`idle_loop`（待机循环），`attack`（攻击动作），`cast`（能力卡动作），`hurt`（受伤），`die`（死亡）这些动画名。（如果你没有`SpineSprite`，参考`卡图&皮肤替换`一章先下载`Spine Godot Extension`。）
 
-* 非Spine需要自己Patch播放动画。（RitsuLib暂不支持，TODO）
+* 非Spine需要使用动画状态机，详见`动画状态机`一章。（TODO）
 
 ## 自定义能量表盘
 
