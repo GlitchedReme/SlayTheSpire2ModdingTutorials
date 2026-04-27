@@ -10,7 +10,7 @@ public enum FjordMosaicMode
     Gamma
 }
 
-[HoverTipsByDefault]
+[ConfigHoverTipsByDefault]
 public sealed class TestModConfig : SimpleModConfig
 {
     [ConfigSection("NimbusWard")]
@@ -18,8 +18,7 @@ public sealed class TestModConfig : SimpleModConfig
 
     public static double PlinthKiteVolume { get; set; } = 2.5;
 
-    [SliderRange(-12.5, 88, 0.25)]
-    [SliderLabelFormat("{0:0.##}")]
+    [ConfigSlider(-12.5, 88, 0.25, Format = "{0:0.##}%")]
     [ConfigHoverTip]
     public static double MothBanjoBias { get; set; } = 14;
 
@@ -54,7 +53,6 @@ public sealed class TestModConfig : SimpleModConfig
         _ = btn;
     }
 }
-
 ```
 
 ![示例配置](../../images/image12.png)
