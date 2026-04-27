@@ -97,6 +97,10 @@ docsTree:
                                     title: 14 添加新人物,
                                     path: /docs/04-ritsulib/04-14-add-new-character/,
                                 },
+                                {
+                                    title: 15 添加单例,
+                                    path: /docs/04-ritsulib/04-15-add-singleton/,
+                                },
                             ],
                     },
                     {
@@ -160,6 +164,10 @@ docsTree:
                                 {
                                     title: 14 添加新人物,
                                     path: /docs/04-add-new-character/,
+                                },
+                                {
+                                    title: 15 添加单例,
+                                    path: /docs/03-baselib/03-15-add-singleton/,
                                 },
                             ],
                     },
