@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 
 namespace Test.Scripts;
 
+// 注册药水。如果要写自定义池看添加人物的开头
 [Pool(typeof(TestPotionPool))]
 public class TestPotion : CustomPotionModel
 {

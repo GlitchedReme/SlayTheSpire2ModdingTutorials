@@ -14,7 +14,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Test.Scripts.Cards;
 
-// 加入哪个卡池
+// 注册卡牌。如果要写自定义池看添加人物的开头
 [Pool(typeof(ColorlessCardPool))]
 public class TestCard : CustomCardModel
 {
