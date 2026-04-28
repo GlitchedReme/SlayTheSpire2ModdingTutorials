@@ -74,6 +74,14 @@ public class MyKeywords
 `:diff()`表示这个值一旦和基础值不同，就会变红色或绿色（例如升级时增加数值，预览变成绿色）。
 
 
+简单来说效果可以在`OnPlay`这么写，或者写一个自己的Cmd方便执行效果：
+```csharp
+    // 使用DynamicVars["Leech"]获取数值，先让敌人失去生命（受到不可格挡不受能力影响的伤害）
+    await CreatureCmd.Damage(choiceContext, [cardPlay.Target!], DynamicVars["Leech"].BaseValue, ValueProp.Unblockable | ValueProp.Unpowered, cardPlay.Card.Owner.Creature);
+    // 再让玩家回复生命
+    await CreatureCmd.Heal(cardPlay.Card.Owner.Creature, DynamicVars["Leech"].BaseValue);
+```
+
 ![alt text](../../images/image26.png)
 
 
@@ -105,4 +113,30 @@ public class TestCard : ModCardTemplate
 
 ## 添加卡牌tag
 
-`ritsulib`暂时不支持添加自定义的卡牌tag。也许暂时可以用keyword替代。
+tag是指`打击` `防御`这种。如果有打击tag会被打击木偶增伤。
+
+```csharp
+[RegisterOwnedCardTag(nameof(Heavy))]
+// [RegisterOwnedCardTag(nameof(Heavy2))] // 添加更多就新加这个特性
+public class MyTags
+{
+    public static readonly string Heavy = ModContentRegistry.GetQualifiedCardTagId(Entry.ModId, nameof(Heavy));
+
+    // public static readonly string Heavy2 = ModContentRegistry.GetQualifiedCardTagId(Entry.ModId, nameof(Heavy2));
+}
+```
+
+然后在你的卡牌类里添加：
+
+```csharp
+    protected override IEnumerable<string> RegisteredCardTagIds => [MyTags.Heavy];
+```
+
+需要使用时这么写。`Card`需要是个`CardModel`类型。
+
+```csharp
+if (cardPlay.Card.HasModCardTag(MyTags.Heavy))
+{
+    // Do something
+}
+```

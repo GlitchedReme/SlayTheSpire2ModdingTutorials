@@ -3,18 +3,22 @@
 和添加卡牌类似。先新建一个类。
 
 ```csharp
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Test.Scripts;
 
-[RegisterRelic(typeof(TestRelicPool))]
+// 注册遗物。如果要写自定义池看添加人物的开头
+[RegisterRelic(typeof(SharedRelicPool))]
 // [RegisterCharacterStarterRelic(typeof(TestCharacter))] // 注册起始遗物
 public class TestRelic : ModRelicTemplate
 {
