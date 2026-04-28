@@ -23,6 +23,7 @@ ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 ```csharp
 using Godot;
 using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Utils;
 
 namespace Test.Scripts;
 

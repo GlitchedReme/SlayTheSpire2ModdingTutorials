@@ -76,6 +76,14 @@ public class MyKeywords
 `:diff()`表示这个值一旦和基础值不同，就会变红色或绿色（例如升级时增加数值，预览变成绿色）。
 
 
+简单来说效果可以在`OnPlay`这么写，或者写一个自己的Cmd方便执行效果：
+```csharp
+    // 使用DynamicVars["Leech"]获取数值，先让敌人失去生命（受到不可格挡不受能力影响的伤害）
+    await CreatureCmd.Damage(choiceContext, [cardPlay.Target!], DynamicVars["Leech"].BaseValue, ValueProp.Unblockable | ValueProp.Unpowered, cardPlay.Card.Owner.Creature);
+    // 再让玩家回复生命
+    await CreatureCmd.Heal(cardPlay.Card.Owner.Creature, DynamicVars["Leech"].BaseValue);
+```
+
 ![alt text](../../images/image26.png)
 
 ## 添加卡牌提示文本

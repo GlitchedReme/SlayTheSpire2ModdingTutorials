@@ -86,7 +86,7 @@ categories:
 | `starIcons()` | 把数值渲染为辉星 | `获得{Stars:starIcons()}。` |
 | `IfUpgraded:show` | 根据升级情况显示不同文本 | `{IfUpgraded:show:升级文本\|未升级文本}` |
 | `abs` | 绝对值 | `{Damage:abs()}` |
-| `percentMore()` / `percentLess()` | 百分比 | `额外造成{Boost:percentMore()}伤害。` |
+| `percentMore()` / `percentLess()` | 百分比。<br>`PercentMore`把1.25变成25%。<br>`PercentLess`把0.75变成25%。 | `额外造成{Boost:percentMore()}%伤害。` |
 
 `SmartFormat`的内置formatter：
 

@@ -21,7 +21,8 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Test.Scripts;
 
-[RegisterPotion(typeof(TestPotionPool))]
+// 注册药水。如果要写自定义池看添加人物的开头
+[RegisterPotion(typeof(SharedPotionPool))]
 public class TestPotion : ModPotionTemplate
 {
     // 稀有度

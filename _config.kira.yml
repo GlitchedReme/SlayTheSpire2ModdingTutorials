@@ -101,6 +101,10 @@ docsTree:
                                     title: 15 添加单例,
                                     path: /docs/04-ritsulib/04-15-add-singleton/,
                                 },
+                                {
+                                    title: 16 血条覆盖,
+                                    path: /docs/04-ritsulib/04-16-health-bar-overlay/,
+                                },
                             ],
                     },
                     {

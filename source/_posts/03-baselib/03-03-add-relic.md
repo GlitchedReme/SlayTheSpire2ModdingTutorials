@@ -8,7 +8,7 @@ categories:
 和添加卡牌类似。先新建一个类。
 
 ```csharp
-// 加入哪个遗物池，此处为通用
+// 注册遗物。如果要写自定义池看添加人物的开头
 [Pool(typeof(SharedRelicPool))]
 public class TestRelic : CustomRelicModel
 {

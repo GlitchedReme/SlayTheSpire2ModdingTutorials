@@ -69,6 +69,9 @@ public class Entry
 
     public static void Init()
     {
+        // harmony可用，但是最好用ritsu的封装patch（TODO）
+        // var harmony = new Harmony("com.example.testmod");
+        // harmony.PatchAll();
         var assembly = Assembly.GetExecutingAssembly();
         RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
         // 自动注册内容

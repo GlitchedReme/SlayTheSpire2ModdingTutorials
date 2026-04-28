@@ -33,7 +33,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Test.Scripts;
 
-// 注册卡牌
+// 注册卡牌到指定池（这里是无色）。如果要写自定义池看添加人物的开头
 [RegisterCard(typeof(ColorlessCardPool))]
 // 注册成人物起始卡，后面是数量。不需要删除即可。
 // [RegisterCharacterStarterCard(typeof(TestCharacter), 5)]
@@ -53,6 +53,11 @@ public class TestCard : ModCardTemplate
     // 卡图资源
     public override CardAssetProfile AssetProfile => new(
         PortraitPath: $"res://Test/images/cards/{GetType().Name}.png"
+        // 卡框等，有需求自己添加。需要自行判断卡牌类型（攻击、技能、能力等）设置，建议写在基类里。
+        // 如果使用自定义卡池，需要改下material（TODO）
+        // FramePath: "", // 卡牌背景
+        // PortraitBorderPath: "", // 边框（状态牌感染使用的）
+        // BannerTexturePath: "" // 横幅（不同类型）
     );
 
     // 卡牌基础数值
@@ -128,7 +133,17 @@ namespace Test.Scripts;
 public abstract class TestCardModel : ModCardTemplate
 {
     public override CardAssetProfile AssetProfile => new(
-        PortraitPath: $"res://Test/images/cards/{GetType().Name}.png"
+        PortraitPath: $"res://RitsuTest/images/cards/{GetType().Name}.png",
+        // 根据不同类型设置不同卡框
+        FramePath: type switch
+        {
+            CardType.Attack => "res://RitsuTest/images/card_frame_attack.png",
+            CardType.Skill => "res://RitsuTest/images/card_frame_skill.png",
+            CardType.Power => "res://RitsuTest/images/card_frame_power.png",
+            _ => ""
+        }
+        // PortraitBorderPath: "",
+        // BannerTexturePath: ""
     );
 
     public TestCardModel(int energyCost, CardType type, CardRarity rarity, TargetType targetType, bool shouldShowInCardLibrary)
