@@ -52,6 +52,12 @@ public class TestEpoch : CharacterUnlockEpochTemplate<TestCharacter>
     // 用于本地化的键
     public override string Id => "TEST_CHARACTER_EPOCH";
 
+    // 时期的图片路径
+    public override EpochAssetProfile AssetProfile => new(
+        PackedPortraitPath: "res://icon.svg",
+        BigPortraitPath: "res://icon.svg"
+    );
+
     // 解锁该时期后，解锁的所有后续时期
     protected override IEnumerable<Type> ExpansionEpochTypes =>
     [
@@ -92,6 +98,12 @@ public sealed class TestAct1Epoch : PackDeclaredCardUnlockEpochTemplate
 {
     // 用于本地化的键.通过某一幕是按ID检索的
     public override string Id => TestStory.ActEpochKey(1);
+
+    // 时期的图片路径
+    public override EpochAssetProfile AssetProfile => new(
+        PackedPortraitPath: "res://icon.svg",
+        BigPortraitPath: "res://icon.svg"
+    );
 }
 
 [RegisterEpoch]
@@ -103,6 +115,12 @@ public sealed class TestAct2Epoch : PackDeclaredRelicUnlockEpochTemplate
 {
     // 用于本地化的键.通过某一幕是按ID检索的
     public override string Id => TestStory.ActEpochKey(2);
+
+    // 时期的图片路径
+    public override EpochAssetProfile AssetProfile => new(
+        PackedPortraitPath: "res://icon.svg",
+        BigPortraitPath: "res://icon.svg"
+    );
 }
 
 [RegisterEpoch]
@@ -113,6 +131,12 @@ public sealed class TestAct3Epoch : PackDeclaredCardUnlockEpochTemplate
 {
     // 用于本地化的键.通过某一幕是按ID检索的
     public override string Id => TestStory.ActEpochKey(3);
+
+    // 时期的图片路径
+    public override EpochAssetProfile AssetProfile => new(
+        PackedPortraitPath: "res://icon.svg",
+        BigPortraitPath: "res://icon.svg"
+    );
 }
 
 [RegisterEpoch]
@@ -123,6 +147,12 @@ public sealed class TestVictoryEpoch : PackDeclaredCardUnlockEpochTemplate
 {
     // 用于本地化的键
     public override string Id => "TEST_VICTORY_EPOCH";
+
+    // 时期的图片路径
+    public override EpochAssetProfile AssetProfile => new(
+        PackedPortraitPath: "res://icon.svg",
+        BigPortraitPath: "res://icon.svg"
+    );
 }
 
 [RegisterEpoch]
@@ -133,6 +163,12 @@ public sealed class TestEliteEpoch : PackDeclaredCardUnlockEpochTemplate
 {
     // 用于本地化的键
     public override string Id => "TEST_ELITE_MILESTONE_EPOCH";
+
+    // 时期的图片路径
+    public override EpochAssetProfile AssetProfile => new(
+        PackedPortraitPath: "res://icon.svg",
+        BigPortraitPath: "res://icon.svg"
+    );
 }
 
 [RegisterEpoch]
@@ -143,6 +179,12 @@ public sealed class TestBossEpoch : PackDeclaredCardUnlockEpochTemplate
 {
     // 用于本地化的键
     public override string Id => "TEST_BOSS_MILESTONE_EPOCH";
+
+    // 时期的图片路径
+    public override EpochAssetProfile AssetProfile => new(
+        PackedPortraitPath: "res://icon.svg",
+        BigPortraitPath: "res://icon.svg"
+    );
 }
 
 [RegisterEpoch]
@@ -153,6 +195,12 @@ public sealed class TestAscensionOneEpoch : PackDeclaredCardUnlockEpochTemplate
 {
     // 用于本地化的键
     public override string Id => "TEST_ASCENSION_ONE_EPOCH";
+
+    // 时期的图片路径
+    public override EpochAssetProfile AssetProfile => new(
+        PackedPortraitPath: "res://icon.svg",
+        BigPortraitPath: "res://icon.svg"
+    );
 }
 ```
 
