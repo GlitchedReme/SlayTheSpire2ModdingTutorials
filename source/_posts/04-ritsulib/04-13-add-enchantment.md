@@ -1,5 +1,5 @@
 ---
-title: 04-13 添加新附魔
+title: 添加新附魔
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-13-add-enchantment/
 categories:

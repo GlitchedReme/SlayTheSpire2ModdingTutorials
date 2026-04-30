@@ -1,5 +1,5 @@
 ---
-title: 04-01 添加卡牌
+title: 添加卡牌
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-01-add-card/
 categories:

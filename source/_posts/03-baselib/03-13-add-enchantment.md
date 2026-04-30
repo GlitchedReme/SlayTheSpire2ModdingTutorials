@@ -1,5 +1,5 @@
 ---
-title: 03-13 添加新附魔
+title: 添加新附魔
 date: 2026-04-11 16:00:00
 permalink: docs/03-baselib/03-13-add-enchantment/
 categories:

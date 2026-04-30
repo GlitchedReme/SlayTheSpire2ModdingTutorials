@@ -1,5 +1,5 @@
 ---
-title: 04-05 添加新能力
+title: 添加新能力
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-05-add-power/
 categories:

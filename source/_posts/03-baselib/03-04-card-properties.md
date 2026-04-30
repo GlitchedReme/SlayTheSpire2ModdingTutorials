@@ -1,5 +1,5 @@
 ---
-title: 03-04 添加卡牌属性
+title: 添加卡牌属性
 date: 2026-04-02 00:00:00
 permalink: docs/03-baselib/03-04-card-properties/
 categories:

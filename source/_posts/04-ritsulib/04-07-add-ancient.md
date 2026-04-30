@@ -1,5 +1,5 @@
 ---
-title: 04-07 添加先古之民
+title: 添加先古之民
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-07-add-ancient/
 categories:

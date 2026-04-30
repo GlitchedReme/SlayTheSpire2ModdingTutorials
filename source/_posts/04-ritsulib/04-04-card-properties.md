@@ -1,5 +1,5 @@
 ---
-title: 04-04 添加卡牌属性
+title: 添加卡牌属性
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-04-card-properties/
 categories:

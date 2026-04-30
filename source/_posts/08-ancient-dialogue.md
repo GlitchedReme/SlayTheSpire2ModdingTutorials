@@ -1,5 +1,5 @@
 ---
-title: 08 先古对话
+title: 先古对话
 date: 2026-03-28 00:00:00
 permalink: docs/08-ancient-dialogue/
 categories:

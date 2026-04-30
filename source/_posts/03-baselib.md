@@ -1,5 +1,5 @@
 ---
-title: 03 BaseLib
+title: BaseLib
 date: 2026-03-15 00:00:00
 permalink: docs/03-baselib/
 categories:

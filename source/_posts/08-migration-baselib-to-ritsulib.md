@@ -1,5 +1,5 @@
 ---
-title: 02 BaseLib 至 RitsuLib
+title: BaseLib 至 RitsuLib
 date: 2026-04-21 00:00:00
 permalink: docs/08-migration-baselib-to-ritsulib/
 categories:

@@ -1,5 +1,5 @@
 ---
-title: 03-02 自定义模组配置
+title: 自定义模组配置
 date: 2026-04-02 00:00:00
 permalink: docs/03-baselib/03-02-mod-config/
 categories:

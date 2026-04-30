@@ -1,5 +1,5 @@
 ---
-title: 05 变量与描述
+title: 变量与描述
 date: 2026-03-25 00:00:00
 permalink: docs/05-variable-and-description/
 categories:

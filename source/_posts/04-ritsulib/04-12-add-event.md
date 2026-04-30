@@ -1,5 +1,5 @@
 ---
-title: 04-12 添加新事件
+title: 添加新事件
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-12-add-event/
 categories:

@@ -1,5 +1,5 @@
 ---
-title: 04-14 添加新人物
+title: 添加新人物
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-14-add-new-character/
 categories:
@@ -303,8 +303,6 @@ TestEnergyCounter (Control)
 * RotationLayers里放需要旋转的图层。没有也行。
 
 ![alt text](../../images/image19.png)
-
-*仅供参考，我这没挂脚本，需要挂脚本*
 
 ## 自定义商店模型
 
@@ -654,25 +652,20 @@ position = Vector2(0, -144)
 ### test_energy_counter.tscn
 
 ```tscn
-[gd_scene load_steps=5 format=3 uid="uid://cs3a5onikvhi4"]
+[gd_scene load_steps=2 format=3 uid="uid://cs3a5onikvhi4"]
 
 [ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_85qf2"]
-[ext_resource type="Script" uid="uid://b4eaf7kin174o" path="res://Scripts/NTestEnergyCounter.cs" id="1_moaty"]
-[ext_resource type="Script" uid="uid://b8vmh6070x38m" path="res://Scripts/NTestParticlesContainer.cs" id="2_sphyw"]
-[ext_resource type="Script" uid="uid://camgj4bhk5dps" path="res://Scripts/TestMegaLabel.cs" id="4_ea8ix"]
 
 [node name="TestEnergyCounter" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 128.0
 offset_bottom = 128.0
-script = ExtResource("1_moaty")
 metadata/_edit_lock_ = true
 
 [node name="EnergyVfxBack" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(64, 64)
-script = ExtResource("2_sphyw")
 
 [node name="Layers" type="Control" parent="."]
 unique_name_in_owner = true
@@ -702,7 +695,6 @@ expand_mode = 1
 [node name="EnergyVfxFront" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(64, 64)
-script = ExtResource("2_sphyw")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -726,7 +718,6 @@ theme_override_font_sizes/font_size = 36
 text = "3/3"
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("4_ea8ix")
 ```
 
 ### test_character_merchant.tscn

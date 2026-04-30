@@ -1,5 +1,5 @@
 ---
-title: 03-05 添加新能力
+title: 添加新能力
 date: 2026-04-02 00:00:00
 permalink: docs/03-baselib/03-05-add-power/
 categories:

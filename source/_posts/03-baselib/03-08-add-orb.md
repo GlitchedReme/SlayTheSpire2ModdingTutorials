@@ -1,5 +1,5 @@
 ---
-title: 03-08 添加充能球
+title: 添加充能球
 date: 2026-04-02 00:00:00
 permalink: docs/03-baselib/03-08-add-orb/
 categories:

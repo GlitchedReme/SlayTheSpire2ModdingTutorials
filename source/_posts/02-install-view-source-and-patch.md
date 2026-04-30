@@ -1,5 +1,5 @@
 ---
-title: 02 常见问题
+title: 常见问题
 date: 2026-03-15 00:00:00
 permalink: docs/02-install-view-source-and-patch/
 categories:

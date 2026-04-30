@@ -1,5 +1,5 @@
 ---
-title: 04-15 添加单例
+title: 添加单例
 date: 2026-04-27 00:00:00
 permalink: docs/04-ritsulib/04-15-add-singleton/
 categories:

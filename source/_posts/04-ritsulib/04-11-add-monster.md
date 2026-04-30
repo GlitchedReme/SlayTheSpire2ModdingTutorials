@@ -1,5 +1,5 @@
 ---
-title: 04-11 添加新怪物
+title: 添加新怪物
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-11-add-monster/
 categories:

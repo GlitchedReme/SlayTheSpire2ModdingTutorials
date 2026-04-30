@@ -1,5 +1,5 @@
 ---
-title: 04-06 添加新药水
+title: 添加新药水
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-06-add-potion/
 categories:

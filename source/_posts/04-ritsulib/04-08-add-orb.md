@@ -1,5 +1,5 @@
 ---
-title: 04-08 添加充能球
+title: 添加充能球
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-08-add-orb/
 categories:

@@ -1,5 +1,5 @@
 ---
-title: 04-16 血条覆盖
+title: 血条覆盖
 date: 2026-04-28 00:00:00
 permalink: docs/04-ritsulib/04-16-health-bar-overlay/
 categories:

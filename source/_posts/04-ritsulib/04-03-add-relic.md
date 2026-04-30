@@ -1,5 +1,5 @@
 ---
-title: 04-03 添加新遗物
+title: 添加新遗物
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/04-03-add-relic/
 categories:

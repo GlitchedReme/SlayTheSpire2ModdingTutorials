@@ -1,5 +1,5 @@
 ---
-title: 03-12 添加新事件
+title: 添加新事件
 date: 2026-04-11 16:00:00
 permalink: docs/03-baselib/03-12-add-event/
 categories:

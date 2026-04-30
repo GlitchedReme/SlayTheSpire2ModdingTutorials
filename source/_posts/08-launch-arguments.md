@@ -1,5 +1,5 @@
 ---
-title: 08 启动项参数
+title: 启动项参数
 date: 2026-04-11 16:00:00
 permalink: docs/08-launch-arguments/
 categories:

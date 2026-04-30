@@ -1,5 +1,7 @@
 将你的`BaseLib`开发的mod与`RitsuLib`开发的mod相互迁移的指南。
 
+善用`ctrl+shift+h`全局替换。
+
 ## 注册内容
 
 两个库都支持自动注册内容。

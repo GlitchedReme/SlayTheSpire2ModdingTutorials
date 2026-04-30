@@ -1,5 +1,5 @@
 ---
-title: 04 RitsuLib
+title: RitsuLib
 date: 2026-04-21 00:00:00
 permalink: docs/04-ritsulib/
 categories:
@@ -9,13 +9,15 @@ categories:
 
 https://github.com/BAKAOLC/STS2-RitsuLib
 
-> 以下内容使用ritsulib0.2.3。
+> 以下内容使用ritsulib0.2.15。
 
 先依赖ritsulib才能查看这里里面的文章。
 
 ## 下载
 
 * 前往 https://github.com/BAKAOLC/STS2-RitsuLib/releases 下载`dll`，和`json`两个文件，把他们放在`mods`文件夹里。记住你下载的版本。
+
+* 请根据你的游戏版本选择对应的`RitsuLib`版本。例如不带后缀的`STS2.RitsuLib.XXX.github.zip`一般跟随测试版，而例如`STS2.RitsuLib.Compat.0.103.2.XXX.github.zip`这种是兼容`0.103.2`正式版的版本。
 
 * 在`csproj`文件中相应位置引用`STS2-RitsuLib.dll`，如下，两种方式都可。推荐使用nuget。
 
@@ -38,6 +40,8 @@ https://github.com/BAKAOLC/STS2-RitsuLib
     </Reference> -->
     <!-- NuGet获取，注意版本是否一致，不一致手动更改Version -->
     <PackageReference Include="STS2.RitsuLib" Version="*" />
+    <!-- 如果你在正式版开发用这个 -->
+    <!-- <PackageReference Include=" STS2.RitsuLib.Compat.0.103.2 " Version="*" /> -->
   </ItemGroup>
 ```
 

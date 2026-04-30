@@ -82,6 +82,10 @@ docsTree:
                                     path: /docs/04-ritsulib/04-09-add-timeline/,
                                 },
                                 {
+                                    title: 10 添加音频,
+                                    path: /docs/04-ritsulib/04-10-add-audio/,
+                                },
+                                {
                                     title: 11 添加新怪物,
                                     path: /docs/04-ritsulib/04-11-add-monster/,
                                 },
@@ -205,7 +209,7 @@ docsTree:
             children:
                 [
                     {
-                        title: 01 卡图&皮肤替换,
+                        title: 01 卡图&Spine,
                         path: /docs/05-card-art-and-skin-replacement/,
                     },
                     {

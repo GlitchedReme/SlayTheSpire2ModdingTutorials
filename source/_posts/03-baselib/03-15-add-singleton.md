@@ -1,5 +1,5 @@
 ---
-title: 03-15 添加单例
+title: 添加单例
 date: 2026-04-27 00:00:00
 permalink: docs/03-baselib/03-15-add-singleton/
 categories:

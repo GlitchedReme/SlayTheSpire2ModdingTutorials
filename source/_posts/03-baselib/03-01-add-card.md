@@ -1,5 +1,5 @@
 ---
-title: 03-01 添加卡牌
+title: 添加卡牌
 date: 2026-04-02 00:00:00
 permalink: docs/03-baselib/03-01-add-card/
 categories:

@@ -1,5 +1,5 @@
 ---
-title: 02 风格原画绘制
+title: 风格原画绘制
 date: 2026-03-16 00:00:00
 permalink: docs/06-style-art-drawing/
 author: 未设置

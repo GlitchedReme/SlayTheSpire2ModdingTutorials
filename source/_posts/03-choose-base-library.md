@@ -1,5 +1,5 @@
 ---
-title: 03 选择基础库
+title: 选择基础库
 date: 2026-04-20 00:00:00
 permalink: docs/03-choose-base-library/
 categories:

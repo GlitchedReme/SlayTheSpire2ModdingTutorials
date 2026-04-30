@@ -1,5 +1,5 @@
 ---
-title: 03-07 添加先古之民
+title: 添加先古之民
 date: 2026-04-02 00:00:00
 permalink: docs/03-baselib/03-07-add-ancient/
 categories:

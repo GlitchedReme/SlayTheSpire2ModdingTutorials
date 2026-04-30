@@ -1,5 +1,5 @@
 ---
-title: 03-03 添加新遗物
+title: 添加新遗物
 date: 2026-04-02 00:00:00
 permalink: docs/03-baselib/03-03-add-relic/
 categories:

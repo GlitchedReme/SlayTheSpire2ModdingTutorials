@@ -1,5 +1,5 @@
 ---
-title: 07 快速调试&热重载
+title: 快速调试&热重载
 date: 2026-04-02 00:00:00
 permalink: docs/07-quick-debug-and-hot-reload/
 categories:
