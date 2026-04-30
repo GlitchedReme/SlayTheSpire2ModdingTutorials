@@ -26,7 +26,7 @@
 
 点击中间的`Banks`栏，将两个bank重命名为你的项目的名字，最好也是`XXX`和`XXXMaster`。
 
-* 不能删除然后重建，不能叫`Master`。
+* `XXX`最好删除重建一个，但是``XXXMaster`不能删除然后重建，不能叫`Master`。
 
 ![alt text](../../images/image37.png)
 
