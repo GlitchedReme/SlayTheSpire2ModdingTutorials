@@ -24,15 +24,15 @@
     }
 ```
 
-## Spine导入&模型替换
+## Spine导入
 
 尖塔使用`4.2.43`版本的Spine，在这之下版本的不能直接使用。（神秘链接或网盘：https://github.com/wang606/SpineSkeletonDataConverter ）
 
-* 第一步，安装一个`Spine Godot Extension`，建议直接下载我编译好的：https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar 。参考 https://zh.esotericsoftware.com/spine-godot 。
+* 第一步，安装一个`Spine Godot Extension`，建议直接下载我编译好的：https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar 。参考 https://zh.esotericsoftware.com/spine-godot 。把里面的文件放到你的项目根目录，然后~~可能需要~~重启一下Godot。
 
-* 把里面的文件放到你的项目根目录，然后~~可能需要~~重启一下Godot。把spine中导出的atlas,skel,png文件放入项目指定位置，能在Godot文件系统中看到就算成功。
+* 把spine中导出的atlas,skel,png文件放入项目你自己指定的位置，能在Godot文件系统中看到就算成功。
 
-* 创建一个`SpineSkeletonDataResource`，并把`Atlas Res`和`SkeletonFile Res`分别设置为atlas和skel文件。
+* 右键godot文件系统创建资源，创建一个`SpineSkeletonDataResource`，并把`Atlas Res`和`SkeletonFile Res`分别设置为atlas和skel文件。
 
 * 你的战斗人物模型需要有`idle_loop`（待机循环），`attack`（攻击动作），`cast`（能力卡动作），`hurt`（受伤），`die`（死亡）这些动画名。
 
@@ -44,59 +44,7 @@
 
 ![3](../../images/image16.png)
 
-然后可以参考这段替换角色：（此处仅替换战斗人物且不播放初始动画，仅供参考）
-
-```csharp
-using System;
-using Godot;
-using HarmonyLib;
-using MegaCrit.Sts2.Core.Bindings.MegaSpine;
-using MegaCrit.Sts2.Core.Modding;
-using MegaCrit.Sts2.Core.Nodes.Combat;
-
-namespace Test.Scripts;
-
-[ModInitializer(nameof(Init))]
-public static class Entry
-{
-    // 替换哪个角色
-    private const string TargetCharacterId = "IRONCLAD";
-
-    // spine资源的路径
-    private const string SkinPath = "res://spineskins/test_skin.tres";
-    // Harmony的ID，确保唯一性
-    private const string HarmonyId = "sts2.reme.spineskintemplate";
-
-    private static Resource? _skinData;
-
-    public static void Init()
-    {
-        _skinData = ResourceLoader.Load<Resource>(SkinPath, null, ResourceLoader.CacheMode.Reuse);
-
-        new Harmony(HarmonyId).PatchAll();
-    }
-
-    [HarmonyPatch(typeof(NCreature), nameof(NCreature._Ready))]
-    private static class NCreature_Ready_Patch
-    {
-        private static void Postfix(NCreature __instance)
-        {
-            if (_skinData == null) return;
-
-            var player = __instance?.Entity?.Player;
-            if (player == null) return;
-
-            if (!string.Equals(player.Character.Id.Entry, TargetCharacterId, StringComparison.OrdinalIgnoreCase))
-                return;
-
-            var visuals = __instance.Visuals;
-            if (visuals?.SpineBody == null || !visuals.HasSpineAnimation) return;
-
-            visuals.SpineBody.SetSkeletonDataRes(new MegaSkeletonDataResource(_skinData));
-        }
-    }
-}
-```
+~~然后可以参考这段替换角色：（此处仅替换战斗人物且不播放初始动画，仅供参考）~~ 以前的代码功能太少，为了不误导新人这里删了
 
 ## 任意模型替换思路
  
