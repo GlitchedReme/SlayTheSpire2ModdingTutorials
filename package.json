@@ -5,10 +5,11 @@
   "scripts": {
     "build": "hexo generate",
     "clean": "hexo clean",
-    "deploy": "hexo deploy",
+    "deploy": "pnpm run build && wrangler deploy",
     "server": "hexo server",
     "sync:posts": "node tools/sync-posts-from-sources.cjs",
-    "restore:post-dates": "node tools/sync-posts-from-sources.cjs --restore-dates"
+    "restore:post-dates": "node tools/sync-posts-from-sources.cjs --restore-dates",
+    "preview": "pnpm run build && wrangler dev"
   },
   "hexo": {
     "version": "7.3.0"
@@ -22,5 +23,8 @@
     "hexo-renderer-stylus": "^2.1.0",
     "hexo-server": "^3.0.0",
     "hexo-theme-kira": "^1.4.9"
+  },
+  "devDependencies": {
+    "wrangler": "^4.92.0"
   }
 }

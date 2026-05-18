@@ -18,3 +18,10 @@ _multiconfig.yml
 .cache/
 coverage/
 pnpm-debug.log*
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
