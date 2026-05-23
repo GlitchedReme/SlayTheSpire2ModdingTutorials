@@ -28,6 +28,12 @@ https://github.com/GDRETools/gdsdecomp
 
 按说明安装[ilspy](https://github.com/icsharpcode/ILSpy)或[dnspy](https://github.com/dnSpy/dnSpy)，然后打开游戏根目录的`data_sts2_windows_x86_64\sts2.dll`即可查看代码。
 
+### 源码位置
+
+反编译后，内容代码在`MegaCrit.Sts2.Core.Models`里，例如`MegaCrit.Sts2.Core.Models.Cards`是卡牌的代码。
+
+可以先在`localization\zhs\cards.json`中搜索中文名，确定其类名后再搜索，善用全局搜索功能。
+
 ## 修改代码
 
 使用`Harmony`库进行代码修改，生态位类似于尖塔1的patch。

@@ -128,4 +128,49 @@ https://github.com/axuno/SmartFormat/wiki
 
 ## DynamicVar
 
-TODO: 如何进行各种复杂的伤害计算
+`DynamicVar`是记录在一个model上的指定值。使用`CanonicalVars`指定这个model的各种初始值，例如：
+
+```csharp
+protected override IEnumerable<DynamicVar> CanonicalVars => [
+        new DamageVar(12, ValueProp.Move)
+    ];
+```
+
+- 那之后就可以用`DynamicVars["Damage"].BaseValue`来获得这个值，因为`DamageVar`的ID是"Damage"。
+
+- 你可以反编译查看每个var的id是什么。一般这些var也可以通过传入第一个参数设置ID，例如`new DamageVar("TestDamage", 12, ValueProp.Move)`。
+
+- 特殊的，`DynamicVars`有便捷的方法来获得原版的属性，例如`DynamicVars.Damage`。
+
+## CalculatedVar
+
+此外有一种特殊的var为`CalculatedVar`，其公式为`base + extra * calculated`，例如全身撞击：
+
+```csharp
+	protected override IEnumerable<DynamicVar> CanonicalVars => new global::_003C_003Ez__ReadOnlyArray<DynamicVar>(new DynamicVar[3]
+	{
+		new CalculationBaseVar(0m),
+		new ExtraDamageVar(1m),
+		new CalculatedDamageVar(ValueProp.Move).WithMultiplier((CardModel card, Creature? _) => card.Owner.Creature.Block)
+	});
+```
+
+就是基础值为0，额外增加1倍自己格挡值的伤害。如果你要使用一个`CalculatedVar`，那么另外两个`base`和`extra`的var必须也要写。
+
+由于其设计过于繁琐而且问题不少，一般不推荐使用。如果你前置库为`ritsulib`可以使用`ComputedDynamicVar`，或者自行写一个传入双回调函数的自定义var也可，例如：（仅供思路展示，不可完全正常运作）
+
+```csharp
+// 仅供思路展示，不可完全正常运作
+public class VariableVar(string name, Func<CardModel, CardPreviewMode, Creature?, bool, decimal> baseValueFunc, Func<CardModel, CardPreviewMode, Creature?, bool, decimal>? previewValueFunc = null) : DynamicVar(name, 0)
+{
+    private readonly Func<CardModel, CardPreviewMode, Creature?, bool, decimal> _valueFunc = baseValueFunc;
+    private readonly Func<CardModel, CardPreviewMode, Creature?, bool, decimal>? _previewValueFunc = previewValueFunc;
+
+    public override void UpdateCardPreview(CardModel card, CardPreviewMode previewMode, Creature? target, bool runGlobalHooks)
+    {
+        _baseValue = _valueFunc(card, previewMode, target, runGlobalHooks);
+        if (_previewValueFunc != null)
+            _previewValue = _previewValueFunc(card, previewMode, target, runGlobalHooks);
+    }
+}
+```
