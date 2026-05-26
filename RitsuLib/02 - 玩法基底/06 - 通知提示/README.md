@@ -64,3 +64,5 @@ RitsuToastService.Show(new RitsuToastRequest(
     // FadeScale：淡入淡出并缩放
     animationOverride: RitsuToastAnimationPreset.FadeScale));
 ```
+
+更新提示

@@ -35,10 +35,11 @@ public class TestCardPool : TypeListCardPoolModel
     public override Color DeckEntryCardColor => new(0.5f, 0.5f, 1f);
     // 能量表盘文字轮廓颜色
     public override Color EnergyOutlineColor => new(0.5f, 0.5f, 1f);
-    // 如果你想用原版卡框换色，加这两行
-    private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateRgbShaderMaterial(0.5f, 0.5f, 1f);
-    // 如果你是自定义卡框，上面一行换成这个
-    // private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateUnmodulatedHsvShaderMaterial();
+
+    // 根据你使用的卡框决定使用哪个Material
+    private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateReplaceHueShaderMaterial(0.5f, 0.5f, 1f); // 如果你使用原版卡框，使用这个直接替换色调。
+    // private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateRgbShaderMaterial(0.5f, 0.5f, 1f); // 使用原版卡框替换色调。除非你的版本没有CreateReplaceHueShaderMaterial函数，否则应使用上面那种
+    // private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateUnmodulatedHsvShaderMaterial(); // 如果你是自定义卡框，使用这个
     public override Material? PoolFrameMaterial => _poolFrameMaterial;
 
     // 卡池是否是无色。例如事件、状态等卡池就是无色的。
@@ -193,7 +194,17 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
                 // ArmPaperTexturePath: null,
                 // 多人模式剪刀石头布-剪刀。
                 // ArmScissorsTexturePath: null
-            )));
+            )
+            // 其余如果有需要自行填写
+            // Spine: null,
+            // VisualCues: null, // 帧动画静态图人物使用，查看角色动画一章
+            // WorldProceduralVisuals: null,
+            // VanillaCardVisualOverrides: [],
+            // VanillaRelicVisualOverrides: [
+            //     new (CharacterOwnedVanillaRelicModelId.YummyCookie, new("res://icon.svg")) // 美味饼干覆盖
+            // ],
+            // VanillaPotionVisualOverrides: []
+        ));
 
     // 攻击和施法动画延迟，以对齐动画
     public override float AttackAnimDelay => 0f;
