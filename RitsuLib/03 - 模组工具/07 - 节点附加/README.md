@@ -1,18 +1,22 @@
 节点附加适合给原版 Godot 节点挂一个自己的子节点，例如给战斗 UI 加一个小面板、给血条旁边加一个调试层，或给某个已有容器塞入辅助 `Control`。
 
-它和自己写 Harmony patch 的区别是：你只声明“哪个父节点 ready 时挂哪个子节点”，RitsuLib 会 patch 对应父类型的 `_Ready`，并负责创建、排序、重复处理和取回已经挂上的节点。
+类似于给已有的场景进行“patch”（补丁修改）。
 
-## 显式注册
+## 注册方式一：显式注册
+
+### 从代码创建节点
 
 在 `Entry.Init()` 中注册。下面的例子会在每个 `NCombatUi` ready 时添加一个 `TestCombatUiBadge`。
 
 ```csharp
 using Godot;
+using MegaCrit.Sts2.Core.Modding;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Scaffolding.Godot.NodeAttachments;
 
 namespace Test.Scripts;
 
+[ModInitializer(nameof(Init))]
 public static class Entry
 {
     public const string ModId = "test";
@@ -56,9 +60,7 @@ public sealed partial class TestCombatUiBadge : Control
 }
 ```
 
-`localId` 只需要在当前 Mod 内唯一。RitsuLib 会把它扩展成类似 `TEST_NODEATTACHMENT_COMBAT_UI_BADGE` 的全局 id。
-
-## 从场景创建节点
+### 从场景创建节点
 
 如果 UI 已经写成 `.tscn`，可以直接从场景实例化：
 
@@ -79,7 +81,9 @@ ModNodeAttachmentRegistry.For(Entry.ModId)
         });
 ```
 
-`RegisterReadyChildFromScene` 要求场景根节点本身就是 `TNode`。如果场景根节点需要经过 RitsuLib 的 Godot 脚本转换，使用 converted scene 版本：
+`RegisterReadyChildFromScene` 要求场景根节点本身就是 `TNode`。（上面是`Control`）。
+
+如果场景根节点需要经过 RitsuLib 的场景转换：
 
 ```csharp
 ModNodeAttachmentRegistry.For(Entry.ModId)
@@ -91,7 +95,7 @@ ModNodeAttachmentRegistry.For(Entry.ModId)
 
 `RegisterReadyChildFromConvertedScene<TParent,TNode>` 的 `TNode` 需要有公开无参构造函数。
 
-## 自动注册
+## 注册方式二：自动注册
 
 如果项目已经在初始化时调用了 `ModTypeDiscoveryHub.RegisterModAssembly(...)`，可以用属性注册。最简单的写法是把属性标在子节点类上：
 
@@ -118,44 +122,11 @@ public sealed partial class TestTurnCounter : Label, INodeAttachmentSetup
 }
 ```
 
-属性上的名字叫 `NodeName`，对应显式注册里的 `NodeAttachmentOptions.Name`。
-
-当子节点不能用无参构造函数创建时，把属性标在工厂类上，并设置 `NodeType`：
-
-```csharp
-[RegisterNodeAttachment(
-    typeof(NCombatUi),
-    "factory_badge",
-    NodeType = typeof(TestCombatUiBadge),
-    NodeName = "TestFactoryBadge")]
-public sealed class TestCombatUiBadgeFactory : INodeAttachmentFactory
-{
-    public Node CreateNode(Node parent)
-    {
-        return new TestCombatUiBadge();
-    }
-}
-```
-
-场景也有对应属性：
-
-```csharp
-[RegisterNodeAttachmentFromScene(
-    typeof(NCombatUi),
-    "scene_badge",
-    "res://Test/scenes/ui/combat_status_panel.tscn",
-    NodeType = typeof(Control),
-    NodeName = "TestSceneBadge")]
-public sealed class TestSceneBadgeRegistration
-{
-}
-```
-
-如果用 converted scene，把属性换成 `RegisterNodeAttachmentFromConvertedScene`。
+同时还有`[RegisterNodeAttachment]`，`[RegisterNodeAttachmentFromScene]`和`[RegisterNodeAttachmentFromConvertedScene]`等自动注册属性。
 
 ## 取回附加节点
 
-注册只负责在父节点 ready 时挂子节点。之后如果别的系统要刷新它，可以用同一个 registry 取回：
+注册只负责在父节点 ready 时挂子节点。之后如果要取回：
 
 ```csharp
 if (ModNodeAttachmentRegistry.For(Entry.ModId)
@@ -183,7 +154,7 @@ ModNodeAttachmentRegistry.TryGetAttachedById<NCombatUi, TestCombatUiBadge>(
 
 `TryGetAttached` 不会创建节点；只有父节点 ready 时才会真正挂载。
 
-## 常用选项
+## NodeAttachmentOptions的参数
 
 | 选项 | 用途 |
 | - | - |
@@ -198,25 +169,3 @@ ModNodeAttachmentRegistry.TryGetAttachedById<NCombatUi, TestCombatUiBadge>(
 | `IncludeDerivedParentTypes` | 父类型的子类是否也应用该 attachment，默认 true |
 
 `ChildIndex`、`InsertBeforeName`、`InsertAfterName` 三者只能选一个。只要 `DuplicatePolicy` 不是 `AllowDuplicateName`，就必须设置 `Name` / `NodeName`。
-
-## 适合和不适合
-
-适合：
-
-* 给现有 UI 加一个额外显示层。
-* 把 `.tscn` 面板挂到原版 screen 或 combat UI 下面。
-* 在多个同类原版节点上统一追加一个辅助节点。
-
-不适合：
-
-* 修改原版节点自己的逻辑分支。那仍然应该用补丁系统。
-* 需要在 `_Ready` 之前影响父节点初始化。节点附加发生在父节点 ready 之后。
-* 需要跨房间长期保存状态。状态放在模型、`ModDataStore` 或 run data 里，节点只负责显示。
-
-## 验证
-
-* 日志中出现 `[NodeAttachment] Registered ...`。
-* 进入目标界面后，父节点下面只出现一次你的子节点。
-* 使用场景注册时，路径拼写正确，场景根节点类型和 `TNode` 一致。
-* 设置 `DuplicatePolicy = ReuseExistingByName` 后，重复进入界面不会生成多个同名节点。
-* `TryGetAttached` 能在父节点 ready 后取到节点，在 ready 前返回 false。

@@ -1,42 +1,25 @@
-RitsuLib 的更新检查用于在主菜单准备好之后读取一个小型 JSON manifest，并在发现新版本时显示 Toast。它不负责下载、安装或替换文件，只负责“告诉玩家有更新，并把玩家带到发布页”。
+RitsuLib 的更新检查用于在发现新版本时显示通知提示。
+
+它不负责下载、安装或替换文件，只负责“告诉玩家有更新，并把玩家带到发布页”。
+
+你需要自己提供资源站点。（TODO：简单搭建）
 
 ## 注册一次性检查
 
 最常见的用法是在初始化阶段注册。RitsuLib 会等第一次主菜单就绪后执行一次网络请求，同一个 `ModId` 每个游戏会话只安排一次。
 
 ```csharp
-using STS2RitsuLib;
-
-namespace Test.Scripts;
-
-public static class TestUpdateChecks
-{
-    private const string CurrentVersion = "1.2.0";
-
-    public static void Register()
-    {
-        RitsuLibFramework.RegisterModUpdateCheck(
-            Entry.ModId,
-            "Test Mod",
-            CurrentVersion,
-            "https://example.com/test-mod/update.json",
-            "https://example.com/test-mod/releases");
-    }
-}
+RitsuLibFramework.RegisterModUpdateCheck(
+    Entry.ModId,
+    "Test Mod",
+    CurrentVersion,
+    "https://example.com/test-mod/update.json",
+    "https://example.com/test-mod/releases");
 ```
 
-初始化时调用：
+`manifestUrl` 必须是 `http` 或 `https` 的绝对 URL。
 
-```csharp
-public static void Init()
-{
-    TestUpdateChecks.Register();
-}
-```
-
-`manifestUrl` 必须是 `http` 或 `https` 的绝对 URL。不要直接指向 GitHub API、GitHub raw 或 releases 下载地址；放到 CDN、自有站点或镜像文件会更稳定，也更不容易被限流。
-
-## manifest 格式
+## manifest json 格式
 
 更新 manifest 是一个小 JSON 文件。RitsuLib 只读取版本、发布页和 Toast 文案。
 
@@ -59,8 +42,6 @@ public static void Init()
   }
 }
 ```
-
-`latest_version` 支持常见语义版本：`1.2.3`、`v1.2.3-beta.1`、`1.2.3+build.5`。比较时会忽略 build metadata，并按 prerelease 规则认为 `1.2.3` 新于 `1.2.3-beta.1`。
 
 Toast 文案支持这些占位符：
 
@@ -139,25 +120,3 @@ public static async Task CheckNowAsync()
     }
 }
 ```
-
-如果只是想立即检查并沿用 RitsuLib 的默认 Toast，调用：
-
-```csharp
-await RitsuLibFramework.CheckForModUpdateAndToastAsync(
-    Entry.ModId,
-    "Test Mod",
-    "1.2.0",
-    "https://example.com/test-mod/update.json",
-    "https://example.com/test-mod/releases",
-    showCompletionToast: true);
-```
-
-`showCompletionToast` 为 `true` 时，未发现更新和失败也会给出短提示，适合手动按钮；自动启动检查建议保持默认 `false`。
-
-## 验证
-
-* manifest 文件小于 512 KB，返回 `application/json` 或至少能被正常读取为 JSON。
-* 当前版本、最新版本都能被解析为语义版本；`v` 前缀可以有，负数和空字符串不行。
-* 断网、超时、404、JSON 格式错误都会进入 `RequestFailed` 或 `InvalidData`，日志中有清楚原因。
-* `localized.zhs` 和 `localized.eng` 能随当前语言显示；缺本地化时回退到 `title` / `message`。
-* 自动注册只在首次主菜单后显示一次 Toast；设置页手动检查可以重复触发。

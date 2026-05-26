@@ -1,4 +1,8 @@
-RitsuLib 的遥测系统只负责用户授权、本地队列、事件封装和发送路由；你的 Mod 仍然要自己决定收集什么、说明为什么收集，以及把数据发到哪个后端。默认情况下，未授权的请求会被 `ITelemetryClient` 静默丢弃，不需要你再写一层开关。
+RitsuLib 的遥测系统提供一个方便收集数据的接口，供后台分析数据。
+
+但是，其本身只提供发送系统，不提供收集服务，以及服务器搭建等。（TODO：如何简单搭建）
+
+当你注册该系统时，玩家会收到是否接受发送数据的请求，只有接受了才会发送给你。
 
 ## 注册申请方
 
@@ -109,51 +113,38 @@ public static partial class TestTelemetry
 诊断请求授权后，可以把异常交给 `CaptureException`。它使用固定的 `diagnostics` request。
 
 ```csharp
-public static void RunToolSafely(Action action)
+catch (Exception ex)
 {
-    try
-    {
-        action();
-    }
-    catch (Exception ex)
-    {
-        Client.CaptureException(
-            ex,
-            new Dictionary<string, object?>
-            {
-                ["tool"] = "challenge_preview",
-            });
-        throw;
-    }
+    Client.CaptureException(
+        ex,
+        new Dictionary<string, object?>
+        {
+            ["tool"] = "challenge_preview",
+        });
+    throw;
 }
 ```
 
 如果玩家没有授权 diagnostics，这次调用也是 no-op。不要为了“确保上报”绕过授权系统。
 
-## 自动 run-history
+## 自动上传一局数据
 
-注册了 `TelemetryRequest.RunHistory(...)` 后，RitsuLib 会在跑局结束时为已授权申请方采集原版 `SerializableRun` JSON。`captureFilter` 可以控制哪些跑局进入队列，例如跳过放弃的跑局、只采集某个挑战模式。
+注册了 `TelemetryRequest.RunHistory(...)` 后，RitsuLib 会在游戏结束时为已授权申请方采集原版 `SerializableRun` JSON。`captureFilter` 可以控制哪些跑局进入队列，例如跳过放弃的跑局、只采集某个挑战模式。
 
 需要手动上传 run-history JSON 时，用 `TelemetryApi.CaptureVanillaRunHistory`：
 
 ```csharp
-using System.Text.Json.Nodes;
-using STS2RitsuLib.Telemetry;
-
-public static void CaptureImportedRun(JsonNode runHistory, string source)
-{
-    TelemetryApi.CaptureVanillaRunHistory(
-        Entry.ModId,
-        runHistory,
-        applicantPayload: new JsonObject
-        {
-            ["source"] = source,
-        },
-        properties: new Dictionary<string, object?>
-        {
-            ["payload_kind"] = "imported_run_history",
-        });
-}
+TelemetryApi.CaptureVanillaRunHistory(
+    Entry.ModId,
+    runHistory,
+    applicantPayload: new JsonObject
+    {
+        ["source"] = source,
+    },
+    properties: new Dictionary<string, object?>
+    {
+        ["payload_kind"] = "imported_run_history",
+    });
 ```
 
 这个方法内部同样走 `run_history` 授权和队列。它适合“你已经拿到了原版 run-history JSON”的情况，不要拿任意自定义对象冒充原版跑局。
@@ -209,11 +200,3 @@ TelemetryRegistry.RegisterContributionProvider(new TestBalanceContribution());
 ```
 
 每个事件 envelope 都包含 `schema`、`applicantId`、`eventName`、`requestId`、`category`、`timestampUtc`、`properties` 和 `payload`。后端建议先校验 `schema`、`applicant_id` 和事件数量，再把原始 JSON 保存下来。需要接 PostHog 时可以用 `PostHogTelemetryAdapter`，但公开项目 API key 会进 Mod 包；正式发布更推荐你自己的后端代理。
-
-## 验证
-
-1. 首次进游戏，打开 RitsuLib 遥测设置页，确认能看到申请方、请求说明和 endpoint。
-2. 未授权时调用 `Client.Capture(...)`，日志应显示事件被丢弃，不应出现网络请求。
-3. 授权 `balance_event` 后触发挑战选择，后端应收到 `challenge.selected`。
-4. 授权 run-history 后结束一局，后端应收到 `run_history.completed`。
-5. 撤销授权，再触发同样事件，确认队列不再发送。
