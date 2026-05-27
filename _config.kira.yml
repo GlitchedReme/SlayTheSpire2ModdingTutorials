@@ -158,6 +158,26 @@ docsTree:
                                     title: 06 通知提示,
                                     path: /docs/04-ritsulib/04-22-notification/,
                                 },
+                                {
+                                    title: 07 额外角标,
+                                    path: /docs/04-ritsulib/04-22-1-extra-badge/,
+                                },
+                                {
+                                    title: 08 常用工具,
+                                    path: /docs/04-ritsulib/04-22-2-common-tools/,
+                                },
+                                {
+                                    title: 09 局内数据,
+                                    path: /docs/04-ritsulib/04-22-3-in-run-data/,
+                                },
+                                {
+                                    title: 10 自定义奖励,
+                                    path: /docs/04-ritsulib/04-22-4-custom-reward/,
+                                },
+                                {
+                                    title: 11 自定义目标,
+                                    path: /docs/04-ritsulib/04-22-5-custom-targeting/,
+                                },
                             ],
                     },
                     {
@@ -178,12 +198,28 @@ docsTree:
                                     path: /docs/04-ritsulib/04-24-patch-system/,
                                 },
                                 {
-                                    title: 04 数据持久化,
-                                    path: /docs/04-ritsulib/04-25-data-persistence/,
+                                    title: 04 更新检查,
+                                    path: /docs/04-ritsulib/04-25-update-checker/,
                                 },
                                 {
                                     title: 05 运行时热键,
                                     path: /docs/04-ritsulib/04-26-runtime-hotkey/,
+                                },
+                                {
+                                    title: 06 内容注册,
+                                    path: /docs/04-ritsulib/04-27-content-registry/,
+                                },
+                                {
+                                    title: 07 节点附加,
+                                    path: /docs/04-ritsulib/04-28-node-attachment/,
+                                },
+                                {
+                                    title: 09 数据遥测,
+                                    path: /docs/04-ritsulib/04-29-telemetry/,
+                                },
+                                {
+                                    title: 10 模组联动,
+                                    path: /docs/04-ritsulib/04-30-mod-integration/,
                                 },
                             ],
                     },
@@ -311,10 +347,7 @@ docsTree:
                                     title: 05 全局环境光照,
                                     path: /docs/09-05-world-environment/,
                                 },
-                                {
-                                    title: 06 Shader,
-                                    path: /docs/09-06-shader/,
-                                },
+                                { title: 06 Shader, path: /docs/09-06-shader/ },
                                 {
                                     title: 07 游戏本体特效,
                                     path: /docs/09-07-game-builtin-vfx/,
