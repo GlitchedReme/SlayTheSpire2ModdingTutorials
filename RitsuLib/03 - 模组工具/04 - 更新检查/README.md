@@ -89,34 +89,31 @@ using STS2RitsuLib;
 using STS2RitsuLib.Updates;
 using STS2RitsuLib.Ui.Toast;
 
-public static async Task CheckNowAsync()
+var result = await RitsuLibFramework.CheckForModUpdateAsync(
+    Entry.ModId,
+    "Test Mod",
+    "1.2.0",
+    "https://example.com/test-mod/update.json",
+    "https://example.com/test-mod/releases");
+
+switch (result.Status)
 {
-    var result = await RitsuLibFramework.CheckForModUpdateAsync(
-        Entry.ModId,
-        "Test Mod",
-        "1.2.0",
-        "https://example.com/test-mod/update.json",
-        "https://example.com/test-mod/releases");
+    case ModUpdateCheckStatus.UpdateAvailable:
+        RitsuToastService.ShowInfo(
+            result.Message ?? $"发现新版本 {result.LatestVersion}。",
+            result.Title ?? "Test Mod 有更新",
+            result.ReleasePageUri == null ? null : () => OS.ShellOpen(result.ReleasePageUri.ToString()));
+        break;
 
-    switch (result.Status)
-    {
-        case ModUpdateCheckStatus.UpdateAvailable:
-            RitsuToastService.ShowInfo(
-                result.Message ?? $"发现新版本 {result.LatestVersion}。",
-                result.Title ?? "Test Mod 有更新",
-                result.ReleasePageUri == null ? null : () => OS.ShellOpen(result.ReleasePageUri.ToString()));
-            break;
+    case ModUpdateCheckStatus.UpToDate:
+        RitsuToastService.ShowInfo("当前已经是最新版本。", "Test Mod");
+        break;
 
-        case ModUpdateCheckStatus.UpToDate:
-            RitsuToastService.ShowInfo("当前已经是最新版本。", "Test Mod");
-            break;
-
-        case ModUpdateCheckStatus.InvalidData:
-        case ModUpdateCheckStatus.RequestFailed:
-            RitsuToastService.ShowWarning(
-                result.Message ?? "更新检查失败。",
-                "Test Mod");
-            break;
-    }
+    case ModUpdateCheckStatus.InvalidData:
+    case ModUpdateCheckStatus.RequestFailed:
+        RitsuToastService.ShowWarning(
+            result.Message ?? "更新检查失败。",
+            "Test Mod");
+        break;
 }
 ```

@@ -1,15 +1,18 @@
-这一章只补充 `RunSavedData` 的进阶用法：开局大厅暂存、多人同步、写入策略、schema 迁移和提交时机。普通“把跑局字段保存起来”的最小例子已经在数据持久化一章讲过，这里直接从完整跑局配置开始。
+`RitsuLib` 提供了 `RunSavedData` 和 `PlayerRunSavedData` 来帮助你极简地实现局内数据持久化，同时还自带了**开局大厅暂存**和**多人联机同步**的支持。
 
-## 注册两个槽位
+---
 
-跑局数据仍然放在 `BeginModDataRegistration` 批处理中注册。共享配置用 `RunSavedData<T>`，按玩家分桶的数据用 `PlayerRunSavedData<T>`。
+## 定义数据结构
+
+首先，我们需要建一个用来装数据的类。
+根据数据的作用范围，分为两种情况：
+- **全局共享** (`RunSavedData<T>`)：全队共用的数据。比如这局游戏的难度、总计击杀精英数量。
+- **按玩家独立** (`PlayerRunSavedData<T>`)：每个玩家分开算的数据。比如联机时，一号玩家选了什么卡牌包，二号玩家选了什么卡牌包。
 
 ```csharp
-using STS2RitsuLib;
-using STS2RitsuLib.RunData;
-
 namespace Test.Scripts.RunData;
 
+// 全局共享
 public sealed class ChallengeRunState
 {
     public string? ChallengeId { get; set; }
@@ -17,59 +20,140 @@ public sealed class ChallengeRunState
     public bool HardMode { get; set; }
 }
 
+// 属于单个玩家数据
 public sealed class PlayerRunState
 {
     public string? LoadoutId { get; set; }
     public int DraftRerolls { get; set; }
 }
+```
 
-public static class TestRunData
+---
+
+## 注册数据槽位
+
+为了方便后面到处调用，我们可以把注册返回的句柄存成静态变量。
+
+```csharp
+using MegaCrit.Sts2.Core.Modding;
+using STS2RitsuLib;
+using STS2RitsuLib.RunData;
+
+namespace Test.Scripts.RunData;
+
+[ModInitializer(nameof(Init))]
+public static class Entry
 {
+    public const string ModId = "test";
+    // 全局数据句柄
     public static RunSavedData<ChallengeRunState> Challenge = null!;
+    // 玩家数据句柄
     public static PlayerRunSavedData<PlayerRunState> Player = null!;
 
-    public static void Register()
+    public static void Init()
     {
-        using (RitsuLibFramework.BeginModDataRegistration(Entry.ModId))
+        using (RitsuLibFramework.BeginModDataRegistration(ModId))
         {
-            var store = RitsuLibFramework.GetRunSavedDataStore(Entry.ModId);
+            var store = RitsuLibFramework.GetRunSavedDataStore(ModId);
 
+            // 注册全局共享的配置
             Challenge = store.Register(
                 key: "challenge",
                 defaultFactory: () => new ChallengeRunState(),
                 options: new RunSavedDataOptions
                 {
                     WritePolicy = RunSavedDataWritePolicy.WhenNonDefault,
-                    SyncLobbyOnChange = true,
+                    SyncLobbyOnChange = true, // 允许在大厅修改时同步给队友
                 });
 
+            // 注册按玩家独立的配置
             Player = store.RegisterPerPlayer(
                 key: "player",
                 defaultFactory: () => new PlayerRunState(),
                 options: new RunSavedDataOptions
                 {
                     WritePolicy = RunSavedDataWritePolicy.WhenSet,
-                    SyncLobbyOnChange = true,
+                    SyncLobbyOnChange = true, // 允许在大厅修改时同步给队友
                 });
         }
     }
 }
 ```
 
-`key` 会进入跑局快照，发布后不要改名。需要新增字段时优先在 class 里加可空属性或默认值，而不是换一个新槽位。`RunSavedData<T>` 的值由主机大厅贡献写入；`PlayerRunSavedData<T>` 会按 `NetId` 存成多个玩家条目。
+> **提示**：`key` 是游戏存档中识别这块数据的唯一标识符。模组发布并有人游玩后，**绝对不要修改被注册的 `key`**，否则老玩家的这部分存档会丢失。（如果你需要给数据加新内容，直接去刚写的 C# 类里加新属性即可。）
 
-## 写入大厅暂存
+---
 
-开局前选择的挑战、加载包、草稿限制等数据，不要先写到全局或 profile 保存里再复制。直接写对应句柄的 `Lobby` scope，RitsuLib 会在真正开局时把暂存数据提交进 run snapshot。
+## 在游戏中读取和修改数据
+
+进入游戏后，我们就可以通过刚刚存下的静态句柄，随时对数据进行读写了。你只需要传入当前的 `RunState`。
+
+### 访问全局共享数据
+```csharp
+using MegaCrit.Sts2.Core.Runs;
+// 假设我们在一个卡牌效果里，方法里能拿到 runState
+RunState runState = ...;
+
+// 读取
+var challengeData = TestRunData.Challenge.Get(runState);
+if (challengeData.HardMode)
+{
+    // 触发困难模式特效...
+}
+
+// 修改
+TestRunData.Challenge.Modify(runState, data => 
+{
+    data.ElitesKilled += 1; // 增加精英击杀数
+});
+```
+`Modify` 是非常推荐的做法。它不仅可以让你用闭包直接修改数据，还会**自动打上“已修改”标记**，向引擎宣告这部分数据需要保存到硬盘。
+
+### 访问玩家独立数据
+按玩家独立的数据提取起来同样简单，唯一的区别是你需要额外告诉它“查的是哪个玩家”（通过玩家本身的实例，或者网络ID `netId`）。
+
+```csharp
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Runs;
+
+Player player = ...;
+
+// 读取当前玩家的数据
+var playerData = TestRunData.Player.Get(player);
+int currentRerolls = playerData.DraftRerolls;
+
+// 修改当前玩家的数据
+TestRunData.Player.Modify(player, data =>
+{
+    data.DraftRerolls -= 1;
+});
+
+// 你也可以通过 RunState + NetId 操作其他玩家的数据
+ulong teammateNetId = ...;
+TestRunData.Player.Modify(runState, teammateNetId, data => 
+{
+    data.LoadoutId = "shared_loadout";
+});
+```
+
+共享槽位只接受主机 net id 的贡献。客户端如果需要提交自己的选择，应写 `PlayerRunSavedData<T>`，并用本机 `lobby.NetService.NetId` 作为玩家 key。主机开始跑局时提交权威快照，之后所有玩家通过跑局存档和重连恢复同一份数据。
+
+---
+
+## 大厅暂存数据
+
+这部分是在跑局刚开始建立前用到的。许多时候，我们需要玩家在**大厅界面**（比如选人、选挑战选项时）更改自己想要的局内数据。
+
+在没有正式“开始游戏”前，`RunState` 其实还没建立，因此我们没法直接调用 `Get(runState)`。RitsuLib 提供了一个开局准备暂存区（Lobby Scope）。
 
 ```csharp
 using MegaCrit.Sts2.Core.Multiplayer.Game.Lobby;
-using STS2RitsuLib.RunData;
 
 namespace Test.Scripts.RunData;
 
 public static class TestLobbyRunData
 {
+    // 在大厅界面切换全局挑战
     public static void SelectChallenge(StartRunLobby lobby, string challengeId, bool hardMode)
     {
         TestRunData.Challenge.Lobby.Modify(lobby, data =>
@@ -79,8 +163,10 @@ public static class TestLobbyRunData
         });
     }
 
+    // 在大厅界面切换玩家初始包
     public static void SelectLocalLoadout(StartRunLobby lobby, string loadoutId)
     {
+        // NetService.NetId 是你当前的本地网络ID
         TestRunData.Player.Lobby.Modify(lobby, lobby.NetService.NetId, data =>
         {
             data.LoadoutId = loadoutId;
@@ -89,76 +175,26 @@ public static class TestLobbyRunData
 }
 ```
 
-当槽位开启 `SyncLobbyOnChange` 时，`Lobby.Set` 和 `Lobby.Modify` 会调用 `RunSavedDataLobby.TryPushContribution(lobby)`。在多人大厅里，RitsuLib 会复用原版大厅消息尾部把当前机器贡献推给主机；单人和主机本机会直接合并到本地 session。这个流程只适合“开局前要进入跑局快照”的数据，不需要 Sidecar。
-
-如果你一次改了多个控件，并且想在最后再通知预览 UI，可以显式发布一次暂存事件：
-
-```csharp
-RunSavedDataLobby.NotifyStagingChanged(lobby);
-RunSavedDataLobby.TryPushContribution(lobby);
-```
-
-## 在跑局里修改
-
-跑局开始后，使用 `RunState` 或 `Player` 修改已提交的数据。`Modify` 会把槽位标记为 dirty，符合写入策略时会随跑局保存一起导出。
-
-```csharp
-using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.Runs;
-
-namespace Test.Scripts.RunData;
-
-public static class TestRunCounters
-{
-    public static void RecordEliteKilled(RunState runState)
-    {
-        TestRunData.Challenge.Modify(runState, data =>
-        {
-            data.ElitesKilled++;
-        });
-    }
-
-    public static void SpendDraftReroll(Player player)
-    {
-        TestRunData.Player.Modify(player, data =>
-        {
-            data.DraftRerolls++;
-        });
-    }
-}
-```
-
-如果只是读取已有数据，不想因为读取而创建默认值，用 `TryGet`。这在判断旧存档是否真的带有某个槽位时很有用。
+前面注册槽位时，我们传入了 `SyncLobbyOnChange = true`。这意味着只要你在这里调用了 `Lobby.Modify`，RitsuLib 就会自动帮你把这个数据的改动**同步给主机和队友**。
 
 ## 监听提交时机
 
-`RunSavedDataLobbyStagingEvent` 用来驱动大厅 UI 预览，`RunSavedDataPreparingEvent` 用来在 run snapshot 导出前补齐最终值。
+通过订阅事件管线可监听：`RunSavedDataLobbyStagingEvent` 用来驱动大厅 UI 预览，`RunSavedDataPreparingEvent` 用来在 run snapshot 导出前补齐最终值。
 
 ```csharp
-using STS2RitsuLib;
-using STS2RitsuLib.RunData;
-
-namespace Test.Scripts.RunData;
-
-public static class TestRunDataEvents
+RitsuLibFramework.SubscribeLifecycle<RunSavedDataLobbyStagingEvent>(evt =>
 {
-    public static void RegisterEvents()
-    {
-        RitsuLibFramework.SubscribeLifecycle<RunSavedDataLobbyStagingEvent>(evt =>
-        {
-            if (evt.IsHost && evt.Reason == RunSavedDataLobbyStagingReason.ContributionMerged)
-                Entry.Logger.Info("大厅跑局数据已合并，可以刷新预览。");
-        });
+    if (evt.IsHost && evt.Reason == RunSavedDataLobbyStagingReason.ContributionMerged)
+        Entry.Logger.Info("大厅跑局数据已合并，可以刷新预览。");
+});
 
-        RitsuLibFramework.SubscribeLifecycle<RunSavedDataPreparingEvent>(evt =>
-        {
-            TestRunData.Challenge.Modify(evt.RunState, data =>
-            {
-                data.ChallengeId ??= "standard";
-            });
-        });
-    }
-}
+RitsuLibFramework.SubscribeLifecycle<RunSavedDataPreparingEvent>(evt =>
+{
+    TestRunData.Challenge.Modify(evt.RunState, data =>
+    {
+        data.ChallengeId ??= "standard";
+    });
+});
 ```
 
 `RunSavedDataLobbyStagingReason` 常见值如下：
@@ -181,6 +217,8 @@ public static class TestRunDataEvents
 `WhenNonDefault` 会把当前值和 `defaultFactory` 创建的新对象序列化后比较，所以默认工厂要稳定，不要放随机数、时间戳或运行时对象引用。
 
 ## 给槽位加迁移
+
+如果你迫不得已要修改数据的结构，需要设置结构迁移，将数据从旧版本迁往新版本。
 
 `RunSavedDataOptions.SchemaVersion` 写进每个槽位。旧版本读入时，RitsuLib 会按 `IMigration.FromVersion` 找迁移，直到升级到当前版本。
 
@@ -220,21 +258,3 @@ Challenge = store.Register(
         Migrations = new[] { new ChallengeV1ToV2Migration() },
     });
 ```
-
-迁移操作的是槽位 JSON 包装对象：共享槽位的实际数据在 `data["data"]`，玩家槽位的实际数据在 `data["players"]`。迁移失败时该槽位不会导入，日志里会出现 `RunSavedData` 警告。
-
-## 多人联机注意点
-
-共享槽位只接受主机 net id 的贡献。客户端如果需要提交自己的选择，应写 `PlayerRunSavedData<T>`，并用本机 `lobby.NetService.NetId` 作为玩家 key。主机开始跑局时提交权威快照，之后所有玩家通过跑局存档和重连恢复同一份数据。
-
-不要把临时 UI 状态、调试面板状态或账号设置塞进 RunSavedData。它会进入 run snapshot，并跟随存档、读档和联机同步流转；只保存“这局本身的一部分”。
-
-## 验证
-
-本地可以按这个顺序测：
-
-1. 在大厅选择挑战和玩家 loadout，确认 `RunSavedDataLobbyStagingEvent` 会触发。
-2. 开局后读取 `Challenge.TryGet(runState, out var challenge)`，确认大厅值已经提交。
-3. 打一场精英后保存、退出、读档，确认 `ElitesKilled` 保留。
-4. 双人联机时让客户端改 loadout，主机收到 `ContributionMerged` 后开局，确认各自 `NetId` 下的数据不同。
-5. 临时改一次 `key` 或降低 `SchemaVersion`，确认旧存档无法读到该槽位；再改回稳定值。
