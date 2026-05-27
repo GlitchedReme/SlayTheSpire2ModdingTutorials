@@ -126,3 +126,11 @@ RitsuLibFramework.CreateContentPack(ModId)
     .ActEncounter<Glory, TestEncounter>()
     .Apply();
 ```
+
+## 章节目录
+
+| | |
+| - | - |
+| [01 - 添加基础内容](01%20-%20添加基础内容/README.md) | [02 - 玩法基底](02%20-%20玩法基底/README.md) |
+| [03 - 模组工具](03%20-%20模组工具/README.md) | [04 - 内容进阶](04%20-%20内容进阶/README.md) |
+| [05 - 运行时 API](05%20-%20运行时%20API/README.md) | [06 - 专项集成](06%20-%20专项集成/README.md) |

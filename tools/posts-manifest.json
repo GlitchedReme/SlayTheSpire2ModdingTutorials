@@ -359,6 +359,168 @@
             "author": "alkaid616"
           }
         ]
+      },
+      {
+        "id": "content-advanced",
+        "articles": [
+          {
+            "source": "RitsuLib/04 - 内容进阶/01 - 内容包与注册器/README.md",
+            "post": "04-ritsulib/04-27-content-packs-and-registries.md",
+            "permalink": "docs/04-ritsulib/04-27-content-packs-and-registries/",
+            "title": "内容包与注册器",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/04 - 内容进阶/02 - 资源配置与回退/README.md",
+            "post": "04-ritsulib/04-28-asset-profiles-and-fallbacks.md",
+            "permalink": "docs/04-ritsulib/04-28-asset-profiles-and-fallbacks/",
+            "title": "资源配置与回退",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/04 - 内容进阶/03 - Godot 场景编写/README.md",
+            "post": "04-ritsulib/04-29-godot-scene-authoring.md",
+            "permalink": "docs/04-ritsulib/04-29-godot-scene-authoring/",
+            "title": "Godot 场景编写",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/04 - 内容进阶/04 - 生物视觉与动画/README.md",
+            "post": "04-ritsulib/04-30-creature-visuals-and-animation.md",
+            "permalink": "docs/04-ritsulib/04-30-creature-visuals-and-animation/",
+            "title": "生物视觉与动画",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/04 - 内容进阶/05 - 额外内容类型/README.md",
+            "post": "04-ritsulib/04-31-extra-content-types.md",
+            "permalink": "docs/04-ritsulib/04-31-extra-content-types/",
+            "title": "额外内容类型",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/04 - 内容进阶/06 - 自定义奖励与目标/README.md",
+            "post": "04-ritsulib/04-32-custom-rewards-and-targets.md",
+            "permalink": "docs/04-ritsulib/04-32-custom-rewards-and-targets/",
+            "title": "自定义奖励与目标",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/04 - 内容进阶/07 - 战斗 UI 数值扩展/README.md",
+            "post": "04-ritsulib/04-33-combat-ui-number-extensions.md",
+            "permalink": "docs/04-ritsulib/04-33-combat-ui-number-extensions/",
+            "title": "战斗 UI 数值扩展",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/04 - 内容进阶/08 - 节点附加/README.md",
+            "post": "04-ritsulib/04-34-node-attachments.md",
+            "permalink": "docs/04-ritsulib/04-34-node-attachments/",
+            "title": "节点附加",
+            "author": "alkaid616"
+          }
+        ]
+      },
+      {
+        "id": "runtime-api",
+        "articles": [
+          {
+            "source": "RitsuLib/05 - 运行时 API/01 - 本地化与 SmartFormat/README.md",
+            "post": "04-ritsulib/04-35-localization-and-smartformat.md",
+            "permalink": "docs/04-ritsulib/04-35-localization-and-smartformat/",
+            "title": "本地化与 SmartFormat",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/02 - LocString 占位符/README.md",
+            "post": "04-ritsulib/04-36-locstring-placeholders.md",
+            "permalink": "docs/04-ritsulib/04-36-locstring-placeholders/",
+            "title": "LocString 占位符",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/03 - Mod 设置页/README.md",
+            "post": "04-ritsulib/04-37-mod-settings-page.md",
+            "permalink": "docs/04-ritsulib/04-37-mod-settings-page/",
+            "title": "Mod 设置页",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/04 - Shell 主题/README.md",
+            "post": "04-ritsulib/04-38-shell-theme.md",
+            "permalink": "docs/04-ritsulib/04-38-shell-theme/",
+            "title": "Shell 主题",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/05 - 更新检查/README.md",
+            "post": "04-ritsulib/04-39-update-checks.md",
+            "permalink": "docs/04-ritsulib/04-39-update-checks/",
+            "title": "更新检查",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/06 - 诊断与导出/README.md",
+            "post": "04-ritsulib/04-40-diagnostics-and-export.md",
+            "permalink": "docs/04-ritsulib/04-40-diagnostics-and-export/",
+            "title": "诊断与导出",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/07 - 跨 Mod Interop/README.md",
+            "post": "04-ritsulib/04-41-cross-mod-interop.md",
+            "permalink": "docs/04-ritsulib/04-41-cross-mod-interop/",
+            "title": "跨 Mod Interop",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/08 - 跑局数据进阶/README.md",
+            "post": "04-ritsulib/04-42-run-data-advanced.md",
+            "permalink": "docs/04-ritsulib/04-42-run-data-advanced/",
+            "title": "跑局数据进阶",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/09 - 遥测/README.md",
+            "post": "04-ritsulib/04-43-telemetry.md",
+            "permalink": "docs/04-ritsulib/04-43-telemetry/",
+            "title": "遥测",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/10 - Sidecar 联机通信/README.md",
+            "post": "04-ritsulib/04-44-sidecar-networking.md",
+            "permalink": "docs/04-ritsulib/04-44-sidecar-networking/",
+            "title": "Sidecar 联机通信",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/05 - 运行时 API/11 - 常用工具类/README.md",
+            "post": "04-ritsulib/04-45-common-utilities.md",
+            "permalink": "docs/04-ritsulib/04-45-common-utilities/",
+            "title": "常用工具类",
+            "author": "alkaid616"
+          }
+        ]
+      },
+      {
+        "id": "special-integrations",
+        "articles": [
+          {
+            "source": "RitsuLib/06 - 专项集成/01 - 遗物专项集成/README.md",
+            "post": "04-ritsulib/04-46-relic-special-integrations.md",
+            "permalink": "docs/04-ritsulib/04-46-relic-special-integrations/",
+            "title": "遗物专项集成",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/06 - 专项集成/02 - 时间线进阶/README.md",
+            "post": "04-ritsulib/04-47-timeline-advanced.md",
+            "permalink": "docs/04-ritsulib/04-47-timeline-advanced/",
+            "title": "时间线进阶",
+            "author": "alkaid616"
+          }
+        ]
       }
     ]
   },

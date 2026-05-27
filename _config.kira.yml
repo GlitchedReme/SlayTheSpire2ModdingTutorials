@@ -127,6 +127,10 @@ docsTree:
                                     title: 15 添加单例,
                                     path: /docs/04-ritsulib/04-15-add-singleton/,
                                 },
+                                {
+                                    title: 16 添加卡池,
+                                    path: /docs/04-ritsulib/04-16-add-card-pool/,
+                                },
                             ],
                     },
                     {
@@ -184,6 +188,111 @@ docsTree:
                                 {
                                     title: 05 运行时热键,
                                     path: /docs/04-ritsulib/04-26-runtime-hotkey/,
+                                },
+                            ],
+                    },
+                    {
+                        title: 04 内容进阶,
+                        open: false,
+                        children:
+                            [
+                                {
+                                    title: 01 内容包与注册器,
+                                    path: /docs/04-ritsulib/04-27-content-packs-and-registries/,
+                                },
+                                {
+                                    title: 02 资源配置与回退,
+                                    path: /docs/04-ritsulib/04-28-asset-profiles-and-fallbacks/,
+                                },
+                                {
+                                    title: 03 Godot 场景编写,
+                                    path: /docs/04-ritsulib/04-29-godot-scene-authoring/,
+                                },
+                                {
+                                    title: 04 生物视觉与动画,
+                                    path: /docs/04-ritsulib/04-30-creature-visuals-and-animation/,
+                                },
+                                {
+                                    title: 05 额外内容类型,
+                                    path: /docs/04-ritsulib/04-31-extra-content-types/,
+                                },
+                                {
+                                    title: 06 自定义奖励与目标,
+                                    path: /docs/04-ritsulib/04-32-custom-rewards-and-targets/,
+                                },
+                                {
+                                    title: 07 战斗 UI 数值扩展,
+                                    path: /docs/04-ritsulib/04-33-combat-ui-number-extensions/,
+                                },
+                                {
+                                    title: 08 节点附加,
+                                    path: /docs/04-ritsulib/04-34-node-attachments/,
+                                },
+                            ],
+                    },
+                    {
+                        title: 05 运行时 API,
+                        open: false,
+                        children:
+                            [
+                                {
+                                    title: 01 本地化与 SmartFormat,
+                                    path: /docs/04-ritsulib/04-35-localization-and-smartformat/,
+                                },
+                                {
+                                    title: 02 LocString 占位符,
+                                    path: /docs/04-ritsulib/04-36-locstring-placeholders/,
+                                },
+                                {
+                                    title: 03 Mod 设置页,
+                                    path: /docs/04-ritsulib/04-37-mod-settings-page/,
+                                },
+                                {
+                                    title: 04 Shell 主题,
+                                    path: /docs/04-ritsulib/04-38-shell-theme/,
+                                },
+                                {
+                                    title: 05 更新检查,
+                                    path: /docs/04-ritsulib/04-39-update-checks/,
+                                },
+                                {
+                                    title: 06 诊断与导出,
+                                    path: /docs/04-ritsulib/04-40-diagnostics-and-export/,
+                                },
+                                {
+                                    title: 07 跨 Mod Interop,
+                                    path: /docs/04-ritsulib/04-41-cross-mod-interop/,
+                                },
+                                {
+                                    title: 08 跑局数据进阶,
+                                    path: /docs/04-ritsulib/04-42-run-data-advanced/,
+                                },
+                                {
+                                    title: 09 遥测,
+                                    path: /docs/04-ritsulib/04-43-telemetry/,
+                                },
+                                {
+                                    title: 10 Sidecar 联机通信,
+                                    path: /docs/04-ritsulib/04-44-sidecar-networking/,
+                                },
+                                {
+                                    title: 11 常用工具类,
+                                    path: /docs/04-ritsulib/04-45-common-utilities/,
+                                },
+                            ],
+                    },
+                    {
+                        title: 06 专项集成,
+                        open: false,
+                        children:
+                            [
+                                {
+                                    title: 01 遗物专项集成,
+                                    path: /docs/04-ritsulib/04-46-relic-special-integrations/,
+                                },
+                                {
+                                    title: 02 时间线进阶,
+                                    path: /docs/04-ritsulib/04-47-timeline-advanced/,
                                 },
                             ],
                     },

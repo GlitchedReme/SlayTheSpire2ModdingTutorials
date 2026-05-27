@@ -32,6 +32,9 @@ importers:
       hexo-theme-kira:
         specifier: ^1.4.9
         version: 1.4.9
+      hexo-wordcount:
+        specifier: ^6.0.1
+        version: 6.0.1
     devDependencies:
       wrangler:
         specifier: ^4.92.0
