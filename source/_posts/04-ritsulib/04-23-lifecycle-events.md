@@ -2,7 +2,7 @@
 title: 生命周期事件
 date: 2026-05-16 23:27:19
 permalink: docs/04-ritsulib/04-23-lifecycle-events/
-author: Reme、alkaid616
+author: alkaid616
 categories:
 - Basics
 ---

@@ -79,7 +79,7 @@ public class MultiClassSharedPool : TypeListCardPoolModel
 
 其中的ID为`{ModId}_POOLFILTER_{ID}`，ID是我们刚刚代码写入的大写形式。
 
-```csharp
+```json
 {
     "REME_MOD_POOLFILTER_REME_MULTICLASS_SHARED_POOL": "多职业共享池。"
 }

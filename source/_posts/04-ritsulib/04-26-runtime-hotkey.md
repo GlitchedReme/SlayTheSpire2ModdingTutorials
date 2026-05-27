@@ -2,7 +2,7 @@
 title: 运行时热键
 date: 2026-05-16 23:27:19
 permalink: docs/04-ritsulib/04-26-runtime-hotkey/
-author: Reme、alkaid616
+author: alkaid616
 categories:
 - Basics
 ---
@@ -24,12 +24,13 @@ public class Entry
     public const string ModId = "Test";
     public static readonly Logger Logger = RitsuLibFramework.CreateLogger(ModId);
 
+    // 存设句柄供未来按需解绑
     private static IRuntimeHotkeyHandle? _reloadHotkey;
 
     public static void Init()
     {
         _reloadHotkey = RuntimeHotkeyService.Register(
-            // 绑定字符串，格式见下表
+            // 支持组合修饰键的字符串，格式请对比稍后的列表
             "Ctrl+Shift+R",
             // 或者使用数组，任一键按下都会触发，重复绑定会自动去重
             // ["F5", "Ctrl+Shift+R"],

@@ -2,7 +2,7 @@
 title: 数据持久化
 date: 2026-05-16 23:27:19
 permalink: docs/04-ritsulib/04-25-data-persistence/
-author: Reme、alkaid616
+author: alkaid616
 categories:
 - Basics
 ---

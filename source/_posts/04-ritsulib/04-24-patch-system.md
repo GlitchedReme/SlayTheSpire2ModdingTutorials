@@ -2,7 +2,7 @@
 title: 补丁系统
 date: 2026-05-16 23:27:19
 permalink: docs/04-ritsulib/04-24-patch-system/
-author: Reme、alkaid616
+author: alkaid616
 categories:
 - Basics
 ---
@@ -19,7 +19,6 @@ categories:
 ```csharp
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
-using MegaCrit.Sts2.Core.Nodes;
 using STS2RitsuLib;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.Patching.Models;

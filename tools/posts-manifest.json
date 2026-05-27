@@ -318,6 +318,41 @@
             "permalink": "docs/04-ritsulib/04-22-notification/",
             "title": "通知提示",
             "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/02 - 玩法基底/07 - 额外角标/README.md",
+            "post": "04-ritsulib/04-22-1-extra-badge.md",
+            "permalink": "docs/04-ritsulib/04-22-1-extra-badge/",
+            "title": "额外角标",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/02 - 玩法基底/08 - 常用工具/README.md",
+            "post": "04-ritsulib/04-22-2-common-tools.md",
+            "permalink": "docs/04-ritsulib/04-22-2-common-tools/",
+            "title": "常用工具",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/02 - 玩法基底/09 - 局内数据/README.md",
+            "post": "04-ritsulib/04-22-3-in-run-data.md",
+            "permalink": "docs/04-ritsulib/04-22-3-in-run-data/",
+            "title": "局内数据",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/02 - 玩法基底/10 - 自定义奖励/README.md",
+            "post": "04-ritsulib/04-22-4-custom-reward.md",
+            "permalink": "docs/04-ritsulib/04-22-4-custom-reward/",
+            "title": "自定义奖励",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/02 - 玩法基底/11 - 自定义目标/README.md",
+            "post": "04-ritsulib/04-22-5-custom-targeting.md",
+            "permalink": "docs/04-ritsulib/04-22-5-custom-targeting/",
+            "title": "自定义目标",
+            "author": "alkaid616"
           }
         ]
       },
@@ -345,10 +380,10 @@
             "author": "alkaid616"
           },
           {
-            "source": "RitsuLib/03 - 模组工具/04 - 数据持久化/README.md",
-            "post": "04-ritsulib/04-25-data-persistence.md",
-            "permalink": "docs/04-ritsulib/04-25-data-persistence/",
-            "title": "数据持久化",
+            "source": "RitsuLib/03 - 模组工具/04 - 更新检查/README.md",
+            "post": "04-ritsulib/04-25-update-checker.md",
+            "permalink": "docs/04-ritsulib/04-25-update-checker/",
+            "title": "更新检查",
             "author": "alkaid616"
           },
           {
@@ -356,6 +391,34 @@
             "post": "04-ritsulib/04-26-runtime-hotkey.md",
             "permalink": "docs/04-ritsulib/04-26-runtime-hotkey/",
             "title": "运行时热键",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/03 - 模组工具/06 - 内容注册/README.md",
+            "post": "04-ritsulib/04-27-content-registry.md",
+            "permalink": "docs/04-ritsulib/04-27-content-registry/",
+            "title": "内容注册",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/03 - 模组工具/07 - 节点附加/README.md",
+            "post": "04-ritsulib/04-28-node-attachment.md",
+            "permalink": "docs/04-ritsulib/04-28-node-attachment/",
+            "title": "节点附加",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/03 - 模组工具/09 - 数据遥测/README.md",
+            "post": "04-ritsulib/04-29-telemetry.md",
+            "permalink": "docs/04-ritsulib/04-29-telemetry/",
+            "title": "数据遥测",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/03 - 模组工具/10 - 模组联动/README.md",
+            "post": "04-ritsulib/04-30-mod-integration.md",
+            "permalink": "docs/04-ritsulib/04-30-mod-integration/",
+            "title": "模组联动",
             "author": "alkaid616"
           }
         ]

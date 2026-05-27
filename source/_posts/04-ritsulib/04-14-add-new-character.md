@@ -42,10 +42,11 @@ public class TestCardPool : TypeListCardPoolModel
     public override Color DeckEntryCardColor => new(0.5f, 0.5f, 1f);
     // 能量表盘文字轮廓颜色
     public override Color EnergyOutlineColor => new(0.5f, 0.5f, 1f);
-    // 如果你想用原版卡框换色，加这两行
-    private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateRgbShaderMaterial(0.5f, 0.5f, 1f);
-    // 如果你是自定义卡框，上面一行换成这个
-    // private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateUnmodulatedHsvShaderMaterial();
+
+    // 根据你使用的卡框决定使用哪个Material
+    private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateReplaceHueShaderMaterial(0.5f, 0.5f, 1f); // 如果你使用原版卡框，使用这个直接替换色调。
+    // private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateRgbShaderMaterial(0.5f, 0.5f, 1f); // 使用原版卡框替换色调。除非你的版本没有CreateReplaceHueShaderMaterial函数，否则应使用上面那种
+    // private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateUnmodulatedHsvShaderMaterial(); // 如果你是自定义卡框，使用这个
     public override Material? PoolFrameMaterial => _poolFrameMaterial;
 
     // 卡池是否是无色。例如事件、状态等卡池就是无色的。
@@ -155,7 +156,7 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
                 // 能量表盘tscn路径。
                 EnergyCounterPath: "res://Test/scenes/test_energy_counter.tscn",
                 // 商店人物场景。
-                MerchantAnimPath: "res://Test/scenes/test_character_merchant.tscn"
+                MerchantAnimPath: "res://Test/scenes/test_character_merchant.tscn",
                 // 篝火休息场景。
                 RestSiteAnimPath: "res://Test/scenes/test_character_rest_site.tscn"
             ),
@@ -200,7 +201,17 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
                 // ArmPaperTexturePath: null,
                 // 多人模式剪刀石头布-剪刀。
                 // ArmScissorsTexturePath: null
-            )));
+            )
+            // 其余如果有需要自行填写
+            // Spine: null,
+            // VisualCues: null, // 帧动画静态图人物使用，查看角色动画一章
+            // WorldProceduralVisuals: null,
+            // VanillaCardVisualOverrides: [],
+            // VanillaRelicVisualOverrides: [
+            //     new (CharacterOwnedVanillaRelicModelId.YummyCookie, new("res://icon.svg")) // 美味饼干覆盖
+            // ],
+            // VanillaPotionVisualOverrides: []
+        ));
 
     // 攻击和施法动画延迟，以对齐动画
     public override float AttackAnimDelay => 0f;
@@ -233,11 +244,21 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
 }
 ```
 
+## 自定义人物背景
+
+```csharp
+Ui: new(
+    CharacterSelectBgPath: "res://Test/scenes/test_bg.tscn",
+)
+```
+
 没什么要求，Godot里创建一个新的场景，类型为`Control`，自己搭建场景即可。参考：（根节点大小建议为2560x1200，可从最下方复制tscn资源）
 
 ![人物背景](../../../images/image17.png)
 
-## 自定义人物
+## 自定义战斗模型
+
+> 如果你的人物使用帧动画或者静态图，可参照`角色动画`一章设置
 
 `AssetProfile`里的：
 
@@ -275,7 +296,7 @@ TestCharacter (Node2D)
 
 * 如果要自然支持Spine播放，需要把`Visuals`改成`SpineSprite`类型（不需要改名），且你的战斗人物模型需要有`idle_loop`（待机循环），`attack`（攻击动作），`cast`（能力卡动作），`hurt`（受伤），`die`（死亡）这些动画名。（如果你没有`SpineSprite`，参考`卡图&皮肤替换`一章先下载`Spine Godot Extension`。）
 
-* 非Spine需要使用动画状态机，详见`动画状态机`一章。（TODO）
+* 非Spine需要使用动画状态机，详见`角色动画`一章。
 
 ## 自定义能量表盘
 

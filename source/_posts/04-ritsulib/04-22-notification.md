@@ -2,7 +2,7 @@
 title: 通知提示
 date: 2026-05-16 23:27:19
 permalink: docs/04-ritsulib/04-22-notification/
-author: Reme、alkaid616
+author: alkaid616
 categories:
 - Basics
 ---
