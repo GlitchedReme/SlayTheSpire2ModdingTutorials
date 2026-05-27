@@ -1013,7 +1013,7 @@ const VANILLA_MATS = [
   { name: 'Quest',            h: 1.0,   s: 1.00, v: 1.0,  swatch: '#c44a3a' },
 ];
 const frameState = {
-  h: 0.025, s: 0.85, v: 1.0, a: 1.0,
+  h: 0.025, s: 0.85, v: 1.0,
   frameType: 'skill', ancientType: 'attack', vanillaName: 'Ironclad Red',
 };
 const NORMAL_FRAME_TYPES = new Set(['skill', 'attack', 'power', 'quest']);
@@ -1051,7 +1051,7 @@ const VS_SRC = `
 const FS_SRC = `
   precision highp float;
   uniform sampler2D u_tex;
-  uniform float u_h, u_s, u_v, u_alpha;
+  uniform float u_h, u_s, u_v;
   uniform mat3 u_yiq_to_rgb;
   varying vec2 v_uv;
   void main() {
@@ -1070,7 +1070,6 @@ const FS_SRC = `
     col.rgb = sat_shift * col.rgb;
     col.rgb = mix(vec3(0.0), col.rgb, u_v);
     col.rgb = u_yiq_to_rgb * col.rgb;
-    col.a *= u_alpha;
     gl_FragColor = col;
   }
 `;
@@ -1113,7 +1112,6 @@ function initGL() {
     h:   gl.getUniformLocation(glProgram, 'u_h'),
     s:   gl.getUniformLocation(glProgram, 'u_s'),
     v:   gl.getUniformLocation(glProgram, 'u_v'),
-    a:   gl.getUniformLocation(glProgram, 'u_alpha'),
     tex: gl.getUniformLocation(glProgram, 'u_tex'),
     yiqToRgb: gl.getUniformLocation(glProgram, 'u_yiq_to_rgb'),
   };
@@ -1187,7 +1185,6 @@ function renderFrame() {
   gl.uniform1f(glUniforms.h, frameState.h);
   gl.uniform1f(glUniforms.s, frameState.s);
   gl.uniform1f(glUniforms.v, frameState.v);
-  gl.uniform1f(glUniforms.a, frameState.a);
   gl.uniformMatrix3fv(glUniforms.yiqToRgb, false, YIQ_TO_RGB);
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -1195,12 +1192,9 @@ function renderFrame() {
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
   $('frameStageInfo').textContent =
-    `${frameState.frameType.toUpperCase()} · h:${frameState.h.toFixed(3)} s:${frameState.s.toFixed(3)} v:${frameState.v.toFixed(3)} a:${frameState.a.toFixed(2)}` +
+    `${frameState.frameType.toUpperCase()} · h:${frameState.h.toFixed(3)} s:${frameState.s.toFixed(3)} v:${frameState.v.toFixed(3)}` +
     (frameState.vanillaName ? ` · ${frameState.vanillaName}` : '');
 
-  const alphaLineTres = frameState.a < 1.0
-    ? `\n# Alpha < 1: apply via Modulate on the sprite node, not the shader.`
-    : '';
   setCode('codeTres',
 `[gd_resource type="ShaderMaterial" load_steps=2 format=3]
 
@@ -1211,24 +1205,9 @@ resource_local_to_scene = true
 shader = ExtResource("1")
 shader_parameter/h = ${frameState.h}
 shader_parameter/s = ${frameState.s}
-shader_parameter/v = ${frameState.v}${alphaLineTres}`);
+shader_parameter/v = ${frameState.v}`);
 
-  setCode('codeApply',
-`var mat = (ShaderMaterial)cardFrameSprite.Material;
-mat.SetShaderParameter("h", ${frameState.h}f);
-mat.SetShaderParameter("s", ${frameState.s}f);
-mat.SetShaderParameter("v", ${frameState.v}f);${frameState.a < 1.0 ? `
-cardFrameSprite.Modulate = new Color(1f, 1f, 1f, ${frameState.a.toFixed(3)}f);` : ''}`);
-
-  $('cvHsv').textContent     = `h=${frameState.h.toFixed(3)}, s=${frameState.s.toFixed(3)}, v=${frameState.v.toFixed(3)}, a=${frameState.a.toFixed(2)}`;
-  $('cvHueDeg').textContent  = `${((1 - frameState.h) * 360).toFixed(1)}°  (反向: ${(frameState.h * 360).toFixed(1)}°)`;
-  const white = applyShaderCPU([1,1,1], frameState.h, frameState.s, frameState.v);
-  const wr = clamp(Math.round(white[0]*255),0,255);
-  const wg = clamp(Math.round(white[1]*255),0,255);
-  const wb = clamp(Math.round(white[2]*255),0,255);
-  $('cvWhiteOut').textContent = `rgb(${wr}, ${wg}, ${wb})`;
-  $('cvWhiteHex').innerHTML =
-    `<span class="ink-swatch" style="background:rgb(${wr},${wg},${wb})"></span>#${pad2(wr)}${pad2(wg)}${pad2(wb)}`;
+  setFrameCSharpSnippet();
 }
 
 function makeCanvas(w, h) {
@@ -1419,12 +1398,7 @@ AncientBanner = res://images/atlases/ui_atlas.sprites/card/ancient_banner.tres
 AncientBorderGlassOverlay.Texture = res://images/vfx/ui/ui_card_mask.png
 AncientBorderGlassOverlay.Material.mask = res://images/vfx/ui/card/ancient/ui_card_ancient_border_main.png`);
 
-  setCode('codeApply',
-`var isAncient = cardModel.Rarity == CardRarity.Ancient;
-frame.Visible = !isAncient;
-ancientBorder.Visible = isAncient;
-ancientTextBg.Visible = isAncient;
-ancientBanner.Visible = isAncient;`);
+  setFrameCSharpSnippet();
 }
 
 function renderAncientFrame() {
@@ -1452,10 +1426,6 @@ function renderAncientFrame() {
     `ANCIENT ${frameState.ancientType.toUpperCase()} · ${w}x${h}` +
     (missingLayers.length ? ` · 缺少资源: ${missingLayers.join(', ')}` : ' · 原版叠层');
   setAncientCodeSnippets();
-  $('cvHsv').textContent = 'Ancient layers';
-  $('cvHueDeg').textContent = 'N/A';
-  $('cvWhiteOut').textContent = 'N/A';
-  $('cvWhiteHex').textContent = 'N/A';
 
   if (!ancientFrameRaf) {
     ancientFrameRaf = requestAnimationFrame(() => {
@@ -1465,44 +1435,37 @@ function renderAncientFrame() {
   }
 }
 
-function applyShaderCPU(rgb, h, s, v) {
-  const Y = 0.2989*rgb[0] + 0.5870*rgb[1] + 0.1140*rgb[2];
-  const I = 0.5959*rgb[0] - 0.2774*rgb[1] - 0.3216*rgb[2];
-  const Q = 0.2115*rgb[0] - 0.5229*rgb[1] + 0.3114*rgb[2];
-  const hue = (1 - h) * 2 * Math.PI;
-  const c = Math.cos(hue), si = Math.sin(hue);
-  let nY = Y, nI = c*I - si*Q, nQ = si*I + c*Q;
-  nI *= s; nQ *= s;
-  nY *= v; nI *= v; nQ *= v;
-  const inv = [
-    [1.003061,  0.955205,  0.619283],
-    [0.999257, -0.271767, -0.646486],
-    [0.996674, -1.105116,  1.705119],
-  ];
-  return [
-    inv[0][0]*nY + inv[0][1]*nI + inv[0][2]*nQ,
-    inv[1][0]*nY + inv[1][1]*nI + inv[1][2]*nQ,
-    inv[2][0]*nY + inv[2][1]*nI + inv[2][2]*nQ,
-  ];
+function frameFloat(n) {
+  return `${Number(n.toFixed(3))}f`;
 }
 
-function setHsv(h, s, v, source, a) {
+function setFrameCSharpSnippet() {
+  setCode('codeApply',
+`// 写在卡池中
+
+// 适用于 RitsuLib
+private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateHsvShaderMaterial(${frameFloat(frameState.h)}, ${frameFloat(frameState.s)}, ${frameFloat(frameState.v)});
+
+public override Material? PoolFrameMaterial => _poolFrameMaterial;
+
+// 适用于 BaseLib
+public override Color ShaderColor => new(${frameFloat(frameState.h)}, ${frameFloat(frameState.s)}, ${frameFloat(frameState.v)});`);
+}
+
+function setHsv(h, s, v, source) {
   frameState.h = clamp(h, 0, 1);
   frameState.s = clamp(s, 0, 5);
   frameState.v = clamp(v, 0, 3);
-  if (a !== undefined) frameState.a = clamp(a, 0, 1);
   if (source !== 'preset') frameState.vanillaName = null;
   if (source !== 'hsvN') {
     $('hsvH').value = frameState.h.toFixed(3);
     $('hsvS').value = frameState.s.toFixed(3);
     $('hsvV').value = frameState.v.toFixed(3);
-    $('hsvA').value = frameState.a.toFixed(2);
   }
   if (source !== 'hsvR') {
     $('hsvHr').value = frameState.h;
     $('hsvSr').value = frameState.s;
     $('hsvVr').value = frameState.v;
-    $('hsvAr').value = frameState.a;
   }
   renderFrame();
 }
@@ -1527,11 +1490,9 @@ function wireFramePreview() {
   $('hsvH').addEventListener('input',  e => setHsv(+e.target.value, frameState.s, frameState.v, 'hsvN'));
   $('hsvS').addEventListener('input',  e => setHsv(frameState.h, +e.target.value, frameState.v, 'hsvN'));
   $('hsvV').addEventListener('input',  e => setHsv(frameState.h, frameState.s, +e.target.value, 'hsvN'));
-  $('hsvA').addEventListener('input',  e => setHsv(frameState.h, frameState.s, frameState.v, 'hsvN', +e.target.value));
   $('hsvHr').addEventListener('input', e => setHsv(+e.target.value, frameState.s, frameState.v, 'hsvR'));
   $('hsvSr').addEventListener('input', e => setHsv(frameState.h, +e.target.value, frameState.v, 'hsvR'));
   $('hsvVr').addEventListener('input', e => setHsv(frameState.h, frameState.s, +e.target.value, 'hsvR'));
-  $('hsvAr').addEventListener('input', e => setHsv(frameState.h, frameState.s, frameState.v, 'hsvR', +e.target.value));
 
   document.querySelectorAll('.chip[data-frame]').forEach(b => {
     b.addEventListener('click', () => {

@@ -389,7 +389,7 @@
 
   .preview-tool .hsva-grid{
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-3);
     margin: var(--space-4) 0 var(--space-1);
   }

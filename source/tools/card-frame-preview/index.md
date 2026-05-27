@@ -8,7 +8,7 @@ hide_meta: true
 ---
 
 <style>
-@import url("../preview-assets/preview-tools.css?v=20260523-cardfit1");
+@import url("../preview-assets/preview-tools.css?v=20260527-frame-hsv1");
 </style>
 
 <div class="preview-tool" data-card-frame-preview-tool>
@@ -16,7 +16,7 @@ hide_meta: true
 <div class="grid-hero">
 <div class="panel-flush">
 <div class="frame-stage">
-<span class="frame-stage-info" id="frameStageInfo">SKILL — h:0 s:0 v:1.2 a:1</span>
+<span class="frame-stage-info" id="frameStageInfo">SKILL — h:0 s:0 v:1.2</span>
 <canvas id="frameCanvas" width="598" height="844"></canvas>
 </div>
 <div class="chip-row" style="padding: 10px 4px 4px;">
@@ -51,11 +51,6 @@ hide_meta: true
 <input type="number" id="hsvV" value="1.0" min="0" max="3" step="0.01">
 <input type="range" id="hsvVr" min="0" max="3" step="0.01" value="1.0">
 </div>
-<div class="hsva-cell">
-<label>A · 0-1</label>
-<input type="number" id="hsvA" value="1" min="0" max="1" step="0.01">
-<input type="range" id="hsvAr" min="0" max="1" step="0.01" value="1">
-</div>
 </div>
 
 <h2 style="margin-top:16px;">原版材质</h2>
@@ -63,23 +58,14 @@ hide_meta: true
 
 <h2 style="margin-top:16px;">代码 & 输出</h2>
 <div class="tabs">
-<button class="tab active" data-tab="frame-tres">.tres 资源</button>
+<button class="tab active" data-tab="frame-tres">.tres</button>
 <button class="tab" data-tab="frame-cs">C# 代码</button>
-<button class="tab" data-tab="frame-conv">数值</button>
 </div>
 <div class="tab-panel active" id="tab-frame-tres">
 <pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeTres" aria-label="复制代码" title="复制代码"></button><code id="codeTres" data-lang="tres"></code></pre>
 </div>
 <div class="tab-panel" id="tab-frame-cs">
 <pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeApply" aria-label="复制代码" title="复制代码"></button><code id="codeApply" data-lang="csharp"></code></pre>
-</div>
-<div class="tab-panel" id="tab-frame-conv">
-<table class="conv">
-<tr><td>HSV (shader)</td><td id="cvHsv"></td></tr>
-<tr><td>Hue ° (度)</td><td id="cvHueDeg"></td></tr>
-<tr><td>白像素 → RGB</td><td id="cvWhiteOut"></td></tr>
-<tr><td>白像素 → HEX</td><td id="cvWhiteHex"></td></tr>
-</table>
 </div>
 </div>
 </div>
@@ -211,4 +197,4 @@ hide_meta: true
 </style>
 
 <script src="../preview-assets/frame-assets.js?v=20260523-fullsize1"></script>
-<script src="../preview-assets/preview-tools.js?v=20260523-cardfit1"></script>
+<script src="../preview-assets/preview-tools.js?v=20260527-frame-hsv1"></script>

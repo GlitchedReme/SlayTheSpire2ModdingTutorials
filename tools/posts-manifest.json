@@ -271,9 +271,17 @@
           },
           {
             "source": "RitsuLib/01 - 添加基础内容/16 - 添加卡池/README.md",
-            "post": "04-ritsulib/04-16-add-card-pool.md",
-            "permalink": "docs/04-ritsulib/04-16-add-card-pool/",
-            "title": "添加卡池"
+            "post": "04-ritsulib/04-15-1-add-card-pool.md",
+            "permalink": "docs/04-ritsulib/04-15-1-add-card-pool/",
+            "title": "添加卡池",
+            "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/01 - 添加基础内容/17 - 角色动画/README.md",
+            "post": "04-ritsulib/04-15-2-character-animation.md",
+            "permalink": "docs/04-ritsulib/04-15-2-character-animation/",
+            "title": "角色动画",
+            "author": "alkaid616"
           }
         ]
       },
