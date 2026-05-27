@@ -11,7 +11,6 @@
 ```csharp
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
-using MegaCrit.Sts2.Core.Nodes;
 using STS2RitsuLib;
 using STS2RitsuLib.Patching.Core;
 using STS2RitsuLib.Patching.Models;
