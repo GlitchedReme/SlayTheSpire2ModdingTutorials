@@ -27,85 +27,90 @@
 				</div>
 				<div id="kira-search-results" class="kira-search-results" hidden></div>
 			</div>
-			<button type="button" class="kira-collapse-toggle" id="kira-sidebar-collapse" aria-expanded="true" aria-controls="kira-sidebar-scroll" title="折叠导航" aria-label="折叠导航">
+			<button type="button" class="kira-collapse-toggle" id="kira-sidebar-collapse" aria-expanded="true"
+				aria-controls="kira-sidebar-scroll" title="折叠导航" aria-label="折叠导航">
 				<i class="kirafont icon-caret-up kira-collapse-icon" aria-hidden="true"></i>
 			</button>
 		</div>
 		<div class="kira-sidebar-scroll kira-scrollbar" id="kira-sidebar-scroll">
-	<div class="kira-list kira-docs-tree kira-explorer">
-		<% if (theme.docsTree && theme.docsTree.length) { %>
-			<ul class="kira-explorer-list kira-explorer-root">
-				<% var nodeCounter=0; function renderExplorer(nodes, level) { (nodes || []).forEach(function(node) { var
-					hasChildren=!!(node.children && node.children.length); var isOpen=node.open !==false; nodeCounter
-					+=1; var nodeId='tree-node-' + level + '-' + nodeCounter; var nodePath=node.path ? (node.path==='/'
-					? node.path : node.path.replace(/^\/+/, '' )) : '' ; var isActive=node.path &&
-					String(is_current(node.path))==='true' ; %>
-					<li class="kira-explorer-node <%= hasChildren ? 'is-folder' : 'is-file' %> <%= isOpen ? 'is-open' : '' %> <%= isActive ? 'is-active' : '' %>"
-						data-level="<%= level %>" data-node-id="<%= nodeId %>" style="--node-order:<%= nodeCounter %>;">
-						<div class="kira-explorer-row">
-							<% if (hasChildren) { %>
-								<button class="kira-explorer-toggle" type="button"
-									aria-expanded="<%= isOpen ? 'true' : 'false' %>" aria-controls="<%= nodeId %>">
-									<span class="kira-explorer-caret"></span>
-								</button>
-								<% } else { %>
-									<span class="kira-explorer-toggle-spacer"></span>
+			<div class="kira-list kira-docs-tree kira-explorer">
+				<% if (theme.docsTree && theme.docsTree.length) { %>
+					<ul class="kira-explorer-list kira-explorer-root">
+						<% var nodeCounter=0; function renderExplorer(nodes, level) { (nodes ||
+							[]).forEach(function(node) { var hasChildren=!!(node.children && node.children.length); var
+							isOpen=node.open !==false; nodeCounter +=1; var nodeId='tree-node-' + level + '-' +
+							nodeCounter; var nodePath=node.path ? (node.path==='/' ? node.path :
+							node.path.replace(/^\/+/, '' )) : '' ; var isActive=node.path &&
+							String(is_current(node.path))==='true' ; %>
+							<li class="kira-explorer-node <%= hasChildren ? 'is-folder' : 'is-file' %> <%= isOpen ? 'is-open' : '' %> <%= isActive ? 'is-active' : '' %>"
+								data-level="<%= level %>" data-node-id="<%= nodeId %>"
+								style="--node-order:<%= nodeCounter %>;">
+								<div class="kira-explorer-row">
+									<% if (hasChildren) { %>
+										<button class="kira-explorer-toggle" type="button"
+											aria-expanded="<%= isOpen ? 'true' : 'false' %>"
+											aria-controls="<%= nodeId %>">
+											<span class="kira-explorer-caret"></span>
+										</button>
+										<% } else { %>
+											<span class="kira-explorer-toggle-spacer"></span>
+											<% } %>
+
+												<% if (node.path) { %>
+													<a class="kira-explorer-link mdui-ripple"
+														href="<%- url_for(nodePath, { relative: true }) -%>"
+														title="<%= node.title %>">
+														<i
+															class="kirafont <%= node.icon || (hasChildren ? 'icon-folder' : 'icon-file') %>"></i>
+														<span class="kira-explorer-text">
+															<%= node.title %>
+														</span>
+													</a>
+													<% } else { %>
+														<span class="kira-explorer-link is-label"
+															title="<%= node.title %>">
+															<i
+																class="kirafont <%= node.icon || (level === 0 ? 'icon-book' : 'icon-folder') %>"></i>
+															<span class="kira-explorer-text">
+																<%= node.title %>
+															</span>
+														</span>
+														<% } %>
+								</div>
+
+								<% if (hasChildren) { %>
+									<div class="kira-explorer-children" id="<%= nodeId %>">
+										<ul class="kira-explorer-list">
+											<% renderExplorer(node.children, level + 1); %>
+										</ul>
+									</div>
 									<% } %>
-
-										<% if (node.path) { %>
-											<a class="kira-explorer-link mdui-ripple"
-												href="<%- url_for(nodePath, { relative: true }) -%>"
-												title="<%= node.title %>">
-												<i
-													class="kirafont <%= node.icon || (hasChildren ? 'icon-folder' : 'icon-file') %>"></i>
-												<span class="kira-explorer-text">
-													<%= node.title %>
-												</span>
-											</a>
-											<% } else { %>
-												<span class="kira-explorer-link is-label" title="<%= node.title %>">
-													<i
-														class="kirafont <%= node.icon || (level === 0 ? 'icon-book' : 'icon-folder') %>"></i>
-													<span class="kira-explorer-text">
-														<%= node.title %>
-													</span>
-												</span>
-												<% } %>
-						</div>
-
-						<% if (hasChildren) { %>
-							<div class="kira-explorer-children" id="<%= nodeId %>">
-								<ul class="kira-explorer-list">
-									<% renderExplorer(node.children, level + 1); %>
-								</ul>
-							</div>
-							<% } %>
-					</li>
-					<% }); } renderExplorer(theme.docsTree, 0); %>
-			</ul>
-			<div class="kira-explorer-hover-indicator" aria-hidden="true"></div>
-			<% } else { %>
-				<% for (name in theme.menu) { %>
-					<a class="kira-list-item mdui-ripple <%= is_current(theme.menu[name][0]) %>"
-						href="<%- url_for(theme.menu[name][0]) -%>" title="<%= name %>">
-						<i class="kirafont
+							</li>
+							<% }); } renderExplorer(theme.docsTree, 0); %>
+					</ul>
+					<div class="kira-explorer-hover-indicator" aria-hidden="true"></div>
+					<% } else { %>
+						<% for (name in theme.menu) { %>
+							<a class="kira-list-item mdui-ripple <%= is_current(theme.menu[name][0]) %>"
+								href="<%- url_for(theme.menu[name][0]) -%>" title="<%= name %>">
+								<i class="kirafont
 						<% if (theme.menu[name][1]) { %>
 							<%= theme.menu[name][1] %>
 						<% } else { %>
 							<%= 'icon-unordered-list' %>
 						<% } %>"></i>
-						<div class="kira-list-item-content">
-							<%= name %>
-						</div>
-					</a>
-					<% } %>
-						<% } %>
-	</div>
-	<aside id="kira-sidebar">
-		<% theme.widgets.forEach(function(widget) {%>
-			<%- partial('_widget/' + widget) %>
-				<% }) %>
-	</aside>
+								<div class="kira-list-item-content">
+									<%= name %>
+								</div>
+							</a>
+							<% } %>
+								<% } %>
+			</div>
+			<aside id="kira-sidebar">
+				<% theme.widgets.forEach(function(widget) {%>
+					<%- partial('_widget/' + widget) %>
+						<% }) %>
+			</aside>
 			<div class="kira-copyright">
 				&copy; <%= date(new Date(), 'YYYY' ) %>
 					<a href="<%- url_for('/') %>">
@@ -145,7 +150,7 @@
 			if (!sidebarScroll || !window.localStorage) return;
 			try {
 				localStorage.setItem(sidebarScrollKey, String(sidebarScroll.scrollTop));
-			} catch (error) {}
+			} catch (error) { }
 		}
 
 		function restoreSidebarScroll() {
@@ -155,7 +160,7 @@
 				if (raw == null) return;
 				var top = parseInt(raw, 10);
 				if (!isNaN(top) && top >= 0) sidebarScroll.scrollTop = top;
-			} catch (error) {}
+			} catch (error) { }
 		}
 
 		function readFolderState() {
@@ -410,6 +415,7 @@
 		function resolveUrl(url) {
 			if (!url) return '#';
 			if (/^https?:\/\//i.test(url)) return url;
+			url = url.replace(/^\/{2,}/, '/'); // fix double slashes from hexo generator
 			if (url.indexOf(baseRoot) === 0) return url;
 			if (url.charAt(0) === '/') return url;
 			return baseRoot + url.replace(/^\/+/, '');

@@ -359,7 +359,7 @@
     pointer-events: none;
 }
 
-.kira-floating-stack > .kira-backtotop,
+.kira-floating-stack>.kira-backtotop,
 .kira-floating-stack .kira-community-dock-btn--icon {
     pointer-events: auto;
 }
@@ -559,8 +559,9 @@
     margin-top: 8px;
     display: grid;
     gap: 6px;
-    max-height: 42vh;
-    overflow: auto;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    overflow-x: hidden;
     padding-right: 2px;
 }
 
@@ -570,6 +571,7 @@
     padding: 8px 10px;
     background: rgba(12, 16, 22, 0.45);
     text-decoration: none;
+    overflow: hidden;
 }
 
 .kira-search-item:hover {
@@ -580,6 +582,8 @@
     color: #e8edf2;
     font-size: 0.9rem;
     line-height: 1.35;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .kira-search-item-snippet {
@@ -587,6 +591,8 @@
     color: #bac6d8;
     font-size: 0.8rem;
     line-height: 1.4;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
 .kira-search-state {
