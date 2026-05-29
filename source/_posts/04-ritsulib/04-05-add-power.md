@@ -53,6 +53,8 @@ public class TestPower : ModPowerTemplate
 
 添加json，`{ModId}/localization/{Language}/powers.json`。
 
+* 通过`ritsulib`添加内容，其id会变成`{modid}_{类别}_{原id}`。例如这里的`modid`是`TEST`,类别是`POWER`。
+
 ```json
 {
     "TEST_POWER_TEST_POWER.description": "每次抽牌时，获得一点[gold]力量[/gold]。",

@@ -101,3 +101,40 @@ if (TargetModApiInterop.IsReady)
     // Console.WriteLine(entry.DisplayName);
 }
 ```
+
+---
+
+## AssemblyInterop（调用任意CLR程序集）
+
+比起上面 `[ModInterop]`更推荐用 `[AssemblyInterop]`，用法完全一样，只是填的目标类型名要带程序集名。
+
+```csharp
+using STS2RitsuLib.Interop;
+
+// 目标类型名格式：命名空间.类型, 程序集名
+[AssemblyInterop("Target.Lib.Api, TargetLib")]
+public static class TargetLibInterop
+{
+    public static bool IsReady => false;
+
+    public static int Compute(string input) => 0;
+}
+
+// 同样支持 [InteropTarget] + InteropClassWrapper
+[AssemblyInterop]
+public static class ExternalCatalogInterop
+{
+    [InteropTarget("Target.Lib.Catalog, TargetLib")]
+    public static RecordRef Lookup(string key) => throw new NotSupportedException();
+
+    [InteropTarget("Target.Lib.Record, TargetLib")]
+    public sealed class RecordRef : InteropClassWrapper
+    {
+        public RecordRef(string id) { }
+        public string Name => "";
+        public double GetMetric(string name) => 0;
+    }
+}
+```
+
+框架自动区分：类型名里含 `,`（逗号）→ 走 `AssemblyInterop` 路径；不含逗号 → 走 `ModInterop` 路径。所以两种模式可以共存在同一个项目里，互不干扰。

@@ -106,6 +106,8 @@ public sealed class TestEvent : ModEventTemplate
 
 创建`{modId}/localization/{Language}/events.json`。
 
+* 通过`ritsulib`添加内容，其id会变成`{modid}_{类别}_{原id}`。例如这里的`modid`是`TEST`,类别是`EVENT`。
+
 ```json
 {
   // 事件标题
