@@ -8,160 +8,706 @@ hide_meta: true
 ---
 
 <style>
-@import url("../preview-assets/preview-tools.css?v=20260523-cardfit1");
+@import url("../preview-assets/preview-tools.css");
+
+/* ====== 全屏工具（在页内） ====== */
+
+/* body 禁止滚动 */
+body:has(.tp-root) {
+  overflow: hidden;
+}
+
+.kira-content:has(.tp-root) {
+  overflow: hidden !important;
+}
+
+@media (min-width: 1001px) {
+
+  body:has(.tp-root) .kira-main-content {
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 14px !important;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  body:has(.tp-root) .kira-post,
+  body:has(.tp-root) .kira-post article {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 文章标题可见，压缩间距 */
+  body:has(.tp-root) .kira-post-title {
+    display: block !important;
+    margin: 0 0 4px 0;
+    flex: 0 0 auto;
+  }
+
+}
+
+/* ====== 根容器 ====== */
+.tp-root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg, #1a1d23);
+  color: var(--text, #e0e6ed);
+  font-family: var(--font-ui, system-ui);
+  font-size: 14px;
+  overflow: hidden;
+}
+
+/* ====== 左右两列 ====== */
+.tp-cols {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 16px 20px 12px;
+  min-height: 0;
+}
+
+/* ====== 卡片 ====== */
+.tp-card {
+  background: var(--panel, rgba(21,27,35,0.86));
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  padding: 12px 16px;
+}
+
+.tp-card h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text, #e8edf2);
+  letter-spacing: 0;
+  text-transform: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ====== 编辑器区域 ====== */
+.tp-editor-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.tp-editor-body textarea {
+  flex-shrink: 1;
+  min-height: 120px;
+  max-height: 45vh;
+  width: 100%;
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  line-height: 1.7;
+  padding: 10px 12px;
+  background: var(--panel-2, rgba(32,38,46,0.92));
+  border: 1px solid var(--line, rgba(255,255,255,0.12));
+  color: var(--text, #e8edf2);
+  border-radius: 6px;
+  outline: none;
+  resize: none;
+  tab-size: 4;
+  transition: border-color .15s, box-shadow .15s;
+  overflow-y: auto;
+}
+
+.tp-editor-body textarea:focus {
+  border-color: var(--accent, #d97519);
+  box-shadow: 0 0 0 3px var(--accent-glow, rgba(217,117,25,0.18));
+}
+
+.tp-editor-body textarea::placeholder {
+  color: var(--text-mute, #7f8da3);
+  opacity: 0.7;
+}
+
+/* ====== 工具栏 ====== */
+.tp-toolbar {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-top: 8px;
+}
+
+.tp-toolbar-section {
+  margin-bottom: 8px;
+}
+
+.tp-toolbar-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim, #aeb9c9);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.tp-toolbar-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tp-toolbar-btns button {
+  background: var(--panel-3, rgba(12,16,22,0.45));
+  border: 1px solid var(--line, rgba(255,255,255,0.12));
+  border-radius: 4px;
+  color: var(--text, #e8edf2);
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+  padding: 2px 7px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.tp-toolbar-btns button:hover {
+  background: var(--panel-hover, rgba(187,101,22,0.24));
+  border-color: var(--accent-dim, #bb6516);
+  color: var(--accent-bright, #f2a14b);
+}
+
+/* ====== 预览区 ====== */
+.tp-preview-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(30,32,38,0.6);
+  border-radius: 6px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tp-preview-label {
+  font-family: var(--font-ui, system-ui);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: var(--text-mute, #7f8da3);
+  padding: 8px 12px 4px;
+  flex-shrink: 0;
+}
+
+.tp-preview-render {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  padding: 0 12px 8px;
+  font-family: var(--font-game, serif);
+  color: var(--cream, #FFF6E2);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+/* ====== 复制按钮 ====== */
+.tp-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  background: var(--panel-2, rgba(32,38,46,0.92));
+  border: 1px solid var(--line, rgba(255,255,255,0.12));
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim, #aeb9c9);
+  transition: color .15s, border-color .15s, background .15s;
+  opacity: 0.75;
+}
+
+.tp-copy-btn:hover {
+  color: var(--accent, #d97519);
+  border-color: var(--accent-dim, #bb6516);
+  background: var(--panel-hover, rgba(187,101,22,0.24));
+  opacity: 1;
+}
+
+/* ====== Toast 通知 ====== */
+.tp-toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel, rgba(21,27,35,0.92));
+  color: var(--text, #e8edf2);
+  border: 1px solid var(--line-accent, rgba(217,117,25,0.48));
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+}
+
+.tp-toast.show {
+  opacity: 1;
+}
+
+/* ====== 标签区域两列布局 ====== */
+.tp-tag-area {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  min-height: 0;
+  overflow: hidden;
+  padding-top: 8px;
+}
+
+/* ====== 标签列表（左侧可折叠列表） ====== */
+.tp-tag-list {
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.tp-tag-fold {
+  margin-bottom: 2px;
+}
+
+.tp-tag-fold-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim, #aeb9c9);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 6px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 3px;
+  transition: background .12s;
+}
+.tp-tag-fold-header:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.tp-fold-icon {
+  font-size: 9px;
+  transition: transform .15s;
+}
+.tp-tag-fold-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 2px 6px 6px 14px;
+  max-height: 300px;
+  overflow: hidden;
+  transition: max-height .2s ease, opacity .15s, padding .15s;
+}
+.tp-tag-fold-body.collapsed {
+  max-height: 0 !important;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tp-tag-fold-body button {
+  background: var(--panel-3, rgba(12,16,22,0.45));
+  border: 1px solid var(--line, rgba(255,255,255,0.12));
+  border-radius: 4px;
+  color: var(--text, #e8edf2);
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+  padding: 1px 6px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, color .12s;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.tp-tag-fold-body button:hover {
+  background: var(--panel-hover, rgba(187,101,22,0.24));
+  border-color: var(--accent-dim, #bb6516);
+  color: var(--accent-bright, #f2a14b);
+}
+
+/* ====== 变量注入面板（右侧） ====== */
+.tp-var-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.tp-var-header {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim, #aeb9c9);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+.tp-var-rows {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.tp-var-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto 1fr auto;
+  gap: 4px;
+  align-items: center;
+}
+.tp-var-row.dragging {
+  opacity: 0.4;
+  border-color: var(--accent, #d97519);
+}
+.tp-var-drag-handle {
+  width: 20px;
+  cursor: grab;
+  color: var(--text-mute, #7f8da3);
+  text-align: center;
+  user-select: none;
+}
+.tp-var-drag-handle:active {
+  cursor: grabbing;
+}
+.tp-var-drag-handle:hover {
+  color: var(--accent, #d97519);
+}
+.tp-var-name-wrap {
+  position: relative;
+}
+.tp-var-name-input,
+.tp-var-value-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+  padding: 3px 6px;
+  background: var(--panel-3, rgba(12,16,22,0.45));
+  border: 1px solid var(--line, rgba(255,255,255,0.12));
+  color: var(--text, #e8edf2);
+  border-radius: 3px;
+  outline: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+.tp-var-name-input:focus,
+.tp-var-value-input:focus {
+  border-color: var(--accent, #d97519);
+  box-shadow: 0 0 0 2px var(--accent-glow, rgba(217,117,25,0.18));
+}
+.tp-var-name-input::placeholder,
+.tp-var-value-input::placeholder {
+  color: var(--text-mute, #7f8da3);
+  opacity: 0.5;
+}
+.tp-var-remove {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--text-mute, #7f8da3);
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 0;
+  cursor: pointer;
+  text-align: center;
+  border-radius: 3px;
+  transition: color .12s, border-color .12s, background .12s;
+}
+.tp-var-remove:hover {
+  color: #e05353;
+  border-color: rgba(224,83,83,0.3);
+  background: rgba(224,83,83,0.08);
+}
+.tp-var-btn-group {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.tp-var-toggle {
+  width: 32px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.1);
+  outline: none;
+  transition: background .15s;
+  position: relative;
+  flex-shrink: 0;
+}
+.tp-var-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  transition: left .15s, background .15s, transform .15s;
+}
+.tp-var-toggle[data-on="true"] {
+  background: var(--accent, #d97519);
+}
+.tp-var-toggle[data-on="true"]::after {
+  left: 16px;
+  background: #fff;
+}
+.tp-var-toggle[data-on="false"]:hover {
+  background: rgba(255,255,255,0.18);
+}
+.tp-var-add-row {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+}
+.tp-var-add-btn {
+  background: var(--panel-3, rgba(12,16,22,0.45));
+  border: 1px dashed var(--line, rgba(255,255,255,0.18));
+  border-radius: 4px;
+  color: var(--text-dim, #aeb9c9);
+  font-size: 12px;
+  line-height: 1;
+  padding: 4px 16px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s, color .12s;
+  width: 100%;
+}
+.tp-var-add-btn:hover {
+  background: var(--panel-hover, rgba(187,101,22,0.24));
+  border-color: var(--accent-dim, #bb6516);
+  color: var(--accent-bright, #f2a14b);
+}
+.tp-var-insert-handle {
+  cursor: grab;
+  color: var(--text-mute, #7f8da3);
+  font-size: 14px;
+  line-height: 1;
+  padding: 2px 4px;
+  user-select: none;
+  transition: color .12s;
+  flex-shrink: 0;
+}
+.tp-var-insert-handle:active {
+  cursor: grabbing;
+}
+.tp-var-insert-handle:hover {
+  color: var(--accent, #d97519);
+}
+textarea.tp-editor-drop-hover {
+  border-color: var(--accent, #d97519) !important;
+  box-shadow: 0 0 0 2px var(--accent-glow, rgba(217,117,25,0.25)) !important;
+}
+
+/* ====== 自动补全下拉 ====== */
+.tp-var-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 50;
+  background: var(--panel, rgba(21,27,35,0.96));
+  border: 1px solid var(--line, rgba(255,255,255,0.12));
+  border-radius: 4px;
+  max-height: 160px;
+  overflow-y: auto;
+  margin-top: 2px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+}
+.tp-var-dropdown-item {
+  padding: 3px 8px;
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+  cursor: pointer;
+  color: var(--text, #e8edf2);
+  transition: background .1s;
+}
+.tp-var-dropdown-item:hover,
+.tp-var-dropdown-item.highlighted {
+  background: var(--panel-hover, rgba(187,101,22,0.24));
+  color: var(--accent-bright, #f2a14b);
+}
+
+/* ====== 编辑器卡片适配 ====== */
+.tp-card-editor .tp-editor-body {
+  overflow: hidden;
+}
+
 </style>
 
-<div class="preview-tool" data-text-preview-tool>
-<header class="app-header">
-<div class="logo-mark" aria-hidden="true"></div>
-<div>
-<h1>文本预览器</h1>
-<div class="subtitle">BBCode 文本预览 · 颜色代码转换 · 游戏命名颜色</div>
-</div>
-<div class="spacer"></div>
-<div class="kbd-hint">
-<kbd>C</kbd> 复制 HEX &nbsp;·&nbsp; <kbd>S</kbd> 保存到最近
-</div>
-</header>
+<div class="tp-root preview-tool" data-text-preview-tool>
 
-<section class="section">
-<div class="grid-2">
+<div class="tp-cols">
 
-<div class="panel">
-<h2>颜色选择 / Color Input</h2>
+<!-- 左栏：编辑器 -->
+<div class="tp-card tp-card-editor">
+<h3>
+  <span>编辑器</span>
+</h3>
 
-<div class="swatch-large" id="swatchLarge" title="点击复制 HEX">
-<span class="swatch-hint">CLICK TO COPY</span>
-<span class="swatch-hex" id="swatchHex">#EFC851</span>
-</div>
+<div class="tp-editor-body">
+<textarea id="bbcodeInput" rows="6" spellcheck="false" placeholder='在此输入 BBCode'>获得等量于与你当前[gold]弃牌堆[/gold]中牌数{IfUpgraded:show:+{CalculationBase}|}的[gold]格挡[/gold]值。{InCombat:\n（获得{CalculatedBlock:diff()}点[gold]格挡[/gold]）|}</textarea>
+<button id="copyEditorBtn" class="tp-copy-btn" title="复制 BBCode (Ctrl+Enter)">复制</button>
 
-<div class="recent-row">
-<span class="recent-label">RECENT</span>
-<span class="recent-empty" id="recentEmpty">尚无记录 — 按 <kbd>S</kbd> 保存当前颜色</span>
-<div id="recentSwatches" style="display:flex;gap:4px;flex-wrap:wrap;"></div>
-</div>
+<div class="tp-tag-area">
 
-<div class="picker-expanded">
-<div class="sv-area" id="svArea" tabindex="0" aria-label="调整饱和度和明度">
-<div class="sv-cursor" id="svCursor"></div>
+<!-- 左侧：可折叠标签列表 -->
+<div class="tp-tag-list">
+
+<div class="tp-tag-fold">
+<div class="tp-tag-fold-header" data-fold="color">
+  <span class="tp-fold-icon">▼</span> 颜色标签
 </div>
-<div class="hue-strip" id="hueStrip" tabindex="0" role="slider" aria-label="调整色相" aria-valuemin="0" aria-valuemax="360" aria-valuenow="46">
-<div class="hue-cursor" id="hueCursor"></div>
-</div>
-<div class="alpha-strip" id="alphaStrip" tabindex="0" role="slider" aria-label="调整透明度" aria-valuemin="0" aria-valuemax="255" aria-valuenow="255">
-<div class="alpha-fill"></div>
-<div class="alpha-cursor" id="alphaCursor"></div>
+<div class="tp-tag-fold-body" data-fold-body="color">
+<button data-insert="[gold]...[/gold]" data-select="...">[gold]</button>
+<button data-insert="[red]...[/red]" data-select="...">[red]</button>
+<button data-insert="[blue]...[/blue]" data-select="...">[blue]</button>
+<button data-insert="[green]...[/green]" data-select="...">[green]</button>
+<button data-insert="[purple]...[/purple]" data-select="...">[purple]</button>
+<button data-insert="[orange]...[/orange]" data-select="...">[orange]</button>
+<button data-insert="[pink]...[/pink]" data-select="...">[pink]</button>
+<button data-insert="[aqua]...[/aqua]" data-select="...">[aqua]</button>
+<button data-insert="[color=#XXXXXX]...[/color]" data-select="...">[color]</button>
+<button data-insert="[font=...]...[/font]" data-select="...">[font]</button>
+<button data-insert="[size=...]...[/size]" data-select="...">[size]</button>
 </div>
 </div>
 
-<div class="row" style="align-items: stretch;">
-<label style="align-self:center;">HEX</label>
-<input type="color" id="picker" value="#efc851">
-<input type="text" id="hexInput" value="#EFC851" maxlength="9" style="flex:1; min-width:110px;">
-<span id="matchTag" class="match-label none" style="align-self:center; white-space:nowrap;">无匹配</span>
+<div class="tp-tag-fold">
+<div class="tp-tag-fold-header" data-fold="fx">
+  <span class="tp-fold-icon">▶</span> 文字效果
 </div>
-
-<div class="num-grid-4">
-<div class="num-cell"><label>R · 0-255</label><input type="number" id="rN" value="239" min="0" max="255" step="1"><input type="range" id="rR" min="0" max="255" step="1" value="239"></div>
-<div class="num-cell"><label>G · 0-255</label><input type="number" id="gN" value="200" min="0" max="255" step="1"><input type="range" id="gR" min="0" max="255" step="1" value="200"></div>
-<div class="num-cell"><label>B · 0-255</label><input type="number" id="bN" value="81"  min="0" max="255" step="1"><input type="range" id="bR" min="0" max="255" step="1" value="81"></div>
-<div class="num-cell"><label>A · 0-255</label><input type="number" id="aN" value="255" min="0" max="255" step="1"><input type="range" id="aR" min="0" max="255" step="1" value="255"></div>
-</div>
-<div class="num-grid-3">
-<div class="num-cell"><label>H · 0-360°</label><input type="number" id="hN" value="46" min="0" max="360" step="1"><input type="range" id="hR" min="0" max="360" step="1" value="46"></div>
-<div class="num-cell"><label>S · 0-100%</label><input type="number" id="sN" value="66" min="0" max="100" step="1"><input type="range" id="sR" min="0" max="100" step="1" value="66"></div>
-<div class="num-cell"><label>V · 0-100%</label><input type="number" id="vN" value="94" min="0" max="100" step="1"><input type="range" id="vR" min="0" max="100" step="1" value="94"></div>
-</div>
-
-<h2 style="margin-top: 14px;">游戏命名颜色 / Named Colors</h2>
-<div class="hint" style="margin-bottom:6px;">前 8 个有专属 BBCode 标签（<code>[gold]文本[/gold]</code>），其余只能用 <code>[color=#XXXXXX]</code></div>
-<div class="preset-grid" id="presetGrid"></div>
-</div>
-
-<div class="panel">
-<h2>游戏内文字预览 / In-Game Preview</h2>
-
-<div class="row" style="margin-bottom:10px;">
-<label>文本</label>
-<textarea id="previewText" class="preview-text-input" rows="3" style="flex:1;">Deal [gold]12[/gold] damage. Gain [blue]5[/blue] [gold]Block[/gold].</textarea>
-</div>
-
-<div class="toggle-row">
-<label class="toggle"><input type="checkbox" id="fxBold"> [b] Bold</label>
-<label class="toggle"><input type="checkbox" id="fxItalic"> [i] Italic</label>
-<label class="toggle"><input type="checkbox" id="fxJitter"> [jitter]</label>
-<label class="toggle"><input type="checkbox" id="fxSine"> [sine]</label>
-<label class="toggle"><input type="checkbox" id="fxFadeIn"> [fade_in]</label>
-<label class="toggle"><input type="checkbox" id="fxFlyIn"> [fly_in]</label>
-<label class="toggle"><input type="checkbox" id="fxThinkyDots"> [thinky_dots]</label>
-</div>
-
-<div class="preview-stage" id="previewStage">
-<span class="preview-stage-label">CARD TEXT</span>
-<div id="previewRender"></div>
-</div>
-
-<div class="hint" style="margin-top:8px;">
-以 Kreon 字体在卡牌羊皮纸底色上渲染 — 与游戏中 <code>NCard</code> / <code>MegaRichTextLabel</code> 的视觉一致。
-颜色取自 <code>StsColors.cs</code>；<code>[jitter]</code>/<code>[sine]</code> 模拟字符位移动效。
-</div>
-</div>
-</div>
-</section>
-
-<section class="section">
-<div class="grid-2">
-
-<div class="panel">
-<h2>代码片段 / Code Snippets</h2>
-<div class="tabs">
-<button class="tab active" data-tab="code-bbcode">BBCode</button>
-<button class="tab" data-tab="code-bbnamed">Named</button>
-<button class="tab" data-tab="code-cs">C#</button>
-<button class="tab" data-tab="code-csf">C# float</button>
-<button class="tab" data-tab="code-gd">GDScript</button>
-<button class="tab" data-tab="code-sts">StsColors</button>
-<button class="tab" data-tab="code-json">JSON</button>
-<button class="tab" data-tab="code-css">CSS</button>
-</div>
-<div class="tab-panel active" id="tab-code-bbcode"><pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeBBCode" aria-label="复制代码" title="复制代码"></button><code id="codeBBCode" data-lang="bbcode"></code></pre></div>
-<div class="tab-panel" id="tab-code-bbnamed"><pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeBBNamed" aria-label="复制代码" title="复制代码"></button><code id="codeBBNamed" data-lang="bbcode"></code></pre></div>
-<div class="tab-panel" id="tab-code-cs"><pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeCSharp" aria-label="复制代码" title="复制代码"></button><code id="codeCSharp" data-lang="csharp"></code></pre></div>
-<div class="tab-panel" id="tab-code-csf"><pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeCSharpF" aria-label="复制代码" title="复制代码"></button><code id="codeCSharpF" data-lang="csharp"></code></pre></div>
-<div class="tab-panel" id="tab-code-gd"><pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeGD" aria-label="复制代码" title="复制代码"></button><code id="codeGD" data-lang="gdscript"></code></pre></div>
-<div class="tab-panel" id="tab-code-sts"><pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeSts" aria-label="复制代码" title="复制代码"></button><code id="codeSts" data-lang="csharp"></code></pre></div>
-<div class="tab-panel" id="tab-code-json"><pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeJson" aria-label="复制代码" title="复制代码"></button><code id="codeJson" data-lang="json"></code></pre></div>
-<div class="tab-panel" id="tab-code-css"><pre class="code"><button class="copy kira-codeblock-copy-wrapper" type="button" data-target="codeCss" aria-label="复制代码" title="复制代码"></button><code id="codeCss" data-lang="css"></code></pre></div>
-</div>
-
-<div class="panel">
-<h2>颜色格式转换 / Conversions</h2>
-<table class="conv">
-<tr><td>HEX (6)</td><td id="cHex6"></td></tr>
-<tr><td>HEX (8 + Alpha)</td><td id="cHex8"></td></tr>
-<tr><td>RGB</td><td id="cRgb"></td></tr>
-<tr><td>RGBA</td><td id="cRgba"></td></tr>
-<tr><td>HSL</td><td id="cHsl"></td></tr>
-<tr><td>HSV</td><td id="cHsv"></td></tr>
-<tr><td>Godot Color(str)</td><td id="cGodotStr"></td></tr>
-<tr><td>Godot 0-1 floats</td><td id="cFloats"></td></tr>
-<tr><td>反色 (complement)</td><td id="cComp"></td></tr>
-<tr><td>亮度 (luminance)</td><td id="cLum"></td></tr>
-<tr><td>对比文本色</td><td id="cContrast"></td></tr>
-</table>
+<div class="tp-tag-fold-body collapsed" data-fold-body="fx">
+<button data-insert="[b]...[/b]" data-select="...">[b]粗体</button>
+<button data-insert="[i]...[/i]" data-select="...">[i]斜体</button>
+<button data-insert="[u]...[/u]" data-select="...">[u]下划线</button>
+<button data-insert="[jitter]...[/jitter]" data-select="...">[jitter]</button>
+<button data-insert="[sine]...[/sine]" data-select="...">[sine]</button>
+<button data-insert="[fade_in]...[/fade_in]" data-select="...">[fade_in]</button>
+<button data-insert="[fly_in]...[/fly_in]" data-select="...">[fly_in]</button>
+<button data-insert="[thinky_dots]...[/thinky_dots]" data-select="...">[thinky_dots]</button>
+<button data-insert="[ancient_banner]...[/ancient_banner]" data-select="...">[ancient_banner]</button>
 </div>
 </div>
 
-<div class="panel" style="margin-top:16px;">
-<h2>反向解析 / Reverse Parse</h2>
-<div class="hint" style="margin-bottom:6px;">
-粘贴任意 <code>[color=#XX]</code>、<code>new Color("…")</code>、<code>Color(1,0.5,0.3)</code>、<code>rgba(…)</code>，自动识别。
+<div class="tp-tag-fold">
+<div class="tp-tag-fold-header" data-fold="var">
+  <span class="tp-fold-icon">▶</span> 占位变量
 </div>
-<textarea id="reverseInput" placeholder='例: [color=#FF5555]Strike[/color]&#10;new Color("EFC851")&#10;Color(1, 0.78, 0.32)&#10;rgba(255, 120, 160, 1)'></textarea>
-<div id="reverseResult" class="hint" style="margin-top:6px;"></div>
+<div class="tp-tag-fold-body collapsed" data-fold-body="var">
+<button data-insert="{Damage}">{Damage}</button>
+<button data-insert="{Block}">{Block}</button>
+<button data-insert="{Energy}">{Energy}</button>
+<button data-insert="{Cards}">{Cards}</button>
+<button data-insert="{Repeat}">{Repeat}</button>
+<button data-insert="{Heal}">{Heal}</button>
+<button data-insert="{HpLoss}">{HpLoss}</button>
+<button data-insert="{MaxHp}">{MaxHp}</button>
+<button data-insert="{Gold}">{Gold}</button>
+<button data-insert="{CalculatedDamage}">{CalculatedDamage}</button>
+<button data-insert="{CalculatedBlock}">{CalculatedBlock}</button>
+<button data-insert="{Summon}">{Summon}</button>
+<button data-insert="{Forge}">{Forge}</button>
+<button data-insert="{Stars}">{Stars}</button>
+<button data-insert="{StrengthPower}">{StrengthPower}</button>
+<button data-insert="{DexterityPower}">{DexterityPower}</button>
+<button data-insert="{WeakPower}">{WeakPower}</button>
+<button data-insert="{VulnerablePower}">{VulnerablePower}</button>
+<button data-insert="{PoisonPower}">{PoisonPower}</button>
+<button data-insert="{DoomPower}">{DoomPower}</button>
+<button data-insert="{energyPrefix}">{energyPrefix}</button>
 </div>
-</section>
-<div class="toast" id="toast"></div>
 </div>
 
-<script src="../preview-assets/preview-tools.js?v=20260523-cardfit1"></script>
+<div class="tp-tag-fold">
+<div class="tp-tag-fold-header" data-fold="cardctx">
+  <span class="tp-fold-icon">▶</span> 卡牌上下文
+</div>
+<div class="tp-tag-fold-body collapsed" data-fold-body="cardctx">
+<button data-insert="{singleStarIcon}">{singleStarIcon}</button>
+<button data-insert="{InCombat:\n（命中{CalculatedHits:diff()}次）|}">{InCombat}</button>
+<button data-insert="{IsTargeting:\n（造成{CalculatedDamage:diff()}点伤害）|}">{IsTargeting}</button>
+<button data-insert="{OnTable:在场上|不在场上}">{OnTable}</button>
+<button data-insert="{IfUpgraded:show:所有牌|一张牌}">{IfUpgraded}</button>
+</div>
+</div>
+
+<div class="tp-tag-fold">
+<div class="tp-tag-fold-header" data-fold="powerctx">
+  <span class="tp-fold-icon">▶</span> 能力上下文
+</div>
+<div class="tp-tag-fold-body collapsed" data-fold-body="powerctx">
+<button data-insert="{Amount}">{Amount}</button>
+<button data-insert="{OnPlayer:你|该敌人}">{OnPlayer}</button>
+<button data-insert="{IsMultiplayer:（联机）|}">{IsMultiplayer}</button>
+<button data-insert="{PlayerCount}">{PlayerCount}</button>
+<button data-insert="{OwnerName}">{OwnerName}</button>
+<button data-insert="{ApplierName}">{ApplierName}</button>
+<button data-insert="{TargetName}">{TargetName}</button>
+</div>
+</div>
+
+<div class="tp-tag-fold">
+<div class="tp-tag-fold-header" data-fold="fmt">
+  <span class="tp-fold-icon">▶</span> 格式化器
+</div>
+<div class="tp-tag-fold-body collapsed" data-fold-body="fmt">
+<button data-insert="{Damage:diff()}">diff()</button>
+<button data-insert="{HpLoss:inverseDiff()}">inverseDiff()</button>
+<button data-insert="{Energy:energyIcons()}">energyIcons()</button>
+<button data-insert="{Stars:starIcons()}">starIcons()</button>
+<button data-insert="{Damage:abs()}">abs</button>
+<button data-insert="{IfUpgraded:show:升级文本|未升级文本}">IfUpgraded</button>
+<button data-insert="{X:cond:>0?生效|不生效}">cond</button>
+<button data-insert="{X:choose(1):一|其他}">choose</button>
+<button data-insert="{Boost:percentMore()}">percentMore()</button>
+<button data-insert="{Boost:percentLess()}">percentLess()</button>
+<button data-insert="{Cards:plural:card|cards}">plural</button>
+<button data-insert="{Cards:list:、|和}">list</button>
+</div>
+</div>
+
+</div><!-- /.tp-tag-list -->
+
+<!-- 右侧：变量注入 -->
+<div class="tp-var-panel">
+<div class="tp-var-header">变量注入</div>
+<div class="tp-var-rows" id="varRows">
+</div>
+</div>
+
+</div><!-- /.tp-tag-area -->
+</div><!-- /.tp-editor-body -->
+</div><!-- /.tp-card -->
+
+<!-- 右栏：预览区 -->
+<div class="tp-card">
+<h3>预览</h3>
+
+<div class="tp-preview-area">
+<div class="tp-preview-render" id="previewRender">输入内容后实时预览</div>
+</div>
+</div>
+
+</div>
+
+<div class="tp-toast" id="toast"></div>
+</div>
+
+<script src="../preview-assets/preview-tools.js"></script>

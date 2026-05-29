@@ -379,6 +379,11 @@ docsTree:
                         path: /tools/card-frame-preview/,
                         icon: icon-container,
                     },
+                    {
+                        title: 文本预览器,
+                        path: /tools/text-preview/,
+                        icon: icon-container,
+                    },
                 ],
         },
     ]

@@ -1036,6 +1036,11 @@ body:has([data-preview-tool]) .kira-post article > p:empty {
 
 .preview-tool {
   font-family: var(--font-ui);
+  font-size: 1.125rem;
+}
+
+.preview-tool .tp-var-name-input,
+.preview-tool .tp-var-value-input {
   font-size: 1rem;
 }
 
@@ -1290,3 +1295,179 @@ article .preview-tool h2::after,
 .preview-tool pre.code .hljs-literal,
 .preview-tool pre.code .hljs-symbol { color: #cc7832; }
 .preview-tool pre.code .rider-token-tag { color: #e8bf6a; }
+
+//
+// === TEXT PREVIEW LAYOUT ===
+//
+.preview-tool .bbcode-input {
+  min-height: 180px;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: var(--fs-base);
+  line-height: 1.7;
+  padding: 12px 14px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: var(--r-sm);
+  outline: none;
+  resize: vertical;
+  transition: border-color .15s, box-shadow .15s;
+  tab-size: 4;
+}
+.preview-tool .bbcode-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.preview-tool .bbcode-input::placeholder {
+  color: var(--text-mute);
+  opacity: 0.7;
+}
+
+.preview-tool .toolbar-section {
+  margin-top: var(--space-3);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.preview-tool .toolbar-label {
+  min-width: 64px;
+  flex-shrink: 0;
+  color: var(--text-mute);
+  font-size: var(--fs-xs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding-top: 4px;
+}
+.preview-tool .toolbar-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1;
+}
+.preview-tool .ins-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--panel-3);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.preview-tool .ins-btn:hover {
+  border-color: var(--accent);
+  background: var(--panel-hover);
+  color: var(--text);
+}
+.preview-tool .ins-btn:active {
+  transform: scale(0.96);
+}
+.preview-tool .ins-btn.preset {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--accent-bright);
+  border-color: var(--line-accent);
+}
+.preview-tool .ins-btn.preset:hover {
+  background: var(--accent-glow);
+  color: var(--text-on-acc);
+}
+
+.preview-tool .hint {
+  color: var(--text-mute);
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+}
+.preview-tool .hint code {
+  font-family: var(--font-mono);
+  background: var(--panel-2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+/* Reference tabs */
+.preview-tool .ref-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: var(--space-2);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0;
+}
+.preview-tool .ref-tab {
+  padding: 5px 12px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: var(--r-sm) var(--r-sm) 0 0;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.preview-tool .ref-tab:hover {
+  color: var(--text);
+  background: var(--panel-2);
+  border-color: var(--line);
+}
+.preview-tool .ref-tab.active {
+  color: var(--accent);
+  background: var(--panel);
+  border-color: var(--line) var(--line) var(--panel);
+  margin-bottom: -1px;
+}
+.preview-tool .ref-panel {
+  display: none;
+}
+.preview-tool .ref-panel.active {
+  display: block;
+}
+
+.preview-tool .ref-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+}
+.preview-tool .ref-table th {
+  text-align: left;
+  padding: 5px 8px;
+  color: var(--text-mute);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 11px;
+  border-bottom: 1px solid var(--line);
+}
+.preview-tool .ref-table td {
+  padding: 4px 8px;
+  color: var(--text-dim);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: top;
+}
+.preview-tool .ref-table td code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--panel-2);
+  padding: 1px 4px;
+  border-radius: 3px;
+  word-break: break-all;
+}
+.preview-tool .ref-table tr:last-child td {
+  border-bottom: none;
+}

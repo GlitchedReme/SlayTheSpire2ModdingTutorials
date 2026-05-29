@@ -475,14 +475,17 @@ function bbcodeToHtml(src) {
     return { arg: null, env };
   }
   function activeStyles() {
-    let color = null, bold = false, italic = false, fx = [];
+    let color = null, bold = false, italic = false, underline = false, font = null, size = null, fx = [];
     for (const t of stack) {
       if (t.color) color = t.color;
+      if (t.font) font = t.font;
+      if (t.size) size = t.size;
       if (t.bold) bold = true;
       if (t.italic) italic = true;
+      if (t.underline) underline = true;
       if (t.fx) fx.push(t.fx);
     }
-    return { color, bold, italic, fx };
+    return { color, bold, italic, underline, font, size, fx };
   }
   function wrapCharsInner(text, fx) {
     let s = '';
@@ -503,11 +506,14 @@ function bbcodeToHtml(src) {
   }
   function emitText(text) {
     if (!text) return;
-    const { color, bold, italic, fx } = activeStyles();
+    const { color, bold, italic, underline, font, size, fx } = activeStyles();
     const styles = [];
     if (color) styles.push(`color:${color}`);
+    if (font) styles.push(`font-family:'${escapeAttr(String(font))}'`);
+    if (size) styles.push(`font-size:${/^\d+(\.\d+)?$/.test(size) ? size + 'px' : size}`);
     if (bold) styles.push(`font-weight:700`);
     if (italic) styles.push(`font-style:italic`);
+    if (underline) styles.push(`text-decoration:underline`);
     const styleAttr = styles.length ? ` style="${styles.join(';')}"` : '';
     if (fx.length) {
       const cls = fx.map(f => 'fx-'+f.name).join(' ');
@@ -525,9 +531,13 @@ function bbcodeToHtml(src) {
       continue;
     }
     if (t.name === 'color' && t.arg)       stack.push({ tag:'color', color: t.arg });
+    else if (t.name === 'font' && t.arg)   stack.push({ tag:'font', font: t.arg });
+    else if (t.name === 'size' && t.arg)   stack.push({ tag:'size', size: t.arg });
     else if (colorMap[t.name])              stack.push({ tag: t.name, color: colorMap[t.name] });
     else if (t.name === 'b')                stack.push({ tag:'b', bold:true });
     else if (t.name === 'i')                stack.push({ tag:'i', italic:true });
+    else if (t.name === 'u')                stack.push({ tag:'u', underline:true });
+    else if (t.name === 'br')               { out += '<br>'; continue; }
     else if (MEGA_TEXT_EFFECTS.has(t.name)) stack.push({ tag: t.name, fx: { name: t.name, env: t.env || {}, index: 0 } });
     else                                    emitText('[' + t.name + (t.arg?'='+t.arg:'') + ']');
   }
@@ -1550,4 +1560,601 @@ async function initFramePreview() {
 initFramePreview();
 }
 initCardFramePreview();
+
+//
+// === TEXT PREVIEW ONLY (dedicated page) ===
+//
+function initTextPreviewOnly() {
+  const bbcodeInput = document.getElementById('bbcodeInput');
+  const previewRender = document.getElementById('previewRender');
+  const toast = document.getElementById('toast');
+
+  if (!bbcodeInput || !previewRender) return;
+
+  // ── Undo / Redo history ──
+  const MAX_UNDO = 100;
+  const undoStack = [bbcodeInput.value];
+  let redoStack = [];
+  let ignoreUndo = false;
+
+  function pushUndo() {
+    if (ignoreUndo) return;
+    const val = bbcodeInput.value;
+    if (undoStack[undoStack.length - 1] === val) return;
+    undoStack.push(val);
+    redoStack.length = 0;
+    if (undoStack.length > MAX_UNDO) undoStack.shift();
+  }
+
+  function doUndo() {
+    if (undoStack.length <= 1) return;
+    redoStack.push(undoStack.pop());
+    ignoreUndo = true;
+    bbcodeInput.value = undoStack[undoStack.length - 1];
+    bbcodeInput.dispatchEvent(new Event('input'));
+    ignoreUndo = false;
+  }
+
+  function doRedo() {
+    if (redoStack.length === 0) return;
+    const next = redoStack.pop();
+    undoStack.push(next);
+    ignoreUndo = true;
+    bbcodeInput.value = next;
+    bbcodeInput.dispatchEvent(new Event('input'));
+    ignoreUndo = false;
+  }
+
+  // ── Variable injection state ──
+  const VAR_NAMES = ['Damage','Block','Energy','Cards','Repeat','Heal','HpLoss','MaxHp','Gold',
+    'CalculatedDamage','CalculatedBlock','Summon','Forge','Stars',
+    'StrengthPower','DexterityPower','WeakPower','VulnerablePower','PoisonPower','DoomPower',
+    'energyPrefix','Amount','OnPlayer','IsMultiplayer','PlayerCount','OwnerName','ApplierName',
+    'TargetName','singleStarIcon','InCombat','IsTargeting','OnTable','IfUpgraded'];
+
+  const VAR_STORAGE_KEY = 'tp-var-state';
+  const TEXT_STORAGE_KEY = 'tp-text-state';
+
+  const DEFAULTS = [
+    { name: 'IsUpgraded', value: 'true' },
+    { name: 'CalcBase', value: '5' },
+    { name: 'CalcBlock', value: '15' },
+    { name: 'InCombat', value: 'true' },
+  ];
+
+  function loadVarState() {
+    try {
+      const saved = localStorage.getItem(VAR_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length) {
+          // Ensure IsUpgraded is always present
+          if (!parsed.some(v => v.name.trim() === 'IsUpgraded')) {
+            parsed.unshift({ name: 'IsUpgraded', value: 'true' });
+          }
+          return parsed;
+        }
+      }
+    } catch (_) { /* ignore corrupt data */ }
+    return null; // no saved data → caller uses defaults
+  }
+
+  function saveVarState() {
+    try {
+      localStorage.setItem(VAR_STORAGE_KEY, JSON.stringify(varState));
+    } catch (_) { /* storage full, ignore */ }
+  }
+
+  let varState = loadVarState() || DEFAULTS;
+
+  // Variable names that should render as toggles instead of text inputs
+  const BOOL_VARS = ['IsUpgraded', 'InCombat', 'IsTargeting', 'OnTable', 'IfUpgraded'];
+
+  // ── Render ──
+  function render() {
+    let src = bbcodeInput.value.replace(/\\n/g, '[br]');
+
+    // Determine if this card is in "upgraded" state
+    const isUpgraded = varState.some(
+      v => v.name === 'IsUpgraded' &&
+           (v.value === 'true' || v.value === '1')
+    );
+
+    // Handle [ifupgrade] … [/ifupgrade] — show green when upgraded, hide otherwise
+    if (isUpgraded) {
+      src = src.replace(/\[ifupgrade\]/gi, '[green]');
+      src = src.replace(/\[\/ifupgrade\]/gi, '[/green]');
+    } else {
+      src = src.replace(/\[ifupgrade\](.*?)\[\/ifupgrade\]/gis, '');
+    }
+
+    // Handle {VarName:diff()} — green when upgraded, plain otherwise
+    if (isUpgraded) {
+      src = src.replace(/\{(\w+):diff\(\)\}/gi, '[green]{$1}[/green]');
+    } else {
+      src = src.replace(/\{(\w+):diff\(\)\}/gi, '{$1}');
+    }
+
+    // Handle {VarName:list:joinSep|andJoinSep} — auto-split by first non-text char in value
+    src = src.replace(/\{(\w+):list:([^|}]*)\|?([^}]*)\}/gi, (m, varName, joinSep, andJoinSep) => {
+      const v = varState.find(x => x.name === varName);
+      if (!v || !v.value) return '';
+      // Find first non-alphanumeric, non-space, non-CJK character as splitter
+      const splitterMatch = v.value.match(/[^a-zA-Z0-9\u4e00-\u9fff\s]/);
+      const splitter = splitterMatch ? splitterMatch[0] : ',';
+      const parts = v.value.split(splitter).map(s => s.trim()).filter(Boolean);
+      if (parts.length === 0) return '';
+      if (parts.length === 1) return parts[0];
+      const sep = joinSep || splitter;
+      if (andJoinSep) {
+        return parts.slice(0, -1).join(sep) + andJoinSep + parts[parts.length - 1];
+      }
+      return parts.join(sep);
+    });
+
+    // Handle conditional variables: {VarName:show?:trueText|falseText} or {VarName:trueText|falseText}
+    src = src.replace(/\{(\w+):(?:show:)?([^|]*)\|([^}]*)\}/gi, (m, varName, trueText, falseText) => {
+      let truthy = false;
+      if (varName === 'IfUpgraded') {
+        truthy = isUpgraded;
+      } else {
+        const v = varState.find(x => x.name === varName);
+        truthy = v && (v.value === 'true' || v.value === '1');
+      }
+      let result = truthy ? trueText : falseText;
+      // Wrap IfUpgraded true-branch in green to match game behavior
+      if (varName === 'IfUpgraded' && truthy) {
+        result = '[green]' + result + '[/green]';
+      }
+      return result;
+    });
+
+    // Substitute injected variables: {Name} → value (case-sensitive)
+    for (const v of varState) {
+      if (!v.name) continue;
+      const re = new RegExp('\\{' + v.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\}', 'g');
+      src = src.replace(re, v.value || '');
+    }
+    const html = bbcodeToHtml(src);
+    previewRender.innerHTML = html || '&nbsp;';
+    restartMegaTextFx();
+  }
+
+  // ── Load saved editor text ──
+  try {
+    const savedText = localStorage.getItem(TEXT_STORAGE_KEY);
+    if (savedText !== null) bbcodeInput.value = savedText;
+  } catch (_) {}
+
+  // ── Input: snapshot + render + save ──
+  bbcodeInput.addEventListener('input', () => {
+    try { localStorage.setItem(TEXT_STORAGE_KEY, bbcodeInput.value); } catch (_) {}
+    pushUndo();
+    render();
+  });
+  render();
+
+  // ── Quick-insert buttons ──
+  document.querySelectorAll('[data-insert]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tmpl = btn.dataset.insert;
+      const sel  = btn.dataset.select;
+      const ta = bbcodeInput;
+      ta.focus();
+      const start = ta.selectionStart;
+      const end   = ta.selectionEnd;
+      const selText = ta.value.substring(start, end);
+      let inserted;
+      if (sel && selText) {
+        inserted = tmpl.replace(sel, selText);
+      } else if (sel) {
+        inserted = tmpl.replace(sel, sel);
+      } else {
+        inserted = tmpl;
+      }
+      ta.setRangeText(inserted, start, end, 'end');
+      ta.dispatchEvent(new Event('input'));
+
+      // Auto-add missing injected variables as new rows
+      const varMatches = inserted.match(/\{(\w+)(?::[^}]*)?\}/g);
+      if (varMatches) {
+        let changed = false;
+        const names = new Set(varState.map(v => v.name.trim()));
+        for (const match of varMatches) {
+          const name = match.replace(/^\{/, '').replace(/\:.*/, '');
+          if (name && !names.has(name)) {
+            varState.push({ name, value: '' });
+            saveVarState();
+            names.add(name);
+            changed = true;
+          }
+        }
+        if (changed) renderVariableRows();
+      }
+    });
+  });
+
+  // ── Reference tabs ──
+  document.querySelectorAll('.ref-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group = tab.closest('.ref-tabs');
+      if (!group) return;
+      group.querySelectorAll('.ref-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const targetId = 'ref-' + tab.dataset.ref;
+      const container = tab.closest('.panel');
+      if (container) {
+        container.querySelectorAll('.ref-panel').forEach(p => p.classList.remove('active'));
+        const target = container.querySelector('#' + targetId);
+        if (target) target.classList.add('active');
+      }
+    });
+  });
+
+  // ── Toast & copy ──
+  function showToastForText(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  async function copyTextToClipboard(txt) {
+    try {
+      await navigator.clipboard.writeText(txt);
+      showToastForText('已复制 BBCode');
+      return true;
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = txt;
+      ta.style.position = 'fixed'; ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) showToastForText('已复制 BBCode');
+      return ok;
+    }
+  }
+
+  // ── Keyboard shortcuts ──
+  bbcodeInput.addEventListener('keydown', e => {
+    const ctrl = e.ctrlKey || e.metaKey;
+
+    if (ctrl && e.key === 'Enter') {
+      e.preventDefault();
+      copyTextToClipboard(bbcodeInput.value);
+      return;
+    }
+
+    if (e.key === 'Enter' && !ctrl) {
+      e.preventDefault();
+      const start = bbcodeInput.selectionStart;
+      const end   = bbcodeInput.selectionEnd;
+      bbcodeInput.setRangeText('\\n', start, end, 'end');
+      bbcodeInput.dispatchEvent(new Event('input'));
+      return;
+    }
+
+    if (ctrl && e.key === 'z' && !e.shiftKey) {
+      e.preventDefault();
+      doUndo();
+      return;
+    }
+
+    if (ctrl && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+      e.preventDefault();
+      doRedo();
+      return;
+    }
+
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const start = bbcodeInput.selectionStart;
+      const end   = bbcodeInput.selectionEnd;
+      bbcodeInput.setRangeText('  ', start, end, 'end');
+      bbcodeInput.dispatchEvent(new Event('input'));
+      return;
+    }
+  });
+
+  // Editor copy button
+  const copyEditorBtn = document.getElementById('copyEditorBtn');
+  if (copyEditorBtn) {
+    copyEditorBtn.addEventListener('click', async () => {
+      await copyTextToClipboard(bbcodeInput.value);
+    });
+  }
+
+  // ── Auto-resize (respect max-height) ──
+  function autoResize(el) {
+    el.style.height = 'auto';
+    const max = parseFloat(getComputedStyle(el).maxHeight) || Infinity;
+    el.style.height = Math.min(el.scrollHeight, max) + 'px';
+  }
+  bbcodeInput.addEventListener('input', () => autoResize(bbcodeInput));
+  setTimeout(() => autoResize(bbcodeInput), 0);
+
+  // ── Fold toggles for tag sections ──
+  document.querySelectorAll('.tp-tag-fold-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const body = header.parentElement.querySelector('.tp-tag-fold-body');
+      if (!body) return;
+      const icon = header.querySelector('.tp-fold-icon');
+      body.classList.toggle('collapsed');
+      if (icon) icon.textContent = body.classList.contains('collapsed') ? '▶' : '▼';
+    });
+  });
+
+  // ── Variable injection UI ──
+  const varRowsEl = document.getElementById('varRows');
+  const varEmptyHint = document.getElementById('varEmptyHint');
+
+  // ── Drag-to-editor: drop variables onto textarea ──
+  bbcodeInput.addEventListener('dragover', (e) => {
+    if (e.dataTransfer.types.includes('text/x-var-name')) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      bbcodeInput.classList.add('tp-editor-drop-hover');
+    }
+  });
+  bbcodeInput.addEventListener('dragenter', (e) => {
+    if (e.dataTransfer.types.includes('text/x-var-name')) {
+      e.preventDefault();
+      bbcodeInput.classList.add('tp-editor-drop-hover');
+    }
+  });
+  bbcodeInput.addEventListener('dragleave', () => {
+    bbcodeInput.classList.remove('tp-editor-drop-hover');
+  });
+  bbcodeInput.addEventListener('drop', (e) => {
+    const varName = e.dataTransfer.getData('text/x-var-name');
+    if (varName) {
+      e.preventDefault();
+      bbcodeInput.classList.remove('tp-editor-drop-hover');
+      // Insert at cursor position (or end if no focus)
+      const pos = bbcodeInput.selectionStart ?? bbcodeInput.value.length;
+      bbcodeInput.setRangeText(varName, pos, pos, 'end');
+      bbcodeInput.focus();
+      bbcodeInput.dispatchEvent(new Event('input'));
+      // Auto-add missing variable
+      const match = varName.match(/^\{(\w+)\}$/);
+      if (match) {
+        const name = match[1];
+        const names = new Set(varState.map(v => v.name.trim()));
+        if (!names.has(name)) {
+          varState.push({ name, value: '' });
+          saveVarState();
+          renderVariableRows();
+        }
+      }
+    }
+  });
+
+  function hideVarDropdown() {
+    document.querySelectorAll('.tp-var-dropdown').forEach(d => d.remove());
+  }
+
+  function showVarDropdown(input, matches) {
+    hideVarDropdown();
+    if (!matches.length) return;
+    const wrap = input.closest('.tp-var-name-wrap');
+    if (!wrap) return;
+    const dd = document.createElement('div');
+    dd.className = 'tp-var-dropdown';
+    matches.forEach(name => {
+      const item = document.createElement('div');
+      item.className = 'tp-var-dropdown-item';
+      item.textContent = '{' + name + '}';
+      item.addEventListener('mousedown', e => { e.preventDefault(); input.value = name; input.dispatchEvent(new Event('input', {bubbles: true})); hideVarDropdown(); });
+      dd.appendChild(item);
+    });
+    wrap.appendChild(dd);
+  }
+
+  function renderVariableRows() {
+    varRowsEl.innerHTML = '';
+    varState.forEach((v, idx) => {
+      const row = document.createElement('div');
+      row.className = 'tp-var-row';
+      row.dataset.idx = idx;
+
+      // Drag handle — only this element initiates row reorder
+      const dragHandle = document.createElement('div');
+      dragHandle.className = 'tp-var-drag-handle';
+      dragHandle.textContent = '⠿';
+      dragHandle.addEventListener('mousedown', () => { row.draggable = true; });
+      dragHandle.addEventListener('mouseup', () => { row.draggable = false; });
+
+      const nameWrap = document.createElement('div');
+      nameWrap.className = 'tp-var-name-wrap';
+      const nameInput = document.createElement('input');
+      nameInput.className = 'tp-var-name-input';
+      nameInput.type = 'text';
+      nameInput.placeholder = '变量名';
+      nameInput.value = v.name || '';
+      nameInput.dataset.idx = idx;
+      nameWrap.appendChild(nameInput);
+
+      // Drag-to-editor handle
+      const insertHandle = document.createElement('span');
+      insertHandle.className = 'tp-var-insert-handle';
+      insertHandle.title = '拖入编辑器插入变量';
+      insertHandle.textContent = '⊕';
+      insertHandle.draggable = true;
+      insertHandle.addEventListener('dragstart', (e) => {
+        e.stopPropagation();
+        e.dataTransfer.effectAllowed = 'copy';
+        e.dataTransfer.setData('text/x-var-name', '{' + (v.name || '') + '}');
+        e.dataTransfer.setData('text/plain', '{' + (v.name || '') + '}');
+      });
+
+      const isBool = BOOL_VARS.includes(v.name.trim());
+      let valEl;
+      if (isBool) {
+        valEl = document.createElement('button');
+        valEl.className = 'tp-var-toggle';
+        const on = v.value === 'true';
+        valEl.dataset.idx = idx;
+        valEl.dataset.on = on ? 'true' : 'false';
+        valEl.textContent = '';
+        valEl.addEventListener('click', () => {
+          const i = parseInt(valEl.dataset.idx);
+          const newOn = varState[i].value !== 'true';
+          varState[i].value = newOn ? 'true' : 'false';
+          saveVarState();
+          renderVariableRows();
+          render();
+        });
+      } else {
+        valEl = document.createElement('input');
+        valEl.className = 'tp-var-value-input';
+        valEl.type = 'text';
+        valEl.placeholder = '值';
+        valEl.value = v.value || '';
+        valEl.dataset.idx = idx;
+      }
+
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'tp-var-btn-group';
+
+      const rmBtn = document.createElement('button');
+      rmBtn.className = 'tp-var-remove';
+      rmBtn.title = '移除';
+      rmBtn.textContent = '✕';
+      rmBtn.dataset.idx = idx;
+      btnGroup.appendChild(rmBtn);
+
+      row.appendChild(dragHandle);
+      row.appendChild(nameWrap);
+      row.appendChild(insertHandle);
+      row.appendChild(valEl);
+      row.appendChild(btnGroup);
+
+      // Drag-and-drop event handlers for reordering
+      row.addEventListener('dragstart', (e) => {
+        row.classList.add('tp-var-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(idx));
+      });
+
+      row.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        row.classList.add('tp-var-drop-target');
+      });
+
+      row.addEventListener('dragleave', () => {
+        row.classList.remove('tp-var-drop-target');
+      });
+
+      row.addEventListener('dragend', () => {
+        row.draggable = false;
+        document.querySelectorAll('.tp-var-row').forEach(r => {
+          r.classList.remove('tp-var-dragging');
+          r.classList.remove('tp-var-drop-target');
+        });
+      });
+
+      row.addEventListener('drop', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.tp-var-row').forEach(r => {
+          r.classList.remove('tp-var-dragging');
+          r.classList.remove('tp-var-drop-target');
+        });
+        const oldIdx = parseInt(e.dataTransfer.getData('text/plain'));
+        const newIdx = idx;
+        if (!isNaN(oldIdx) && !isNaN(newIdx) && oldIdx !== newIdx) {
+          const [moved] = varState.splice(oldIdx, 1);
+          varState.splice(newIdx, 0, moved);
+          saveVarState();
+          renderVariableRows();
+          render();
+        }
+      });
+
+      varRowsEl.appendChild(row);
+    });
+
+    // Standalone add-button row (always visible, even when empty)
+    const addRow = document.createElement('div');
+    addRow.className = 'tp-var-add-row';
+    const addBtn = document.createElement('button');
+    addBtn.className = 'tp-var-add-btn';
+    addBtn.textContent = '+ 添加变量';
+    addBtn.addEventListener('click', addVariable);
+    addRow.appendChild(addBtn);
+    varRowsEl.appendChild(addRow);
+
+    // Name input handlers with autocomplete
+    varRowsEl.querySelectorAll('.tp-var-name-input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const idx = parseInt(inp.dataset.idx);
+        const prev = varState[idx].name;
+        varState[idx].name = inp.value;
+        saveVarState();
+        const val = inp.value;
+        if (val) {
+          showVarDropdown(inp, VAR_NAMES.filter(n => n.toLowerCase().includes(val.toLowerCase())));
+        } else {
+          hideVarDropdown();
+        }
+        // Re-render rows when name crosses bool/non-bool boundary
+        const now = inp.value.trim();
+        const wasBool = BOOL_VARS.includes(prev.trim());
+        const isBool = BOOL_VARS.includes(now);
+        if (wasBool !== isBool) {
+          renderVariableRows();
+        }
+        render();
+      });
+      inp.addEventListener('blur', () => setTimeout(hideVarDropdown, 200));
+      inp.addEventListener('focus', () => {
+        const val = inp.value;
+        if (val) showVarDropdown(inp, VAR_NAMES.filter(n => n.includes(val)));
+      });
+    });
+
+    // Value input handlers
+    varRowsEl.querySelectorAll('.tp-var-value-input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        const idx = parseInt(inp.dataset.idx);
+        varState[idx].value = inp.value;
+        saveVarState();
+        render();
+      });
+    });
+
+    // Remove button handlers
+    varRowsEl.querySelectorAll('.tp-var-remove').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.idx);
+        varState.splice(idx, 1);
+        saveVarState();
+        renderVariableRows();
+        render();
+      });
+    });
+  }
+
+  function addVariable() {
+    varState.push({ name: '', value: '' });
+    saveVarState();
+    renderVariableRows();
+    const inputs = varRowsEl.querySelectorAll('.tp-var-name-input');
+    if (inputs.length) inputs[inputs.length-1].focus();
+  }
+
+  // Init variable rows
+  renderVariableRows();
+}
+
+// Auto-start if on the text-preview page
+if (document.querySelector('[data-text-preview-tool]')) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTextPreviewOnly);
+  } else {
+    initTextPreviewOnly();
+  }
+}
 })();
