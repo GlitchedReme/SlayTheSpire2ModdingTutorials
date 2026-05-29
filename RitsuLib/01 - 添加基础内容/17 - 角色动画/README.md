@@ -165,18 +165,27 @@ await DamageCmd.Attack(DynamicVars.Damage.BaseValue).WithAttackerAnim("Shiv", 0.
 
 ```csharp
     protected override ModAnimStateMachine? SetupCustomCombatAnimationStateMachine(
-    Node visualsRoot,
-    CharacterModel character)
+            Node visualsRoot,
+            CharacterModel character)
     {
-        return ModAnimStateMachineBuilder.Create()
-            .AddState("Idle", loop: true).Done()
+        var builder = ModAnimStateMachineBuilder.Create()
+            .AddState("Idle", loop: true).AsInitial().Done()
             .AddState("Attack").WithNext("Idle").Done()
             .AddState("Cast").WithNext("Idle").Done()
-            .AddState("Hurt").WithNext("Idle").Done()
-            .AddState("Die").WithNext("Idle").Done()
-            .AddState("Shiv").WithNext("Idle").Done()
+            .AddState("Hit").WithNext("Idle").Done()
+            .AddState("Dead").Done()
             .AddState("Relaxed", loop: true).Done()
-            // BuildSpine(spineBody); // 创建spine动画。需要根据visualsRoot找到spine节点，使用spine还是推荐使用CreatureAnimator
-            .BuildForVisualsRoot(visualsRoot, character); // 创建帧动画。
-    }
+            .AddState("Shiv").WithNext("Idle").Done();
+
+        // 映射 状态到上面设置的Cue动画名
+        builder.AddAnyState("Idle", "idle");
+        builder.AddAnyState("Dead", "dead");
+        builder.AddAnyState("Hit", "hit");
+        builder.AddAnyState("Attack", "attack");
+        builder.AddAnyState("Cast", "cast");
+        builder.AddAnyState("Relaxed", "relaxed");
+        builder.AddAnyState("Shiv", "shiv");
+        // return builder.BuildSpine(spineBody); // 创建spine动画。需要根据visualsRoot找到spine节点，使用spine还是推荐使用CreatureAnimator
+        return builder.BuildForVisualsRoot(visualsRoot, character); // 创建帧动画。
+    }   
 ```

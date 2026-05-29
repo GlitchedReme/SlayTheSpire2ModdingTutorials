@@ -373,6 +373,8 @@ TestCharacterRestSite (Node2D)
 
 创建`{modId}/localization/{Language}/characters.json`，填写以下内容：
 
+* 通过`ritsulib`添加内容，其id会变成`{modid}_{类别}_{原id}`。例如这里的`modid`是`TEST`,类别是`CHARACTER`。
+
 ```json
 {
   // 混沌香气事件中的内心独白
