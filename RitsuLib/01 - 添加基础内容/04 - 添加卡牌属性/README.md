@@ -5,12 +5,19 @@
 * 新建一个类：
 
 ```csharp
+using MegaCrit.Sts2.Core.Entities.Cards;
+using STS2RitsuLib.Content;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Keywords;
+
+namespace Test.Scripts;
+
 [RegisterOwnedCardKeyword(nameof(Unique), IconPath = "res://icon.svg", CardDescriptionPlacement = ModKeywordCardDescriptionPlacement.BeforeCardDescription)]
 // [RegisterOwnedCardKeyword(nameof(Unique2), IconPath = "res://icon.svg")] // 如果要加更多关键词，添加特性
 public class MyKeywords
 {
-    public static readonly string Unique = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Unique));
-    // public static readonly string Unique2 = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Unique2));
+    public static readonly CardKeyword Unique = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Unique)).GetModCardKeyword();
+    // public static readonly CardKeyword Unique2 = ModContentRegistry.GetQualifiedKeywordId(Entry.ModId, nameof(Unique2)).GetModCardKeyword();
 }
 ```
 
@@ -34,12 +41,12 @@ using STS2RitsuLib.Keywords; // 需要额外using这个
 
 // 写在你的卡牌类里
 public override IEnumerable<CardKeyword> CanonicalKeywords => [
-    MyKeywords.Unique.GetModKeywordCardKeyword(), // 添加自定义关键词
+    MyKeywords.Unique, // 添加自定义关键词
     // CardKeyword.Exhaust, // 添加原版关键词
 ];
 ```
 
-判断是否有：`card.HasModKeyword(MyKeywords.Unique)`
+判断是否有：`Keywords.Contains(MyKeywords.Unique)`
 
 ![alt text](../../../images/image23.png)
 
@@ -112,7 +119,6 @@ public class TestCard : ModCardTemplate
         HoverTipFactory.FromCard<Shiv>(),
         HoverTipFactory.FromPower<TestPower>(),
         HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
-        // ModKeywordRegistry.CreateHoverTip(MyKeywords.Unique), // 自定义关键词
     ];
 }
 ```
@@ -124,13 +130,20 @@ tag是指`打击` `防御`这种。如果有打击tag会被打击木偶增伤。
 不要忘记给你的打击和防御加上strike和defend的tag。
 
 ```csharp
+using MegaCrit.Sts2.Core.Entities.Cards;
+using STS2RitsuLib.CardTags;
+using STS2RitsuLib.Content;
+using STS2RitsuLib.Interop.AutoRegistration;
+
+namespace Test.Scripts;
+
 [RegisterOwnedCardTag(nameof(Heavy))]
 // [RegisterOwnedCardTag(nameof(Heavy2))] // 添加更多就新加这个特性
 public class MyTags
 {
-    public static readonly string Heavy = ModContentRegistry.GetQualifiedCardTagId(Entry.ModId, nameof(Heavy));
+    public static readonly CardTag Heavy = ModContentRegistry.GetQualifiedCardTagId(Entry.ModId, nameof(Heavy)).GetModCardTag();
 
-    // public static readonly string Heavy2 = ModContentRegistry.GetQualifiedCardTagId(Entry.ModId, nameof(Heavy2));
+    // public static readonly CardTag Heavy2 = ModContentRegistry.GetQualifiedCardTagId(Entry.ModId, nameof(Heavy2)).GetModCardTag();
 }
 ```
 
@@ -141,7 +154,7 @@ using STS2RitsuLib.CardTags; // 需要额外using这个
 
 // 在你的卡牌类里添加这个或在已有的里添加
 protected override HashSet<CardTag> CanonicalTags => [
-    MyTags.Heavy.GetModCardTag(), // 添加自定义tag
+    MyTags.Heavy, // 添加自定义tag
     // CardTag.Strike, // 添加原版tag
 ];
 ```
@@ -149,7 +162,7 @@ protected override HashSet<CardTag> CanonicalTags => [
 需要使用时这么写。`Card`需要是个`CardModel`类型。
 
 ```csharp
-if (Card.HasModCardTag(MyTags.Heavy))
+if (Card.Tags.Any(t => t == MyTags.Heavy))
 {
     // Do something
 }
