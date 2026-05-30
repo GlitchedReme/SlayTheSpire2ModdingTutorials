@@ -13,6 +13,9 @@ _multiconfig.yml
 *.tmp
 *.swp
 .claude/
+.opencode/
+.codex/
+.atomcode/
 
 # Temporary caches and reports
 .cache/
