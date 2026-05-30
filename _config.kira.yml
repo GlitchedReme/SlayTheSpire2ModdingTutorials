@@ -186,6 +186,10 @@ docsTree:
                                     title: 11 自定义目标,
                                     path: /docs/04-ritsulib/04-22-5-custom-targeting/,
                                 },
+                                {
+                                    title: 12 右键交互,
+                                    path: /docs/04-ritsulib/04-22-6-right-click/,
+                                },
                             ],
                     },
                     {

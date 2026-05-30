@@ -361,6 +361,12 @@
             "permalink": "docs/04-ritsulib/04-22-5-custom-targeting/",
             "title": "自定义目标",
             "author": "alkaid616"
+          },
+          {
+            "source": "RitsuLib/02 - 玩法基底/12 - 右键交互/README.md",
+            "post": "04-ritsulib/04-22-6-right-click.md",
+            "permalink": "docs/04-ritsulib/04-22-6-right-click/",
+            "title": "右键交互"
           }
         ]
       },

@@ -1617,8 +1617,8 @@ function initTextPreviewOnly() {
 
   const DEFAULTS = [
     { name: 'IsUpgraded', value: 'true' },
-    { name: 'CalcBase', value: '5' },
-    { name: 'CalcBlock', value: '15' },
+    { name: 'CalculationBase', value: '5' },
+    { name: 'CalculatedBlock', value: '15' },
     { name: 'InCombat', value: 'true' },
   ];
 
