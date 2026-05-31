@@ -2,9 +2,10 @@
 
 ## 注册卡牌堆
 
-在 初始化函数（`Entry.Init`） 中注册：
+在初始化函数（`Entry.Init`）中注册，并把牌堆类型存为静态变量方便后续引用：
 
 ```csharp
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using STS2RitsuLib;
@@ -18,38 +19,55 @@ public class Entry
     public const string ModId = "Test";
     public static readonly Logger Logger = RitsuLibFramework.CreateLogger(ModId);
 
+    public static PileType VoidPile;
+
     public static void Init()
     {
         var registry = ModCardPileRegistry.For(ModId);
-        registry.RegisterOwned("void_pile", new ModCardPileSpec
+        VoidPile = registry.RegisterOwned("void_pile", new ModCardPileSpec
         {
-            // 作用域。
             // CombatOnly：每次战斗创建，战斗结束时销毁
-            // RunPersistent：同一局游戏内可跨战斗保留。（仅存于内存，需要自行实现写入局内存档）
+            // RunPersistent：同一局游戏内可跨战斗保留（仅存于内存，需自行写入存档）
             Scope = ModCardPileScope.CombatOnly,
-            // UI样式。
             // Headless：不可见
-            // TopBarDeck：顶栏，位于原版牌组按钮旁。
-            // BottomLeft：战斗UI左下按钮（靠近抽牌堆）。
-            // BottomRight：战斗UI右下按钮（靠近消耗堆）。
-            // ExtraHand：额外的手牌容器。
+            // TopBarDeck：顶栏牌组按钮旁
+            // BottomLeft：战斗UI左下（抽牌堆附近）
+            // BottomRight：战斗UI右下（消耗堆附近）
+            // ExtraHand：额外手牌容器
             Style = ModCardPileUiStyle.BottomLeft,
-            // 锚点，见下方说明
             Anchor = ModCardPileAnchor.Default,
-            // 图标
             IconPath = "res://Test/images/void_pile.png",
-            // 点击打开时的逻辑
-            OnOpen = ctx =>
-            {
-                ctx.ShowDefaultPileScreen();        // 打开类似于原版的界面
-                // 或
-                // ctx.OpenCapstoneScreen(myScreen);   // 通过自定义ICapstoneScreen实现自定义界面逻辑
-            },
-            // 何时可见
+            // 点击打开
+            OnOpen = ctx => ctx.ShowDefaultPileScreen(),
             VisibleWhen = ctx => ctx.Player != null,
-        });
+        }).PileType;
     }
 }
+```
+
+* `RegisterOwned` 返回 `ModCardPileDefinition`，其 `.PileType` 是运行时操作牌堆的标识。
+* RitsuLib 用 Harmony patch 拦截了原版 `CardPile.Get(PileType, Player)`，所以用你的 `PileType` 可以直接拿到牌堆对象。
+
+## 使用卡牌堆
+
+注册后通过 `CardPileCmd.Add` 把卡牌移入自定义牌堆：
+
+```csharp
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
+
+// 单张移入
+await CardPileCmd.Add(card, Entry.VoidPile);
+
+// 获取玩家的牌堆对象，手动读写
+var pile = Entry.VoidPile.GetPile(player);
+foreach (var c in pile.Cards)
+{
+    Logger.Info($"虚空堆中的卡牌: {c.Id}");
+}
+
+// 其他参考原版api即可
 ```
 
 ## Anchor（锚点）
@@ -139,7 +157,7 @@ Anchor = ModCardPileAnchor.AtPivot(
 
 在`{modId}/localization/{lang}/static_hover_tips.json`中添加文本。
 
-ID格式为`{MODID}_CARDPILE_{LOCALSTEM}`，例如这里会变成`TEST_CADPILE_VOLD_PILE`。
+ID格式为`{MODID}_CARDPILE_{LOCALSTEM}`，例如这里会变成`TEST_CARDPILE_VOID_PILE`。
 
 ```json
 {
