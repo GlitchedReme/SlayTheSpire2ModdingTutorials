@@ -2,7 +2,7 @@
 
 https://github.com/BAKAOLC/STS2-RitsuLib
 
-> 以下内容使用ritsulib0.3.2。
+> 以下内容使用ritsulib0.3.9。
 
 先依赖ritsulib才能查看这里里面的文章。
 

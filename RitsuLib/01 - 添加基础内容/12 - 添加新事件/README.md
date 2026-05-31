@@ -99,7 +99,7 @@ public sealed class TestEvent : ModEventTemplate
 
 创建`{modId}/localization/{Language}/events.json`。
 
-* 通过`ritsulib`添加内容，其id会变成`{modid}_{类别}_{原id}`。例如这里的`modid`是`TEST`,类别是`EVENT`。
+- 通过`ritsulib`添加内容，其id会变成`{modid}_{类别}_{原id}`。例如这里的`modid`是`TEST`,类别是`EVENT`。
 
 ```json
 {
@@ -123,11 +123,32 @@ public sealed class TestEvent : ModEventTemplate
   "TEST_EVENT_TEST_EVENT.pages.POTIONS_CHOSEN.description": "液体在瓶里轻轻晃荡，像远处引擎空转的节奏。\n\n[gold]戈多[/gold]把空瓶口朝你举了举，像在敬酒，又像在敬时间本身。\n\n[sine]……好了。剩下的，你自己慢慢等吧。[/sine]",
   "TEST_EVENT_TEST_EVENT.pages.CARDS_CHOSEN.description": "纸牌边缘划过指缝，留下一点脆响——至少比沉默更热闹。\n\n[gold]戈多[/gold]望着你把牌收好，点点头。\n\n[sine]带走它们。路还长，别让自己……等得太安静。[/sine]"
 }
-
 ```
 
 ![alt text](../../../images/image33.png)
 
 ## 战斗事件
 
-TODO
+在你的事件类里添加：
+
+```csharp
+    public override EventLayoutType LayoutType => EventLayoutType.Combat; // 使用战斗场景
+
+    public override EncounterModel CanonicalEncounter => ModelDb.Encounter<TestEncounter>(); // 即将进行的遭遇
+
+    // 某一个选项的效果，开始战斗
+    public Task Fight()
+    {
+        // 开始战斗
+        EnterCombatWithoutExitingEvent<TestEncounter>(
+            [new SpecialCardReward(Owner!.RunState.CreateCard<LanternKey>(Owner), Owner)], // 额外给予的奖励
+            shouldResumeAfterCombat: false // 战斗结束后是否继续事件
+        );
+        return Task.CompletedTask;
+    }
+
+    // 如果你shouldResumeAfterCombat设置为true，那么战斗结束后执行该逻辑
+    public override async Task Resume(AbstractRoom room)
+    {
+    }
+```
