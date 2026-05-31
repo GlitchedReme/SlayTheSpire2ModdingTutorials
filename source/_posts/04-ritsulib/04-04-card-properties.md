@@ -55,6 +55,8 @@ public override IEnumerable<CardKeyword> CanonicalKeywords => [
 
 判断是否有：`Keywords.Contains(MyKeywords.Unique)`
 
+可配合单例（`SingletonModel`）实现逻辑。参考对应文章。
+
 ![alt text](../../../images/image23.png)
 
 ## 添加新动态变量

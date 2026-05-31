@@ -39,6 +39,10 @@ public class MyKeywords
 
 ![alt text](../../../images/image23.png)
 
+判断是否有：`Keywords.Contains(MyKeywords.Unique)`
+
+可配合单例（`SingletonModel`）实现逻辑。参考对应文章。
+
 ## 添加新动态变量
 
 动态变量是指`伤害`，`格挡`，`抽牌数`，`获得能量数`等这种动态数值。虽然可以通过`new DynamicPower("xxx", 1)`这种形式添加，但是写一个新的类比较规范也便于扩展功能。参考`变量与描述`这章。
