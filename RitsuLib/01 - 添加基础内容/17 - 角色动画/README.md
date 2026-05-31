@@ -6,6 +6,8 @@
 
 `VisualCueSet` 适合静态图或帧动画。每个 cue 可以是一张图，也可以是一段帧动画。
 
+使用该系统仍然推荐保留`VisualsPath`和`TryCreateCreatureVisuals`。另外你的场景需要至少有一个`Sprite2D`类型的节点（例如把`Visuals`改成该类型）。
+
 ```csharp
 using STS2RitsuLib.Scaffolding.Characters;
 using STS2RitsuLib.Scaffolding.Visuals;
@@ -15,15 +17,13 @@ namespace Test.Scripts;
 public sealed class TestCharacter
     : ModCharacterTemplate<TestCardPool, TestRelicPool, TestPotionPool>
 {
-    public override CharacterAssetProfile AssetProfile => new()
-    {
-        Scenes = new()
-        {
-            VisualsPath = "res://Test/scenes/characters/test_visuals.tscn",
-        },
-        VisualCues = ModVisualCues.CueSet()
+    public override CharacterAssetProfile AssetProfile => new( // 如果你用人物那章和ironclad merge的用法可以保留你的写法
+        Scenes: new(
+            VisualsPath = "res://Test/scenes/characters/test_visuals.tscn", // 需要保留
+        ),
+        VisualCues: ModVisualCues.CueSet()
             // idle动画使用单图
-            .Single("idle_loop", "res://Test/images/character/idle.png")
+            .Single("idle", "res://Test/images/character/idle.png")
             .Single("hit", "res://Test/images/character/hit.png")
             // attack动画使用帧动画
             .Sequence("attack", seq => seq
@@ -31,7 +31,10 @@ public sealed class TestCharacter
                 .Frame("res://Test/images/character/attack_02.png", 0.06f)
                 .Frame("res://Test/images/character/attack_03.png", 0.08f))
             .Single("dead", "res://Test/images/character/dead.png")
-            .Build(),
+            .Build(), // 最后需要调用一次build
+    )
+
+    protected override NCreatureVisuals? TryCreateCreatureVisuals() => RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!); // 需要保留
     };
 }
 ```
@@ -129,7 +132,7 @@ public sealed class TestCharacter
         AnimState animState4 = new("hurt");
         AnimState state = new("die");
         AnimState animState5 = new("shiv"); // new
-        AnimState animState6 = new("relaxed_loop", isLooping: true);
+        AnimState animState6 = new("relaxed", isLooping: true);
 
         // 设定播放后自动跳转，例如这里都是返回idle
         animState2.NextState = animState;
