@@ -141,6 +141,23 @@ function luminance({r,g,b}) {
   return 0.2126*ch(r) + 0.7152*ch(g) + 0.0722*ch(b);
 }
 function floatStr(n) { return (n/255).toFixed(3); }
+function hsvFrameToRgb(h, s, v) {
+  const hh = (h * 360) % 360;
+  s = Math.min(s, 1);
+  v = Math.min(v, 1);
+  const c = v * s;
+  const hp = hh / 60;
+  const x = c * (1 - Math.abs((hp % 2) - 1));
+  const m = v - c;
+  let r, g, b;
+  if      (hp < 1) { r = c;   g = x;   b = 0; }
+  else if (hp < 2) { r = x;   g = c;   b = 0; }
+  else if (hp < 3) { r = 0;   g = c;   b = x; }
+  else if (hp < 4) { r = 0;   g = x;   b = c; }
+  else if (hp < 5) { r = x;   g = 0;   b = c; }
+  else             { r = c;   g = 0;   b = x; }
+  return { r: r + m, g: g + m, b: b + m };
+}
 function hsvToRgb(h, s, v) {
   h = ((h % 360) + 360) % 360;
   s = clamp(s, 0, 100) / 100;
@@ -1450,6 +1467,7 @@ function frameFloat(n) {
 }
 
 function setFrameCSharpSnippet() {
+  const rgb = hsvFrameToRgb(frameState.h, frameState.s, frameState.v);
   setCode('codeApply',
 `// 写在卡池中
 
@@ -1459,7 +1477,7 @@ private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateHsvSh
 public override Material? PoolFrameMaterial => _poolFrameMaterial;
 
 // 适用于 BaseLib
-public override Color ShaderColor => new(${frameFloat(frameState.h)}, ${frameFloat(frameState.s)}, ${frameFloat(frameState.v)});`);
+public override Color ShaderColor => new(${frameFloat(rgb.r)}, ${frameFloat(rgb.g)}, ${frameFloat(rgb.b)});`);
 }
 
 function setHsv(h, s, v, source) {

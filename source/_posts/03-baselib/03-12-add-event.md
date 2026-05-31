@@ -129,4 +129,26 @@ public sealed class TestEvent : CustomEventModel
 
 ## 战斗事件
 
-TODO
+在你的事件类里添加：
+
+```csharp
+    public override EventLayoutType LayoutType => EventLayoutType.Combat; // 使用战斗场景
+
+    public override EncounterModel CanonicalEncounter => ModelDb.Encounter<TestEncounter>(); // 即将进行的遭遇
+
+    // 某一个选项的效果，开始战斗
+    public Task Fight()
+    {
+        // 开始战斗
+        EnterCombatWithoutExitingEvent<TestEncounter>(
+            [new SpecialCardReward(Owner!.RunState.CreateCard<LanternKey>(Owner), Owner)], // 额外给予的奖励
+            shouldResumeAfterCombat: false // 战斗结束后是否继续事件
+        );
+        return Task.CompletedTask;
+    }
+
+    // 如果你shouldResumeAfterCombat设置为true，那么战斗结束后执行该逻辑
+    public override async Task Resume(AbstractRoom room)
+    {
+    }
+```

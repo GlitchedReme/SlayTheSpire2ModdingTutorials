@@ -5,8 +5,6 @@ permalink: docs/04-ritsulib/04-02-custom-config/
 categories:
 - Basics
 ---
-> 本文章由AI生成，还在人工润色，如有问题请指出。
-
 RitsuLib 提供三种方式创建配置页面：**代码流式构建**、**反射属性注册**、**Schema 声明注册**。配置数据的持久化由 `ModDataStore` 承担。
 
 ## 方法一：代码流式注册
