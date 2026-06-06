@@ -1,3 +1,18 @@
+## DynamicEnumValueRegistry
+
+统一管理动态枚举的扩展逻辑确保安全。可以为已知枚举添加分支。
+
+但是只是添加枚举，其他匹配逻辑和素材需要自己制作。
+
+```csharp
+// 之后使用这个值
+static CardType Field;
+
+// 写在初始化里，注册一个场地的卡牌类型
+var enumRegistry = DynamicEnumValueRegistry<CardType>.For(ModId);
+Field = enumRegistry.RegisterOwned("FIELD").Value;
+```
+
 ## WeightedList
 
 `WeightedList<T>` 是一个带权重的列表，可以用原版 `Rng` 抽取，也可以不放回抽取。
@@ -167,16 +182,8 @@ using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib;
 using STS2RitsuLib.Utils;
 
-namespace Test.Scripts.Utils;
-
-public static class TestUiHelpers
-{
-    public static void AddPreview(Control owner, IEnumerable<CardModel> cards)
-    {
-        HoverTipHelper.AddTipToOwner(owner, "Test", "这是一条额外说明。");
-        HoverTipHelper.AddCardTipsToOwner(owner, cards);
-    }
-}
+HoverTipHelper.AddTipToOwner(owner, "Test", "这是一条额外说明。");
+HoverTipHelper.AddCardTipsToOwner(owner, cards);
 ```
 
 `HoverTipHelper` 的方法返回 `false` 表示当前没有绑定活动悬浮提示组，通常可以忽略；如果你在自定义控件里自己管理悬浮提示，需要先按原版方式创建并绑定悬浮提示组。

@@ -49,7 +49,7 @@ public class TestMonster : ModMonsterTemplate
     // 战斗开始时，在这里给自己上buff之类
     public override async Task AfterAddedToRoom()
     {
-        await PowerCmd.Apply<StrengthPower>(Creature, 2m, Creature, null); 
+        await PowerCmd.Apply<StrengthPower>(Creature, 2m, Creature, null);
         //await PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), Creature, 2m, Creature, null); // 测试版
     }
 
@@ -114,21 +114,21 @@ public class TestMonster : ModMonsterTemplate
 > ├── CenterPos (Marker2D) %
 > └── TalkPos (Marker2D) %
 > ```
-> 
+>
 > <b>其中`Visuals`，`Bounds`，`IntentPos`，`CenterPos`，`TalkPos`需要右键勾选`作为唯一名称访问`，出现`%`即可。名字不要改。</b>
-> 
+>
 > `Bounds`就是你的人物hitbox的大小，如果你觉得血条太短调整一下它的大小。
-> 
-> * 人物显示在x轴上方。
+>
+> - 人物显示在x轴上方。
 
 然后创建`{modId}/localization/{Language}/monsters.json`。
 
 ```json
 {
-    "TEST_MONSTER_TEST_MONSTER.name": "戈多", // 怪物名字
-    "TEST_MONSTER_TEST_MONSTER.moves.BASIC_ATTACK.title": "基础攻击", // 意图名字
-    "TEST_MONSTER_TEST_MONSTER.moves.BASIC_ATTACK.banter": "[jitter]接下这招！[/jitter]", // 对话文本，在意图中使用了。不用删除即可。
-    "TEST_MONSTER_TEST_MONSTER.moves.HEAVY_ATTACK.title": "重击"
+  "TEST_MONSTER_TEST_MONSTER.name": "戈多", // 怪物名字
+  "TEST_MONSTER_TEST_MONSTER.moves.BASIC_ATTACK.title": "基础攻击", // 意图名字
+  "TEST_MONSTER_TEST_MONSTER.moves.BASIC_ATTACK.banter": "[jitter]接下这招！[/jitter]", // 对话文本，在意图中使用了。不用删除即可。
+  "TEST_MONSTER_TEST_MONSTER.moves.HEAVY_ATTACK.title": "重击"
 }
 ```
 
@@ -161,6 +161,12 @@ public class TestEncounter : ModEncounterTemplate
     protected override IReadOnlyList<(MonsterModel, string?)> GenerateMonsters() => [
         (ModelDb.Monster<TestMonster>().ToMutable(), null) // 如果不想指定怪物生成在哪个槽位，可以直接传null，系统会自动分配
     ];
+
+    // 可选的生成条件，例如只能在密林生成
+    // public override bool IsValidForAct(ActModel act)
+    // {
+    //     return act is Overgrowth;
+    // }
 }
 ```
 
@@ -247,10 +253,10 @@ TODO:重载CustomEncounterBackground
 
 ```json
 {
-    "TEST-TEST_ENCOUNTER.title": "一只戈多", // 标题
-    "TEST-TEST_ENCOUNTER.loss": "{character}被[gold]{encounter}[/gold]折磨而死。", // 被击败文本
-    "TEST-TEST_MULTI_ENCOUNTER.title": "很多戈多",
-    "TEST-TEST_MULTI_ENCOUNTER.loss": "{character}被[gold]{encounter}[/gold]的一堆新版本淹没。"
+  "TEST-TEST_ENCOUNTER.title": "一只戈多", // 标题
+  "TEST-TEST_ENCOUNTER.loss": "{character}被[gold]{encounter}[/gold]折磨而死。", // 被击败文本
+  "TEST-TEST_MULTI_ENCOUNTER.title": "很多戈多",
+  "TEST-TEST_MULTI_ENCOUNTER.loss": "{character}被[gold]{encounter}[/gold]的一堆新版本淹没。"
 }
 ```
 

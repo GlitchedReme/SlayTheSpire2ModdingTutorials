@@ -91,7 +91,7 @@ public class TestPotionPool : TypeListPotionPoolModel
 public class TestCard : ModCardTemplate
 ```
 
-## 初始遗物和卡牌升级
+## 人物独有的内容注册
 
 `古老牙齿`可以把一张初始卡变成先古升级。在初始化函数(`Entry.Init`)里注册：
 
@@ -108,6 +108,22 @@ RitsuLibFramework.RegisterTouchOfOrobasRefinementMapping<TestRelic, Akabeko>();
 ```
 
 `尘封魔典`可以获得一张先古卡。这个结果是从你池子里选出所有先古卡，然后去除`古老牙齿`的那张得到的。所以只需再创建一张先古卡即可。
+
+`美味饼干`会根据你的人物使用不同的图标。参考下方`AssetProfile`属性里的`VanillaRelicVisualOverrides`值填写。
+
+`海玻璃`会使用不同角色的池子设置效果。需要一条你的人物的本地化文本，在你mod的`relics.json`里添加`SEA_GLASS.{你人物id}.title`即可：
+
+```json
+{
+  "SEA_GLASS.TEST_CHARACTER_TEST_CHARACTER.title": "戈多玻璃"
+}
+```
+
+`色彩哲学家`事件会产生三个角色的卡池。默认不接收你的角色，需要给你的卡池实现`IModColorfulPhilosophersCardPool`接口。
+
+```csharp
+public class TestCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCardPool {}
+```
 
 ## 创建人物
 
@@ -154,20 +170,20 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
                 RestSiteAnimPath: "res://Test/scenes/test_character_rest_site.tscn"
             ),
             Ui: new(
-                // 人物头像路径。
+                // 人物头像路径。自适应大小。
                 IconTexturePath: "res://icon.svg",
-                // 人物头像2号。
-                // IconPath: "res://scenes/ui/character_icons/ironclad_icon.tscn",
+                // 游戏左上角头像、角色统计页头像、每日挑战角色头像。这个是场景而不是图片。参考下方附赠资源搭建。
+                IconPath: "res://Test/scenes/test_icon.tscn",
                 // 人物选择背景。
                 CharacterSelectBgPath: "res://Test/scenes/test_bg.tscn",
                 // 人物选择图标。
                 CharacterSelectIconPath: "res://Test/images/char_select_test.png",
                 // 人物选择图标-锁定状态。
-                CharacterSelectLockedIconPath: "res://Test/images/char_select_test_locked.png"
+                CharacterSelectLockedIconPath: "res://Test/images/char_select_test_locked.png",
                 // 人物选择过渡动画。
                 // CharacterSelectTransitionPath: "res://materials/transitions/ironclad_transition_mat.tres",
-                // 地图上的角色标记图标、表情轮盘上的角色头像
-                // MapMarkerPath: null
+                // 地图上的角色标记图标、表情轮盘上的角色头像。
+                MapMarkerPath: "res://icon.svg"
             ),
             Vfx: new(
                 // 卡牌拖尾场景。
@@ -195,10 +211,11 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
                 // 多人模式剪刀石头布-剪刀。
                 // ArmScissorsTexturePath: null
             )
-            // 其余如果有需要自行填写
+            // 其余如果有需要自行取消注释使用
             // Spine: null,
             // VisualCues: null, // 帧动画静态图人物使用，查看角色动画一章
             // WorldProceduralVisuals: null,
+            // 以下为让遗物根据你的人物展现不同的图像资源，在列表里添加即可
             // VanillaCardVisualOverrides: [],
             // VanillaRelicVisualOverrides: [
             //     new (CharacterOwnedVanillaRelicModelId.YummyCookie, new("res://icon.svg")) // 美味饼干覆盖
@@ -528,9 +545,9 @@ TestCharacterRestSite (Node2D)
 ### test_bg.tscn
 
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://cejqjeipgqe0n"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_c8lhi"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_c8lhi"]
 
 [node name="TestBg" type="Control"]
 layout_mode = 3
@@ -620,9 +637,9 @@ color = Color(0.121879734, 0.15283081, 0.33476263, 1)
 ### test_character.tscn
 
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://c4dnpxxd6ldei"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_hxav6"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_hxav6"]
 
 [node name="TestCharacter" type="Node2D"]
 
@@ -655,9 +672,9 @@ position = Vector2(0, -144)
 ### test_energy_counter.tscn
 
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://cs3a5onikvhi4"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_85qf2"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_85qf2"]
 
 [node name="TestEnergyCounter" type="Control"]
 layout_mode = 3
@@ -725,9 +742,9 @@ vertical_alignment = 1
 
 ### test_character_merchant.tscn
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://pdy0teckf4i"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_diepv"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_diepv"]
 
 [node name="IroncladMerchant" type="Node2D"]
 
@@ -737,9 +754,9 @@ texture = ExtResource("1_diepv")
 
 ### test_character_rest_site.tscn
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://bkft7e41sjfud"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_74iws"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_74iws"]
 
 [node name="TestCharacterRestSite" type="Node2D"]
 
@@ -785,5 +802,23 @@ offset_left = -113.0
 offset_top = -95.0
 offset_right = -113.0
 offset_bottom = -95.0
+```
 
+### test_icon.tscn
+
+```tscn
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_by5rm"]
+
+[node name="TestIcon" type="TextureRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_by5rm")
+expand_mode = 1
+stretch_mode = 5
 ```

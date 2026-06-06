@@ -153,7 +153,7 @@ public abstract class TestCardModel : ModCardTemplate
 
 * `Language`可以写`zhs`表示简体中文。填写`{CardId}.title`（卡牌名）和`{CardId}.description`（卡牌描述）：
 
-* 通过`ritsulib`添加内容，其id会变成`{modid}_{类别}_{原id}`。例如这里的`modid`是`TEST`,类别是`CARD`。
+* 通过`ritsulib`添加内容，其id会变成`{modid}_{类别}_{原id}`。例如这里的`modid`是`TEST`,类别是`CARD`。原始卡牌id为`TEST_CARD`，是`TestCard`的大写snake-case。
 
 ```json
 {

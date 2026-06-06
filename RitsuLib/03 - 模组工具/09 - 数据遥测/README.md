@@ -1,6 +1,6 @@
 RitsuLib 的遥测系统提供一个方便收集数据的接口，供后台分析数据。
 
-但是，其本身只提供发送系统，不提供收集服务，以及服务器搭建等。（TODO：如何简单搭建）
+但是，其本身只提供发送系统，不提供收集服务，以及服务器搭建等。
 
 当你注册该系统时，玩家会收到是否接受发送数据的请求，只有接受了才会发送给你。
 
@@ -200,3 +200,13 @@ TelemetryRegistry.RegisterContributionProvider(new TestBalanceContribution());
 ```
 
 每个事件 envelope 都包含 `schema`、`applicantId`、`eventName`、`requestId`、`category`、`timestampUtc`、`properties` 和 `payload`。后端建议先校验 `schema`、`applicant_id` 和事件数量，再把原始 JSON 保存下来。需要接 PostHog 时可以用 `PostHogTelemetryAdapter`，但公开项目 API key 会进 Mod 包；正式发布更推荐你自己的后端代理。
+
+## 使用 PostHog 搭建简单遥测服务
+
+`posthog`提供100 万事件/月的免费额度，对于mod来说绰绰有余。
+
+另外还需要一个`cloudflare`转发（同样有免费额度）。不然的话你的apikey会暴露在代码中能被别人看到窃取。
+
+### 第一步：注册
+
+先注册`posthog`和`cloudflare`账号。
