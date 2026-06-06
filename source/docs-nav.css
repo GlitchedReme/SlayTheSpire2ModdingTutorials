@@ -835,6 +835,14 @@
     vertical-align: top !important;
 }
 
+.kira-content .kira-main-content figure.highlight td.gutter pre {
+    font-family: Consolas, monospace !important;
+    font-size: 1em !important;
+    line-height: 1.3em !important;
+    padding-top: 1em !important;
+    padding-bottom: 1em !important;
+}
+
 .kira-content .kira-main-content figure.highlight td.code {
     width: auto !important;
 }
