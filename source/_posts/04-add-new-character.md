@@ -135,7 +135,7 @@ public class TestCharacter : PlaceholderCharacterModel
     // public override string CustomTrailPath => "res://scenes/vfx/card_trail_ironclad.tscn";
     // 人物头像路径。
     public override string CustomIconTexturePath => "res://icon.svg";
-    // 人物头像2号。
+    // 游戏左上角头像、角色统计页头像、每日挑战角色头像。这个是场景而不是图片。参考下方附赠资源搭建。
     // public override string CustomIconPath => "res://scenes/ui/character_icons/ironclad_icon.tscn";
     // 能量表盘tscn路径。要自定义见下。
     public override string CustomEnergyCounterPath => "res://test/scenes/test_energy_counter.tscn";

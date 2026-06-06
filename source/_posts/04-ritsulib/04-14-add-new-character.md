@@ -393,6 +393,18 @@ TestCharacterRestSite (Node2D)
 
 * 如果你使用其他动画，只要把Node换成你的类型就行了。可以创建一个自定义脚本（继承`NRestSiteCharacter`）然后自行播放动画。
 
+## 自定义过渡动画
+
+过渡动画首先需要准备一张2560x1200的图片，如下。
+
+越接近白色的部分越先出现，逐步覆盖到黑色。如下的过渡图就是从左到右。
+
+![过渡动画](../../../images/test_transition.png)
+
+然后创建一个`shader material`类型的资源，并添加配套着色器。代码在最后。
+
+在`shader parameters`中设置你自己的过渡纹理。
+
 ## 本地化文件
 
 创建`{modId}/localization/{Language}/characters.json`，填写以下内容：
@@ -523,18 +535,21 @@ TestCharacterRestSite (Node2D)
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.0-1r.char": "……我在等一个名字被念出来。念到之前，我哪儿都不去。",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.0-1r.next": "继续",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.0-2r.ancient": "许可？你从来不需要。你只是害怕“等了却等错”。",
+  "THE_ARCHITECT.talk.TEST_CHARACTER.0-attack": "Both",
 
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.1-0r.ancient": "你又回来。时间对你而言像走廊——你走不完，是因为你不想走完。",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.1-0r.next": "继续",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.1-1r.char": "走廊很好。尽头不好。尽头意味着……不用再等。",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.1-1r.next": "继续",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.1-2r.ancient": "愚蠢。你若不走向尽头，就永远只是回声。",
+  "THE_ARCHITECT.talk.TEST_CHARACTER.1-attack": "Both",
 
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.2-0r.ancient": "那就站着吧。塔会替你记住：你来过，很多次，却什么也没拿走。",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.2-0r.next": "继续",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.2-1r.char": "拿走什么……会让我不等吗？",
   "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.2-1r.next": "继续",
-  "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.2-2r.ancient": "会。所以别拿。继续等——这是你唯一擅长的武器。"
+  "THE_ARCHITECT.talk.TEST_CHARACTER_TEST_CHARACTER.2-2r.ancient": "会。所以别拿。继续等——这是你唯一擅长的武器。",
+  "THE_ARCHITECT.talk.TEST_CHARACTER.2-attack": "Both",
 }
 ```
 
@@ -828,4 +843,32 @@ mouse_filter = 2
 texture = ExtResource("1_by5rm")
 expand_mode = 1
 stretch_mode = 5
+```
+
+### test_transition.tres
+
+```tscn
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://bqq3ie43o064g"]
+
+[ext_resource type="Texture2D" path="res://RitsuTest/images/test_transition.png" id="1_2pnya"]
+
+[sub_resource type="Shader" id="Shader_wjwex"]
+code = "shader_type canvas_item;
+
+uniform sampler2D transitionTex;
+uniform float threshold : hint_range(0,1);
+
+void fragment() {
+    float falloff = 1.0 - texture(transitionTex, UV).r;
+    
+    // helps with falloff artifacts issues towards the transition extremes
+    float remap  = mix(-0.1, 1.1, threshold);
+    falloff = step(falloff, remap);
+    COLOR.a = falloff;
+}"
+
+[resource]
+shader = SubResource("Shader_wjwex")
+shader_parameter/transitionTex = ExtResource("1_2pnya")
+shader_parameter/threshold = 0.0
 ```
