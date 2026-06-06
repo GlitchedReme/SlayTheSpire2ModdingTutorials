@@ -56,8 +56,9 @@ const CODE_LANGS = {
 // === State ===
 //
 let state = { r: 239, g: 200, b: 81, a: 255 };
-const MEGA_TEXT_EFFECTS = new Set(['jitter', 'sine', 'fade_in', 'fly_in', 'thinky_dots']);
+const MEGA_TEXT_EFFECTS = new Set(['jitter', 'sine', 'fade_in', 'fly_in', 'thinky_dots', 'rainbow']);
 const JITTER_NOISE_FREQUENCY = 0.01;
+const RAINBOW_PALETTE = ['#FF5555','#FFA518','#EFC851','#7FFF00','#2AEBBE','#87CEEB','#EE82EE','#FF78A0'];
 let megaTextStartMs = 0;
 let megaTextRaf = 0;
 let megaTextChars = [];
@@ -433,6 +434,12 @@ function applyMegaTextFx(now) {
         const x = elapsed * 600 * JITTER_NOISE_FREQUENCY;
         tx += fractalNoise1D(x, (index + 1) * 131) * 3;
         ty += fractalNoise1D(x, (index + 1) * 737) * 3;
+        visible = visible && boolEnv(env, 'visible', true);
+      } else if (fx.name === 'rainbow') {
+        const speed = Math.max(0.1, numEnv(env, 'speed', 0.5));
+        const spread = Math.max(0, numEnv(env, 'spread', 0.05));
+        const hue = ((elapsed * speed * 360) + index * (1 + spread * 10) * 45) % 360;
+        item.el.style.setProperty('color', `hsl(${Math.round(hue)}, 80%, 60%)`, 'important');
         visible = visible && boolEnv(env, 'visible', true);
       }
     }

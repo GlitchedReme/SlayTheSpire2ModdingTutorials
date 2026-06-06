@@ -9,8 +9,6 @@ categories:
 
 https://github.com/BAKAOLC/STS2-RitsuLib
 
-> 以下内容使用ritsulib0.3.9。
-
 先依赖ritsulib才能查看这里里面的文章。
 
 ## 下载
@@ -37,7 +35,7 @@ https://github.com/BAKAOLC/STS2-RitsuLib
 
     <!-- NuGet获取 -->
     <PackageReference Include="STS2.RitsuLib" Version="*" />
-    <!-- 如果你在正式版开发用这个 -->
+    <!-- 如果你在其他版本开发，自由指定兼容版本 -->
     <!-- <PackageReference Include=" STS2.RitsuLib.Compat.0.103.2 " Version="*" /> -->
   </ItemGroup>
 ```

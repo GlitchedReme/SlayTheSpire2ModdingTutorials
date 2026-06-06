@@ -480,9 +480,9 @@ TestCharacterRestSite (Node2D)
 ### test_bg.tscn
 
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://cejqjeipgqe0n"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_c8lhi"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_c8lhi"]
 
 [node name="TestBg" type="Control"]
 layout_mode = 3
@@ -572,9 +572,9 @@ color = Color(0.121879734, 0.15283081, 0.33476263, 1)
 ### test_character.tscn
 
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://c4dnpxxd6ldei"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_hxav6"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_hxav6"]
 
 [node name="TestCharacter" type="Node2D"]
 
@@ -603,9 +603,9 @@ position = Vector2(0, -72)
 ### test_energy_counter.tscn
 
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://cs3a5onikvhi4"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://ddxmxgyyfy8mn" path="res://icon.svg" id="1_85qf2"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_85qf2"]
 
 [node name="TestEnergyCounter" type="Control"]
 layout_mode = 3
@@ -672,9 +672,9 @@ vertical_alignment = 1
 ```
 ### test_character_merchant.tscn
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://pdy0teckf4i"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_diepv"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_diepv"]
 
 [node name="IroncladMerchant" type="Node2D"]
 
@@ -684,9 +684,9 @@ texture = ExtResource("1_diepv")
 
 ### test_character_rest_site.tscn
 ```tscn
-[gd_scene load_steps=2 format=3 uid="uid://bkft7e41sjfud"]
+[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Texture2D" uid="uid://hn2nofekpwrp" path="res://icon.svg" id="1_74iws"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_74iws"]
 
 [node name="TestCharacterRestSite" type="Node2D"]
 
@@ -732,5 +732,23 @@ offset_left = -113.0
 offset_top = -95.0
 offset_right = -113.0
 offset_bottom = -95.0
+```
 
+### test_icon.tscn
+
+```tscn
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_by5rm"]
+
+[node name="TestIcon" type="TextureRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("1_by5rm")
+expand_mode = 1
+stretch_mode = 5
 ```

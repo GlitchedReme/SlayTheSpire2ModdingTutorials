@@ -71,10 +71,9 @@ public class TestAncient : ModAncientEventTemplate
         ];
     }
 
-    // 出现条件。这里是只能在第二幕出现（索引为1）
-    // public override bool IsAllowed(IRunState runState)
-    // {
-    //     return runState.CurrentActIndex == 1;
+    // 出现条件。这里是只能在密林出现
+    // public override bool IsValidForAct(ActModel act) {
+    //     return act is Overgrowth;
     // }
 }
 ```

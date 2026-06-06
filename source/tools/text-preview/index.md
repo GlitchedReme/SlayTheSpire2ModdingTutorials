@@ -602,7 +602,7 @@ textarea.tp-editor-drop-hover {
 <button data-insert="[fade_in]...[/fade_in]" data-select="...">[fade_in]</button>
 <button data-insert="[fly_in]...[/fly_in]" data-select="...">[fly_in]</button>
 <button data-insert="[thinky_dots]...[/thinky_dots]" data-select="...">[thinky_dots]</button>
-<button data-insert="[ancient_banner]...[/ancient_banner]" data-select="...">[ancient_banner]</button>
+<button data-insert="[rainbow]...[/rainbow]" data-select="...">[rainbow]</button>
 </div>
 </div>
 
