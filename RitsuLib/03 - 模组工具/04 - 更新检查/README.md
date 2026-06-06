@@ -24,7 +24,7 @@ RitsuLibFramework.RegisterModUpdateCheck(new()
 
 `ReleasePageUri` 是 manifest 没写 `release_page_url` 时的备用发布页。如果检查到新版本但两边都没有发布页，结果会是 `InvalidData`，不会显示更新 Toast。
 
-`manifestUri` 必须是 `http` 或 `https` 的绝对 URL。
+`manifestUri` 必须是 `https` 的绝对 URL。
 
 ## manifest json 格式
 
