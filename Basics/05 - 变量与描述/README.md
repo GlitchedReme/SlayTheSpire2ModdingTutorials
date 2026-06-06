@@ -13,13 +13,13 @@
 | `[u]...[/u]` | 下划线 | `[u]underline[/u]` |
 | `[color=...]...[/color]` | 文字颜色 | `[color=red]red text[/color]` |
 | `[font=...]...[/font]` | 字体 | `[font=Arial]Arial text[/font]` |
-| `[size=...]...[/size]` | 字号 | `[size=24]large text[/size]` |
+| `[font_size=...]...[/font_size]` | 字号 | `[font_size=24]large text[/font_size]` |
 
 ## 游戏自定义tag
 
 | 标签名 | 作用 |
 | - | - |
-| `[ancient_banner]...[/ancient_banner]` | 古代横幅风格 |
+| `[ancient_banner]...[/ancient_banner]` | 先古之民横幅风格 |
 | `[aqua]...[/aqua]` | 水绿色文字 |
 | `[blue]...[/blue]` | 蓝色文字 |
 | `[fade_in]...[/fade_in]` | 渐显动画效果 |
@@ -33,6 +33,7 @@
 | `[red]...[/red]` | 红色文字 |
 | `[sine]...[/sine]` | 正弦波动动画效果 |
 | `[thinky_dots]...[/thinky_dots]` | 思考点点动画效果 |
+| `[rainbow freq=0.3 sat=0.8 val=1]...[/rainbow]` | 彩虹文字 |
 
 ## 占位变量
 
@@ -136,7 +137,7 @@ protected override IEnumerable<DynamicVar> CanonicalVars => [
     ];
 ```
 
-- 那之后就可以用`DynamicVars["Damage"].BaseValue`来获得这个值，因为`DamageVar`的ID是"Damage"。
+- 那之后就可以用`DynamicVars["Damage"].BaseValue`来获得或者修改这个值，因为`DamageVar`的ID是"Damage"。
 
 - 你可以反编译查看每个var的id是什么。一般这些var也可以通过传入第一个参数设置ID，例如`new DamageVar("TestDamage", 12, ValueProp.Move)`。
 
