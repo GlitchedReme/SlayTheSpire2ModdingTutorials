@@ -135,6 +135,10 @@ docsTree:
                                     title: 17 角色动画,
                                     path: /docs/04-ritsulib/04-15-2-character-animation/,
                                 },
+                                {
+                                    title: 18 添加组件,
+                                    path: /docs/04-ritsulib/04-18-add-capability/,
+                                },
                             ],
                     },
                     {
