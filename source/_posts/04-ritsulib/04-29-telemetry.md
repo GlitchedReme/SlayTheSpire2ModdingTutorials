@@ -229,7 +229,7 @@ TelemetryRegistry.RegisterContributionProvider(new TestBalanceContribution());
 
 #### 安装
 
-先安装[Node](https://nodejs.org/en/download) 和 wrangler 命名行工具。用 npm 安装：
+先安装[Node](https://nodejs.org/en/download) 和 wrangler 命令行工具。用 npm 安装：
 
 ```bash
 npm install -g wrangler
@@ -294,20 +294,6 @@ wrangler init
 │
 ╰ Done
 ```
-
-然后部署：
-
-```bash
-wrangler deploy
-```
-
-部署成功后会输出类似：
-
-```
-Your worker has been deployed to https://telemetry-proxy.yourname.workers.dev
-```
-
-**如果没有自定义域名，这就是你 mod 里要填的 `host` 地址。**
 
 #### 修改js代码
 
@@ -465,6 +451,20 @@ export default {
 };
 ```
 
+然后在你的项目里部署：
+
+```bash
+wrangler deploy
+```
+
+部署成功后会输出类似：
+
+```
+Your worker has been deployed to https://telemetry-proxy.yourname.workers.dev
+```
+
+**如果没有自定义域名，这就是你 mod 里要填的 `host` 地址。**
+
 #### 设置机密环境变量
 
 为了防止泄露你的apikey，用 wrangler secret 设置：
@@ -486,7 +486,7 @@ wrangler secret list
 
 如果你需要自定义域名请查询相关教程。
 
-### 模组端代码
+### 第三步：模组端代码
 
 以下对应参数换成你自己的。
 
@@ -517,8 +517,8 @@ TelemetryRegistry.RegisterApplicant(new()
 });
 ```
 
-### 分析数据
+### 第四步：分析数据
 
 然后接受发送遥测数据的用户的信息就能来到你的posthog里了。具体怎么分析数据不在本教程范畴内。
 
-简单来说，在posthog控制台左侧点击`Apps - Product analytics - My insights - New insight`，`Series`选择事件类型，`Breakdown`添加`Country name`，右上角图表类型选择`Bar chart`即可查看每日启动你的mod的用户的国家分布。
+简单来说，在posthog控制台左侧点击`Apps - Product analytics - My insights - New insight`，`Series`选择事件类型，`Breakdown`添加`Country name`，右上角图表类型选择`Bar chart`即可查看每日启动你的mod的用户的国家分布。你可以保存这个图表之后快速启动本分析。
