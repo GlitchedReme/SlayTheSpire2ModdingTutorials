@@ -22,6 +22,7 @@ public class TestOrb : ModOrbTemplate
     // 暗色，使用球的主体色的暗色调
     public override Color DarkenedColor => new(0.1f, 0.2f, 0.5f);
 
+    // 对于图片，只要是godot支持的格式都可以，例如png,jpg,svg等等
     public override OrbAssetProfile AssetProfile => new(
         // 提示文本小图标路径
         IconPath: "res://icon.svg",

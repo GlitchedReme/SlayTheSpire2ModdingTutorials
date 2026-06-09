@@ -316,8 +316,7 @@ public class StackableBuffCapability : CardCapability, IModelCapabilityMergeHand
 
 ```csharp
 // ✅ 叠加：每次 Add 都触发合并
-var id = ModelCapabilityRegistry.GetCapabilityId<StackableBuffCapability>();
-var cap = ModelCapabilityRegistry.Create(id) as StackableBuffCapability;
+var cap = ModelCapabilityRegistry.Create<DrawPowerCapability>();
 cap.DynamicVars.Cards.BaseValue = 3;
 this.AddCapability(cap); // 叠加。使用SubtractCapability移除层数
 
