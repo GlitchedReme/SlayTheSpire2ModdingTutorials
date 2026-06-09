@@ -177,6 +177,7 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
                 RestSiteAnimPath: "res://Test/scenes/test_character_rest_site.tscn"
             ),
             Ui: new(
+                // 对于图片，只要是godot支持的格式都可以，例如png,jpg,svg等等，之后不再说明
                 // 人物头像路径。自适应大小。
                 IconTexturePath: "res://icon.svg",
                 // 游戏左上角头像、角色统计页头像、每日挑战角色头像。这个是场景而不是图片。参考下方附赠资源搭建。
@@ -848,7 +849,7 @@ stretch_mode = 5
 ### test_transition.tres
 
 ```tscn
-[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://bqq3ie43o064g"]
+[gd_resource type="ShaderMaterial" load_steps=3 format=3]
 
 [ext_resource type="Texture2D" path="res://RitsuTest/images/test_transition.png" id="1_2pnya"]
 

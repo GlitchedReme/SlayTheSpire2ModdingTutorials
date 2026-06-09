@@ -194,6 +194,10 @@ docsTree:
                                     title: 12 右键交互,
                                     path: /docs/04-ritsulib/04-22-6-right-click/,
                                 },
+                                {
+                                    title: 13 次要资源,
+                                    path: /docs/04-ritsulib/04-22-7-secondary-resources/,
+                                },
                             ],
                     },
                     {
