@@ -25,6 +25,7 @@ public class TestAncient : ModAncientEventTemplate
         BackgroundScenePath: "res://Test/scenes/test_ancient.tscn"
     );
 
+    // 对于图片，只要是godot支持的格式都可以，例如png,jpg,svg等等
     // 自定义地图图标和轮廓的路径
     public override AncientEventPresentationAssetProfile AncientPresentationAssetProfile => new(
         MapIconPath: "res://icon.svg",
