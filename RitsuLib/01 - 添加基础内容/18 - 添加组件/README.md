@@ -44,7 +44,7 @@ public class DrawPowerCapability : CardCapability
 }
 ```
 
-- `[RegisterModelCapability]` 会自动注册这个组件，组件 id 为 `{MODID}_MODELCAPABILITY_{类名的大写SNAKE_CASE}`。
+- `[RegisterModelCapability]` 会自动注册这个组件，组件 id 为 `{MODID}_MODEL_CAPABILITY_{类名的大写SNAKE_CASE}`。
 - 组件本质也是一个 `AbstractModel`。
 - `Owner` 指向挂载的模型实例（这里是 `CardModel`）。
 - `CardCapability` 是专为卡牌准备的组件基类，也有其他内容的基类。
