@@ -230,8 +230,8 @@ public class TestCharacter : ModCharacterTemplate<TestCardPool, TestRelicPool, T
     // 显示通过哪个角色解锁，仅显示无实际效果
     protected override Type? UnlocksAfterRunAsType => typeof(Ironclad);
 
-    // 如果你不需要时间线
-    // public override bool RequiresEpochAndTimeline => false;
+    // 如果你需要时间线
+    public override bool RequiresEpochAndTimeline => true;
 }
 ```
 

@@ -13,6 +13,8 @@ categories:
 
 每个资源需要先注册定义，之后才能在战斗中使用。在初始化函数中注册。
 
+我们可以建一个新的类来管理，同时也可以直接放在你的主类里。只要保证在初始化中调用即可。
+
 ```csharp
 using STS2RitsuLib;
 using STS2RitsuLib.Combat.SecondaryResources;
@@ -149,12 +151,24 @@ this.SecondaryCosts().Set(ModResources.ManaId, SecondaryResourceCost.Free, Secon
 this.SecondaryCosts().Clear(ModResources.ManaId);  // 完全移除该资源的费用，不再显示
 ```
 
-### 费用检查
+### 获取 X 的效果数值
 
-框架会在 `CanPlay` 阶段自动验证次级资源是否足够，不足则卡牌不可打出。如需手动判断：
+如果费用设为 X（消耗全部），需要在卡牌的 `OnPlay` 中获取实际生效的数值：
 
 ```csharp
-bool canPay = SecondaryResourcePaymentResolver.CanPay(card);
+using STS2RitsuLib.Combat.SecondaryResources;
+
+protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+{
+    // 获取 X 费用的效果数值（当前持有量 × XMultiplier，并经过 Hook 修正后）
+    int effectValue = cardPlay.SecondaryResources().Value(ModResources.ManaId);
+
+    // 检查是否为 X 费用
+    bool wasX = cardPlay.SecondaryResources().CostsX(ModResources.ManaId);
+
+    // 获取实际消耗量
+    int spent = cardPlay.SecondaryResources().Spent(ModResources.ManaId);
+}
 ```
 
 ## Hook 系统
@@ -300,15 +314,15 @@ registry.AlwaysShowInCombatUi(ManaDefinition.LocalId);
 ```json
 {
     "TEST_SECONDARY_RESOURCE_MANA.title": "法力",
-    "TEST_SECONDARY_RESOURCE_MANA.description": "每回合开始时获得上限数值。跨战斗保留。用于支付技能费用。",
+    "TEST_SECONDARY_RESOURCE_MANA.description": "每回合开始时获得数值。跨战斗保留。",
     "TEST_SECONDARY_RESOURCE_RAGE.title": "怒气",
-    "TEST_SECONDARY_RESOURCE_RAGE.description": "每回合开始时清零。攻击卡牌可获得怒气。"
+    "TEST_SECONDARY_RESOURCE_RAGE.description": "每回合开始时清零。打出攻击牌可获得怒气。"
 }
 ```
 
 如果没有提供 `titleKey` / `descriptionKey`，框架会按 `{resourceId}.title` 和 `{resourceId}.description` 自动推导 key。
 
-### 在卡牌文本中显示图标
+## 在卡牌文本中显示图标
 
 ```csharp
 using STS2RitsuLib.Combat.SecondaryResources;
