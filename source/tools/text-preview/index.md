@@ -586,6 +586,7 @@ textarea.tp-editor-drop-hover {
 <button data-insert="[color=#XXXXXX]...[/color]" data-select="...">[color]</button>
 <button data-insert="[font=...]...[/font]" data-select="...">[font]</button>
 <button data-insert="[size=...]...[/size]" data-select="...">[size]</button>
+<button data-insert="[font_size=...]...[/font_size]" data-select="...">[font_size]</button>
 </div>
 </div>
 

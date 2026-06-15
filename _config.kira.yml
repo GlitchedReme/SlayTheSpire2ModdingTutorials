@@ -396,6 +396,11 @@ docsTree:
                         path: /tools/text-preview/,
                         icon: icon-container,
                     },
+                    {
+                        title: 对话预览器,
+                        path: /tools/dialogue-preview/,
+                        icon: icon-container,
+                    },
                 ],
         },
     ]

@@ -452,9 +452,16 @@ function applyMegaTextFx(now) {
   megaTextRaf = requestAnimationFrame(applyMegaTextFx);
 }
 
-function restartMegaTextFx() {
+function restartMegaTextFx(root) {
   megaTextStartMs = performance.now();
-  megaTextChars = Array.from(previewRender.querySelectorAll('.fx-char'))
+  const scope = root || previewRender;
+  if (!scope) {
+    megaTextChars = [];
+    if (megaTextRaf) cancelAnimationFrame(megaTextRaf);
+    megaTextRaf = 0;
+    return;
+  }
+  megaTextChars = Array.from(scope.querySelectorAll('.fx-char'))
     .map(el => ({ el, effects: parseFxList(el) }))
     .filter(item => item.effects.length);
   if (megaTextRaf) cancelAnimationFrame(megaTextRaf);
@@ -533,10 +540,11 @@ function bbcodeToHtml(src) {
     const { color, bold, italic, underline, font, size, fx } = activeStyles();
     const styles = [];
     if (color) styles.push(`color:${color}`);
+    // [i] in STS2 (Chinese) renders as fangsong, not Western italic. An explicit [font=...] still wins.
+    if (italic && !font) styles.push(`font-family:var(--font-italic)`);
     if (font) styles.push(`font-family:'${escapeAttr(String(font))}'`);
     if (size) styles.push(`font-size:${/^\d+(\.\d+)?$/.test(size) ? size + 'px' : size}`);
     if (bold) styles.push(`font-weight:700`);
-    if (italic) styles.push(`font-style:italic`);
     if (underline) styles.push(`text-decoration:underline`);
     const styleAttr = styles.length ? ` style="${styles.join(';')}"` : '';
     if (fx.length) {
@@ -556,7 +564,8 @@ function bbcodeToHtml(src) {
     }
     if (t.name === 'color' && t.arg)       stack.push({ tag:'color', color: t.arg });
     else if (t.name === 'font' && t.arg)   stack.push({ tag:'font', font: t.arg });
-    else if (t.name === 'size' && t.arg)   stack.push({ tag:'size', size: t.arg });
+    else if ((t.name === 'size' || t.name === 'font_size') && t.arg)
+                                            stack.push({ tag: t.name, size: t.arg });
     else if (colorMap[t.name])              stack.push({ tag: t.name, color: colorMap[t.name] });
     else if (t.name === 'b')                stack.push({ tag:'b', bold:true });
     else if (t.name === 'i')                stack.push({ tag:'i', italic:true });
@@ -2182,4 +2191,10 @@ if (document.querySelector('[data-text-preview-tool]')) {
     initTextPreviewOnly();
   }
 }
+
+// Expose shared BBCode rendering for other tools (e.g. dialogue-preview)
+globalThis.SpireBBCode = {
+  toHtml: bbcodeToHtml,
+  restartFx: restartMegaTextFx,
+};
 })();

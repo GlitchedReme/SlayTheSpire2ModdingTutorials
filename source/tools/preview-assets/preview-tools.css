@@ -1,3 +1,6 @@
+/* Webfont fallback for [i] when system fangsong is unavailable */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&display=swap");
+
 @font-face {
     font-family: 'STS2ColorPreviewKreon';
     font-weight: 400;
@@ -68,6 +71,8 @@
     --font-ui: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", system-ui, sans-serif;
     --font-mono: "Cascadia Mono", "Consolas", ui-monospace, monospace;
     --font-game: "STS2ColorPreviewKreon", "PingFang SC", "Microsoft YaHei", serif;
+    /* [i] in STS2 (Chinese) renders as fangsong-style serif; we use Source Han Serif (Noto Serif SC). */
+    --font-italic: "Noto Serif SC", "Source Han Serif SC", "Source Han Serif CN", "FangSong", "STFangsong", "\u4EFF\u5B8B", serif;
 
     /* Font scale */
     --fs-xs: 0.78rem;
