@@ -769,7 +769,11 @@
 
   function lineHtml(line, charIdForCharSpeaker) {
     const speaker = line.speaker === 'character' ? 'character' : 'ancient';
-    const bbHtml = SpireBBCode.toHtml(line.text || '');
+    const bbHtml = SpireBBCode.toHtml(
+      String(line.text || '')
+        .replace(/\\n/g, '[br]')   // literal backslash-n (when typed by user)
+        .replace(/\n/g, '[br]')    // real newline (after JSON.parse)
+    );
     const charKind = (charIdForCharSpeaker === ANY_CHAR || charIdForCharSpeaker === FIRST_VISIT)
       ? 'any' : charIdForCharSpeaker;
     const leftIcon = iconHtml('left', 'ancient');

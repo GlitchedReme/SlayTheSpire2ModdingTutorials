@@ -439,6 +439,15 @@
     transform: translateY(-50%) translateX(0);
 }
 
+/* Force tip visible when a copy-action button signals success */
+.kira-community-dock-btn--icon.is-copied .kira-community-dock-tip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+    background: rgba(18, 183, 245, 0.95);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+}
+
 .kira-collapse-toggle,
 .kira-panel-reopen {
     flex: 0 0 auto;

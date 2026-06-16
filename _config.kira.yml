@@ -482,6 +482,7 @@ customStyles:
 customScripts:
     - docs-anchors
     - docs-panels
+    - community-qq
 
 # 友链配置
 friends:
