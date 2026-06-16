@@ -31,6 +31,7 @@
     sets: $('dpSets'),
     json: $('dpJson'),
     copyJson: $('dpCopyJson'),
+    jsonOnlyCurrent: $('dpJsonOnlyCurrent'),
     previewStage: $('dpPreviewStage'),
     dialogueStack: $('dpDialogueStack'),
     nextHint: $('dpNextHint'),
@@ -51,7 +52,10 @@
 
   function updateBanner() {
     if (dom.bannerTitle) dom.bannerTitle.textContent = state.ancientName || state.ancientId || '';
-    if (dom.bannerEpithet) dom.bannerEpithet.textContent = state.ancientEpithet || '';
+    if (dom.bannerEpithet) {
+      dom.bannerEpithet.textContent = state.ancientEpithet || '';
+      dom.bannerEpithet.style.display = state.ancientEpithet ? '' : 'none';
+    }
   }
 
   // Map char ID -> icon set keys (from DialoguePreviewIcons)
@@ -206,8 +210,8 @@
       if (meta.title) pickedId = meta.title.id;
     }
     if (pickedId) state.ancientId = pickedId;
-    if (meta.title) state.ancientName = meta.title.val;
-    if (meta.epithet) state.ancientEpithet = meta.epithet.val;
+    state.ancientName = meta.title ? meta.title.val : '';
+    state.ancientEpithet = meta.epithet ? meta.epithet.val : '';
 
     // Sort sets per char by dialogueIdx; apply visit overrides; collapse line holes.
     Object.keys(state.chars).forEach((c) => {
@@ -230,11 +234,12 @@
   }
 
   // ---------- Export structured state back to a flat JSON object ----------
-  function exportToJson() {
+  function exportToJson(onlyCurrentChar) {
     const out = {};
     if (state.ancientName) out[state.ancientId + '.title'] = state.ancientName;
     if (state.ancientEpithet) out[state.ancientId + '.epithet'] = state.ancientEpithet;
     Object.keys(state.chars).forEach((charId) => {
+      if (onlyCurrentChar && charId !== state.activeChar) return;
       state.chars[charId].forEach((s, i) => {
         const dIdx = i; // dialogueIdx is position
         const rTag = s.repeatable ? 'r' : '';
@@ -351,6 +356,7 @@
     renderCharSelect();
     renderSets();
     renderPreview(true);
+    jsonFromVisual();
   });
 
 
@@ -702,7 +708,8 @@
 
   function jsonFromVisual() {
     if (document.activeElement === dom.json) return;
-    dom.json.value = JSON.stringify(exportToJson(), null, 2);
+    const onlyCurrent = dom.jsonOnlyCurrent && dom.jsonOnlyCurrent.checked;
+    dom.json.value = JSON.stringify(exportToJson(onlyCurrent), null, 2);
   }
 
   function visualFromJson(silent) {
@@ -737,6 +744,10 @@
       toast('已复制（兼容模式）');
     }
   });
+
+  if (dom.jsonOnlyCurrent) {
+    dom.jsonOnlyCurrent.addEventListener('change', () => { jsonFromVisual(); });
+  }
 
   // ---------- SVG sprites ----------
   // Bubble corner radius and tail point recreate dialogue_nine_patch + dialogue_tail.

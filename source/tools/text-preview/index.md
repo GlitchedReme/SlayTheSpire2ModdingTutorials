@@ -10,18 +10,18 @@ hide_meta: true
 <style>
 @import url("../preview-assets/preview-tools.css");
 
-/* ====== 全屏工具（在页内） ====== */
-
-/* body 禁止滚动 */
-body:has(.tp-root) {
-  overflow: hidden;
-}
-
-.kira-content:has(.tp-root) {
-  overflow: hidden !important;
-}
+/* ====== 全屏工具（仅桌面） ====== */
 
 @media (min-width: 1001px) {
+
+  /* body 禁止滚动 */
+  body:has(.tp-root) {
+    overflow: hidden;
+  }
+
+  .kira-content:has(.tp-root) {
+    overflow: hidden !important;
+  }
 
   body:has(.tp-root) .kira-main-content {
     height: 100% !important;
@@ -549,6 +549,39 @@ textarea.tp-editor-drop-hover {
   overflow: hidden;
 }
 
+/* ====== 移动端：单列堆叠，允许页面滚动（放最后以胜过前面的桌面规则） ====== */
+@media (max-width: 1000px) {
+  .tp-root {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0;
+    overflow: visible !important;
+  }
+  .tp-cols {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    padding: 12px;
+  }
+  .tp-card {
+    overflow: visible !important;
+  }
+  .tp-editor-body,
+  .tp-card-editor .tp-editor-body {
+    overflow: visible !important;
+  }
+  .tp-editor-body textarea {
+    max-height: 50vh;
+    min-height: 160px;
+  }
+  .tp-preview-area {
+    overflow: visible !important;
+  }
+  .tp-preview-render {
+    overflow: visible !important;
+    min-height: 200px;
+  }
+}
+
 </style>
 
 <div class="tp-root preview-tool" data-text-preview-tool>
@@ -585,7 +618,6 @@ textarea.tp-editor-drop-hover {
 <button data-insert="[aqua]...[/aqua]" data-select="...">[aqua]</button>
 <button data-insert="[color=#XXXXXX]...[/color]" data-select="...">[color]</button>
 <button data-insert="[font=...]...[/font]" data-select="...">[font]</button>
-<button data-insert="[size=...]...[/size]" data-select="...">[size]</button>
 <button data-insert="[font_size=...]...[/font_size]" data-select="...">[font_size]</button>
 </div>
 </div>

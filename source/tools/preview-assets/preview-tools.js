@@ -1,11 +1,10 @@
-(function () {
+﻿(function () {
   "use strict";
   const FRAME_B64 = globalThis.RitsuLibTextFramePreviewFrameB64 || {};
 //
-// === Game named colors (from src/Core/Helpers/StsColors.cs) ===
+// === Game named colors with BBCode effect tag (RichText*.cs) ===
 //
 const NAMED_COLORS = [
-  // The 8 colors that have a custom BBCode effect tag (RichText*.cs)
   { name: 'gold',    hex: '#EFC851', tag: 'gold',   csVar: 'StsColors.gold'   },
   { name: 'red',     hex: '#FF5555', tag: 'red',    csVar: 'StsColors.red'    },
   { name: 'green',   hex: '#7FFF00', tag: 'green',  csVar: 'StsColors.green'  },
@@ -14,31 +13,13 @@ const NAMED_COLORS = [
   { name: 'orange',  hex: '#FFA518', tag: 'orange', csVar: 'StsColors.orange' },
   { name: 'pink',    hex: '#FF78A0', tag: 'pink',   csVar: 'StsColors.pink'   },
   { name: 'aqua',    hex: '#2AEBBE', tag: 'aqua',   csVar: 'StsColors.aqua'   },
-  // Other StsColors (no dedicated effect tag)
-  { name: 'cream',          hex: '#FFF6E2', csVar: 'StsColors.cream' },
-  { name: 'darkBlue',       hex: '#67AEEB', csVar: 'StsColors.darkBlue' },
-  { name: 'energyBlue',     hex: '#40FFFF', csVar: 'StsColors.energyBlue' },
-  { name: 'merchantBlue',   hex: '#516ACF', csVar: 'StsColors.merchantBlue' },
-  { name: 'redGlow',        hex: '#FF0000', csVar: 'StsColors.redGlow' },
-  { name: 'lightGray',      hex: '#BFBFBF', csVar: 'StsColors.lightGray' },
-  { name: 'targetingEnemy', hex: '#E61E1B', csVar: 'StsColors.targetingArrowEnemy' },
-  { name: 'targetingAlly',  hex: '#36C78A', csVar: 'StsColors.targetingArrowAlly' },
 ];
 
 //
 // === DOM refs ===
 //
 const $ = id => document.getElementById(id);
-const picker   = $('picker');
-const hexInput = $('hexInput');
-const swatchLarge = $('swatchLarge');
-const swatchHex = $('swatchHex');
-const matchTag = $('matchTag');
-const previewText = $('previewText');
 const previewRender = $('previewRender');
-const reverseInput = $('reverseInput');
-const fxBold = $('fxBold'), fxItalic = $('fxItalic'), fxJitter = $('fxJitter'), fxSine = $('fxSine');
-const fxFadeIn = $('fxFadeIn'), fxFlyIn = $('fxFlyIn'), fxThinkyDots = $('fxThinkyDots');
 const CODE_LANGS = {
   codeTres: 'tres',
   codeApply: 'csharp',
@@ -55,10 +36,8 @@ const CODE_LANGS = {
 //
 // === State ===
 //
-let state = { r: 239, g: 200, b: 81, a: 255 };
 const MEGA_TEXT_EFFECTS = new Set(['jitter', 'sine', 'fade_in', 'fly_in', 'thinky_dots', 'rainbow']);
 const JITTER_NOISE_FREQUENCY = 0.01;
-const RAINBOW_PALETTE = ['#FF5555','#FFA518','#EFC851','#7FFF00','#2AEBBE','#87CEEB','#EE82EE','#FF78A0'];
 let megaTextStartMs = 0;
 let megaTextRaf = 0;
 let megaTextChars = [];
@@ -100,47 +79,6 @@ function hexToRgb(hex) {
     a:  n         & 0xff,
   };
 }
-function rgbToHsl({r,g,b}) {
-  const R = r/255, G = g/255, B = b/255;
-  const max = Math.max(R,G,B), min = Math.min(R,G,B);
-  let h, s, l = (max+min)/2;
-  if (max === min) { h = s = 0; }
-  else {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case R: h = (G - B) / d + (G < B ? 6 : 0); break;
-      case G: h = (B - R) / d + 2; break;
-      case B: h = (R - G) / d + 4; break;
-    }
-    h /= 6;
-  }
-  return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
-}
-function rgbToHsv({r,g,b}) {
-  const R = r/255, G = g/255, B = b/255;
-  const max = Math.max(R,G,B), min = Math.min(R,G,B);
-  const d = max - min;
-  let h = 0;
-  const v = max;
-  const s = max === 0 ? 0 : d / max;
-  if (d !== 0) {
-    switch (max) {
-      case R: h = (G - B) / d + (G < B ? 6 : 0); break;
-      case G: h = (B - R) / d + 2; break;
-      case B: h = (R - G) / d + 4; break;
-    }
-    h /= 6;
-  }
-  return { h: Math.round(h*360), s: Math.round(s*100), v: Math.round(v*100) };
-}
-function luminance({r,g,b}) {
-  const ch = c => {
-    const s = c/255;
-    return s <= 0.03928 ? s/12.92 : Math.pow((s+0.055)/1.055, 2.4);
-  };
-  return 0.2126*ch(r) + 0.7152*ch(g) + 0.0722*ch(b);
-}
 function floatStr(n) { return (n/255).toFixed(3); }
 function hsvFrameToRgb(h, s, v) {
   const hh = (h * 360) % 360;
@@ -158,67 +96,6 @@ function hsvFrameToRgb(h, s, v) {
   else if (hp < 5) { r = x;   g = 0;   b = c; }
   else             { r = c;   g = 0;   b = x; }
   return { r: r + m, g: g + m, b: b + m };
-}
-function hsvToRgb(h, s, v) {
-  h = ((h % 360) + 360) % 360;
-  s = clamp(s, 0, 100) / 100;
-  v = clamp(v, 0, 100) / 100;
-  const c = v * s;
-  const hh = h / 60;
-  const x = c * (1 - Math.abs((hh % 2) - 1));
-  let r1=0, g1=0, b1=0;
-  if      (hh < 1) { r1=c; g1=x; }
-  else if (hh < 2) { r1=x; g1=c; }
-  else if (hh < 3) { g1=c; b1=x; }
-  else if (hh < 4) { g1=x; b1=c; }
-  else if (hh < 5) { r1=x; b1=c; }
-  else             { r1=c; b1=x; }
-  const m = v - c;
-  return {
-    r: Math.round((r1+m)*255),
-    g: Math.round((g1+m)*255),
-    b: Math.round((b1+m)*255),
-  };
-}
-
-//
-// === State sync ===
-//
-function setFromRgb(r, g, b, a, source) {
-  state.r = clamp(Math.round(r), 0, 255);
-  state.g = clamp(Math.round(g), 0, 255);
-  state.b = clamp(Math.round(b), 0, 255);
-  state.a = clamp(Math.round(a), 0, 255);
-  renderAll(source);
-}
-function setFromHex(hex, source) {
-  const c = hexToRgb(hex);
-  if (!c) return false;
-  state = c;
-  renderAll(source);
-  return true;
-}
-function setFromHsvA(h, s, v, a, source) {
-  const rgb = hsvToRgb(h, s, v);
-  state.r = rgb.r; state.g = rgb.g; state.b = rgb.b;
-  state.a = clamp(Math.round(a), 0, 255);
-  renderAll(source);
-}
-
-//
-// === Named-color presets ===
-//
-function buildPresets() {
-  const grid = $('presetGrid');
-  for (const c of NAMED_COLORS) {
-    const btn = document.createElement('button');
-    btn.className = 'preset-btn';
-    btn.innerHTML = `<span class="sw" style="background:${c.hex}"></span>
-                     <span class="preset-text"><span class="pname">${c.name}</span><span class="phex">${c.hex}</span></span>`;
-    btn.title = `${c.name} · ${c.hex}`;
-    btn.onclick = () => setFromHex(c.hex, 'preset');
-    grid.appendChild(btn);
-  }
 }
 
 function escapeCodeHtml(s) {
@@ -564,7 +441,7 @@ function bbcodeToHtml(src) {
     }
     if (t.name === 'color' && t.arg)       stack.push({ tag:'color', color: t.arg });
     else if (t.name === 'font' && t.arg)   stack.push({ tag:'font', font: t.arg });
-    else if ((t.name === 'size' || t.name === 'font_size') && t.arg)
+    else if (t.name === 'font_size' && t.arg)
                                             stack.push({ tag: t.name, size: t.arg });
     else if (colorMap[t.name])              stack.push({ tag: t.name, color: colorMap[t.name] });
     else if (t.name === 'b')                stack.push({ tag:'b', bold:true });
@@ -576,345 +453,6 @@ function bbcodeToHtml(src) {
   }
   return out;
 }
-
-//
-// === Main render ===
-//
-function renderAll(source) {
-  const { r, g, b, a } = state;
-  const hex6 = rgbToHex(state, false);
-  const hex8 = rgbToHex(state, true);
-
-  if (source !== 'hex')    hexInput.value = a === 255 ? hex6 : hex8;
-  if (source !== 'picker') picker.value = hex6;
-
-  const hsv = rgbToHsv(state);
-  const hue = hsv.h, sat = hsv.s, val = hsv.v;
-
-  // Sync numeric inputs
-  if (source !== 'numR') $('rN').value = r;
-  if (source !== 'numG') $('gN').value = g;
-  if (source !== 'numB') $('bN').value = b;
-  if (source !== 'numA') $('aN').value = a;
-  if (source !== 'rangeR') $('rR').value = r;
-  if (source !== 'rangeG') $('gR').value = g;
-  if (source !== 'rangeB') $('bR').value = b;
-  if (source !== 'rangeA') $('aR').value = a;
-  if (source !== 'numH' && source !== 'svDrag' && source !== 'hueDrag') $('hN').value = hue;
-  if (source !== 'numS' && source !== 'svDrag') $('sN').value = sat;
-  if (source !== 'numV' && source !== 'svDrag') $('vN').value = val;
-  if (source !== 'rangeH' && source !== 'svDrag' && source !== 'hueDrag') $('hR').value = hue;
-  if (source !== 'rangeS' && source !== 'svDrag') $('sR').value = sat;
-  if (source !== 'rangeV' && source !== 'svDrag') $('vR').value = val;
-
-  // SV / hue / alpha visual
-  if (source !== 'svDrag') {
-    const svArea = $('svArea');
-    svArea.style.backgroundColor = `hsl(${hue}, 100%, 50%)`;
-    $('svCursor').style.left = sat + '%';
-    $('svCursor').style.top = (100 - val) + '%';
-  }
-  if (source !== 'hueDrag') {
-    $('hueCursor').style.top = (hue / 360 * 100) + '%';
-  }
-  $('alphaStrip').style.setProperty('--current-color', hex6);
-  if (source !== 'alphaDrag') {
-    $('alphaCursor').style.left = (a / 255 * 100) + '%';
-  }
-  $('hueStrip').setAttribute('aria-valuenow', String(hue));
-  $('alphaStrip').setAttribute('aria-valuenow', String(a));
-
-  // Swatch
-  const cssColor = `rgba(${r}, ${g}, ${b}, ${(a/255).toFixed(3)})`;
-  swatchLarge.style.setProperty('--current-color', cssColor);
-  swatchHex.textContent = a === 255 ? hex6 : hex8;
-
-  // Named match
-  const match = NAMED_COLORS.find(c => c.hex.toUpperCase() === hex6.toUpperCase());
-  if (match) {
-    matchTag.textContent = match.tag ? '[' + match.tag + ']' : match.name;
-    matchTag.classList.remove('none');
-  } else {
-    matchTag.textContent = '无匹配';
-    matchTag.classList.add('none');
-  }
-
-  // Text preview
-  const effects = [];
-  if (fxBold.checked)   effects.unshift({ open:'[b]',     close:'[/b]' });
-  if (fxItalic.checked) effects.unshift({ open:'[i]',     close:'[/i]' });
-  if (fxJitter.checked) effects.unshift({ open:'[jitter]',close:'[/jitter]' });
-  if (fxSine.checked)   effects.unshift({ open:'[sine]',  close:'[/sine]' });
-  if (fxFadeIn.checked) effects.unshift({ open:'[fade_in]', close:'[/fade_in]' });
-  if (fxFlyIn.checked) effects.unshift({ open:'[fly_in]', close:'[/fly_in]' });
-  if (fxThinkyDots.checked) effects.unshift({ open:'[thinky_dots]', close:'[/thinky_dots]' });
-
-  const colorTag = match && match.tag
-    ? { open: `[${match.tag}]`, close: `[/${match.tag}]` }
-    : { open: `[color=${a===255?hex6:hex8}]`, close: `[/color]` };
-
-  const userText = previewText.value;
-  const wrapped =
-    effects.map(e=>e.open).join('') +
-    colorTag.open + userText + colorTag.close +
-    effects.map(e=>e.close).reverse().join('');
-  previewRender.innerHTML = bbcodeToHtml(wrapped);
-  restartMegaTextFx();
-
-  // Code snippets
-  setCode('codeBBCode', `[color=${a===255?hex6:hex8}]${userText||'Text'}[/color]`);
-  setCode('codeBBNamed', match && match.tag
-      ? `[${match.tag}]${userText||'Text'}[/${match.tag}]`
-      : `// 当前颜色没有对应的命名 BBCode 标签\n// 请使用通用形式: [color=${hex6}]${userText||'Text'}[/color]`);
-  setCode('codeCSharp', `new Color("${hex6.slice(1)}${a===255?'':pad2(a)}")`);
-  setCode('codeCSharpF', `new Color(${floatStr(r)}f, ${floatStr(g)}f, ${floatStr(b)}f, ${floatStr(a)}f)`);
-  setCode('codeGD', `Color("${hex6.slice(1)}${a===255?'':pad2(a)}")`);
-  setCode('codeSts', match
-      ? `${match.csVar}  // StsColors.${match.name} (${match.hex})`
-      : `// 未在 StsColors 中找到此颜色 — 可自行定义:\npublic static readonly Color myColor = new Color("${hex6.slice(1)}${a===255?'':pad2(a)}");`);
-  setCode('codeJson', `"KEY_NAME": "${wrapped.replace(/"/g, '\\"')}"`);
-  setCode('codeCss', `color: ${a===255?hex6.toLowerCase():cssColor};`);
-
-  // Conversions
-  const hsl = rgbToHsl(state);
-  const lum = luminance(state);
-  $('cHex6').textContent      = hex6;
-  $('cHex8').textContent      = hex8;
-  $('cRgb').textContent       = `rgb(${r}, ${g}, ${b})`;
-  $('cRgba').textContent      = `rgba(${r}, ${g}, ${b}, ${(a/255).toFixed(3)})`;
-  $('cHsl').textContent       = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
-  $('cHsv').textContent       = `hsv(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`;
-  $('cGodotStr').textContent  = `new Color("${hex6.slice(1)}${a===255?'':pad2(a)}")`;
-  $('cFloats').textContent    = `(${floatStr(r)}, ${floatStr(g)}, ${floatStr(b)}, ${floatStr(a)})`;
-  $('cComp').textContent      = `#${pad2(255-r)}${pad2(255-g)}${pad2(255-b)}`;
-  $('cLum').textContent       = lum.toFixed(4) + '  (' + (lum > 0.179 ? '亮 / light' : '暗 / dark') + ')';
-  $('cContrast').innerHTML    = lum > 0.179
-    ? '<span class="ink-swatch" style="background:#000"></span>#000000 (深色文本)'
-    : '<span class="ink-swatch" style="background:#fff"></span>#FFFFFF (浅色文本)';
-}
-
-//
-// === Reverse parser ===
-//
-function tryReverseParse(s) {
-  s = s.trim();
-  if (!s) return null;
-  const hexMatch = s.match(/#?([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8}|[0-9A-Fa-f]{3})\b/);
-  if (hexMatch) {
-    const c = hexToRgb(hexMatch[1]);
-    if (c) return { color: c, type: 'hex' };
-  }
-  const bbMatch = s.match(/\[color=([^\]]+)\]/i);
-  if (bbMatch) {
-    const c = hexToRgb(bbMatch[1].replace(/^#/, ''));
-    if (c) return { color: c, type: 'bbcode' };
-  }
-  for (const nc of NAMED_COLORS) {
-    if (nc.tag && new RegExp(`\\[${nc.tag}\\]`, 'i').test(s)) {
-      return { color: hexToRgb(nc.hex), type: `named [${nc.tag}]` };
-    }
-  }
-  const godotStr = s.match(/Color\s*\(\s*"([0-9A-Fa-f#]{6,9})"\s*\)/);
-  if (godotStr) {
-    const c = hexToRgb(godotStr[1].replace(/^#/, ''));
-    if (c) return { color: c, type: 'Godot Color(string)' };
-  }
-  const godotF = s.match(/Color\s*\(\s*([0-9.]+)\s*[,f]?\s*,\s*([0-9.]+)\s*[,f]?\s*,\s*([0-9.]+)(?:\s*[,f]?\s*,\s*([0-9.]+))?/);
-  if (godotF) {
-    const toByte = v => clamp(Math.round(parseFloat(v)*255), 0, 255);
-    return {
-      color: {
-        r: toByte(godotF[1]), g: toByte(godotF[2]), b: toByte(godotF[3]),
-        a: godotF[4] ? toByte(godotF[4]) : 255,
-      },
-      type: 'Godot Color(float)'
-    };
-  }
-  const rgbM = s.match(/rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([0-9.]+))?\s*\)/i);
-  if (rgbM) {
-    return {
-      color: {
-        r: +rgbM[1], g: +rgbM[2], b: +rgbM[3],
-        a: rgbM[4] ? Math.round(parseFloat(rgbM[4])*255) : 255,
-      },
-      type: 'rgb()'
-    };
-  }
-  return null;
-}
-
-//
-// === Event wiring ===
-//
-function initTextPreview() {
-if (!picker || !hexInput || !swatchLarge || !previewText || !previewRender || !reverseInput) return;
-
-buildPresets();
-bindAutoResizeTextareas();
-
-picker.addEventListener('input', e => setFromHex(e.target.value, 'picker'));
-hexInput.addEventListener('input', e => {
-  const v = e.target.value;
-  if (/^#?[0-9A-Fa-f]{3,8}$/.test(v.trim())) setFromHex(v, 'hex');
-});
-$('rN').addEventListener('input', e => setFromRgb(+e.target.value, state.g, state.b, state.a, 'numR'));
-$('gN').addEventListener('input', e => setFromRgb(state.r, +e.target.value, state.b, state.a, 'numG'));
-$('bN').addEventListener('input', e => setFromRgb(state.r, state.g, +e.target.value, state.a, 'numB'));
-$('aN').addEventListener('input', e => setFromRgb(state.r, state.g, state.b, +e.target.value, 'numA'));
-$('rR').addEventListener('input', e => setFromRgb(+e.target.value, state.g, state.b, state.a, 'rangeR'));
-$('gR').addEventListener('input', e => setFromRgb(state.r, +e.target.value, state.b, state.a, 'rangeG'));
-$('bR').addEventListener('input', e => setFromRgb(state.r, state.g, +e.target.value, state.a, 'rangeB'));
-$('aR').addEventListener('input', e => setFromRgb(state.r, state.g, state.b, +e.target.value, 'rangeA'));
-
-function setFromCurrentHsvInputs(source) {
-  setFromHsvA(+$('hN').value, +$('sN').value, +$('vN').value, state.a, source);
-}
-$('hN').addEventListener('input', () => setFromCurrentHsvInputs('numH'));
-$('sN').addEventListener('input', () => setFromCurrentHsvInputs('numS'));
-$('vN').addEventListener('input', () => setFromCurrentHsvInputs('numV'));
-function setFromCurrentHsvRanges(source) {
-  setFromHsvA(+$('hR').value, +$('sR').value, +$('vR').value, state.a, source);
-}
-$('hR').addEventListener('input', () => setFromCurrentHsvRanges('rangeH'));
-$('sR').addEventListener('input', () => setFromCurrentHsvRanges('rangeS'));
-$('vR').addEventListener('input', () => setFromCurrentHsvRanges('rangeV'));
-
-function bindDrag(el, onMove) {
-  if (window.PointerEvent) {
-    let pointerId = null;
-    const move = e => {
-      if (pointerId !== null && e.pointerId !== pointerId) return;
-      e.preventDefault();
-      onMove(e);
-    };
-    const release = e => {
-      if (pointerId !== null && e.pointerId !== pointerId) return;
-      if (pointerId !== null && el.releasePointerCapture) {
-        try { el.releasePointerCapture(pointerId); } catch (_) {}
-      }
-      pointerId = null;
-      el.removeEventListener('pointermove', move);
-      el.removeEventListener('pointerup', release);
-      el.removeEventListener('pointercancel', release);
-    };
-
-    el.addEventListener('pointerdown', e => {
-      pointerId = e.pointerId;
-      if (el.setPointerCapture) el.setPointerCapture(pointerId);
-      el.focus({ preventScroll: true });
-      move(e);
-      el.addEventListener('pointermove', move);
-      el.addEventListener('pointerup', release);
-      el.addEventListener('pointercancel', release);
-    });
-    return;
-  }
-
-  const onDown = e => {
-    if (e.preventDefault) e.preventDefault();
-    const startPoint = e.touches ? e.touches[0] : e;
-    if (startPoint) onMove(startPoint);
-    const move = ev => onMove(ev);
-    const up = () => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseup', up);
-      window.removeEventListener('touchmove', moveTouch);
-      window.removeEventListener('touchend', up);
-    };
-    const moveTouch = ev => {
-      if (ev.preventDefault) ev.preventDefault();
-      const touch = ev.touches[0] || ev.changedTouches[0];
-      if (touch) onMove(touch);
-    };
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mouseup', up);
-    window.addEventListener('touchmove', moveTouch, { passive: false });
-    window.addEventListener('touchend', up);
-  };
-  el.addEventListener('mousedown', onDown);
-  el.addEventListener('touchstart', onDown, { passive: false });
-}
-
-function nudgeColorPart(part, delta) {
-  const hsv = rgbToHsv(state);
-  if (part === 'h') setFromHsvA(clamp(hsv.h + delta, 0, 360), hsv.s, hsv.v, state.a, 'pickerKey');
-  else if (part === 's') setFromHsvA(hsv.h, clamp(hsv.s + delta, 0, 100), hsv.v, state.a, 'pickerKey');
-  else if (part === 'v') setFromHsvA(hsv.h, hsv.s, clamp(hsv.v + delta, 0, 100), state.a, 'pickerKey');
-  else if (part === 'a') setFromRgb(state.r, state.g, state.b, clamp(state.a + delta, 0, 255), 'pickerKey');
-}
-
-function bindPickerKeys() {
-  const handle = (e, handler) => {
-    const large = e.shiftKey ? 10 : 1;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
-      e.preventDefault();
-      handler(-large, e.key);
-    } else if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      handler(large, e.key);
-    }
-  };
-
-  $('svArea').addEventListener('keydown', e => handle(e, (step, key) => {
-    nudgeColorPart(key === 'ArrowLeft' || key === 'ArrowRight' ? 's' : 'v', step);
-  }));
-  $('hueStrip').addEventListener('keydown', e => handle(e, step => nudgeColorPart('h', step)));
-  $('alphaStrip').addEventListener('keydown', e => handle(e, step => nudgeColorPart('a', step)));
-}
-
-bindDrag($('svArea'), e => {
-  const rect = $('svArea').getBoundingClientRect();
-  const s = clamp((e.clientX - rect.left) / rect.width, 0, 1) * 100;
-  const v = (1 - clamp((e.clientY - rect.top) / rect.height, 0, 1)) * 100;
-  const curH = rgbToHsv(state).h;
-  setFromHsvA(curH, s, v, state.a, 'svDrag');
-  $('svCursor').style.left = s + '%';
-  $('svCursor').style.top = (100 - v) + '%';
-  $('sN').value = Math.round(s);
-  $('vN').value = Math.round(v);
-  $('sR').value = Math.round(s);
-  $('vR').value = Math.round(v);
-});
-bindDrag($('hueStrip'), e => {
-  const rect = $('hueStrip').getBoundingClientRect();
-  const pct = clamp((e.clientY - rect.top) / rect.height, 0, 1);
-  const h = pct * 360;
-  const curHsv = rgbToHsv(state);
-  setFromHsvA(h, curHsv.s, curHsv.v, state.a, 'hueDrag');
-  $('hueCursor').style.top = (pct * 100) + '%';
-  $('hN').value = Math.round(h);
-  $('hR').value = Math.round(h);
-});
-bindDrag($('alphaStrip'), e => {
-  const rect = $('alphaStrip').getBoundingClientRect();
-  const pct = clamp((e.clientX - rect.left) / rect.width, 0, 1);
-  const a = Math.round(pct * 255);
-  setFromRgb(state.r, state.g, state.b, a, 'alphaDrag');
-  $('alphaCursor').style.left = (pct * 100) + '%';
-  $('aN').value = a;
-  $('aR').value = a;
-});
-bindPickerKeys();
-
-[fxBold, fxItalic, fxJitter, fxSine, fxFadeIn, fxFlyIn, fxThinkyDots, previewText].forEach(el => {
-  el.addEventListener('input', () => renderAll('fx'));
-});
-
-reverseInput.addEventListener('input', e => {
-  const r = tryReverseParse(e.target.value);
-  const out = $('reverseResult');
-  if (r) {
-    state = r.color;
-    out.innerHTML = `<span style="color:var(--green)">✓ ${r.type} → R:${r.color.r} G:${r.color.g} B:${r.color.b} A:${r.color.a}</span>`;
-    renderAll('reverse');
-  } else if (e.target.value.trim() === '') {
-    out.textContent = '';
-  } else {
-    out.innerHTML = `<span style="color:var(--red)">未能识别颜色格式</span>`;
-  }
-});
-}
-initTextPreview();
 
 // Tab switching (works for any .tabs / .tab-panel block)
 document.querySelectorAll('.tabs').forEach(group => {
@@ -932,23 +470,8 @@ document.querySelectorAll('.tabs').forEach(group => {
   });
 });
 
-// Copy buttons
-document.querySelectorAll('.copy').forEach(btn => {
-  btn.addEventListener('click', async () => {
-    const target = $(btn.dataset.target);
-    const txt = target ? (target.dataset.raw || target.textContent) : '';
-    if (await writeClipboard(txt)) {
-      btn.classList.add('kira-codeblock-copy-wrapper-copied');
-      setTimeout(() => btn.classList.remove('kira-codeblock-copy-wrapper-copied'), 1500);
-    } else {
-      btn.classList.add('copy-failed');
-      setTimeout(() => btn.classList.remove('copy-failed'), 1500);
-    }
-  });
-});
-
 //
-// === UX: toast, click-to-copy swatch, recent colors, keyboard shortcuts ===
+// === UX: toast ===
 //
 const toastEl = $('toast');
 let toastTimer = 0;
@@ -959,82 +482,6 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1400);
 }
-
-async function copyText(txt) {
-  return writeClipboard(txt);
-}
-
-// Click large swatch to copy current HEX
-function initTextPreviewUx() {
-if (!swatchLarge || !picker || !$('recentSwatches') || !$('recentEmpty')) return;
-
-swatchLarge.addEventListener('click', async () => {
-  const hex = state.a === 255 ? rgbToHex(state, false) : rgbToHex(state, true);
-  const ok = await copyText(hex);
-  if (ok) {
-    swatchLarge.classList.add('copied');
-    swatchLarge.querySelector('.swatch-hint').textContent = '✓ COPIED ' + hex;
-    setTimeout(() => {
-      swatchLarge.classList.remove('copied');
-      swatchLarge.querySelector('.swatch-hint').textContent = 'CLICK TO COPY';
-    }, 1000);
-    showToast(`已复制 ${hex}`);
-  }
-});
-
-// Recent colors via localStorage (cap 12)
-const RECENT_KEY = 'sts2-text-preview-recent';
-function loadRecent() {
-  try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); }
-  catch (_) { return []; }
-}
-function saveRecent(list) {
-  try { localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 12))); }
-  catch (_) {}
-}
-function renderRecent() {
-  const list = loadRecent();
-  const container = $('recentSwatches');
-  const empty = $('recentEmpty');
-  container.innerHTML = '';
-  if (list.length === 0) { empty.style.display = 'inline'; return; }
-  empty.style.display = 'none';
-  for (const hex of list) {
-    const sw = document.createElement('div');
-    sw.className = 'recent-swatch';
-    sw.style.setProperty('--c', hex);
-    sw.title = hex + ' — 点击载入';
-    sw.onclick = () => setFromHex(hex, 'recent');
-    container.appendChild(sw);
-  }
-}
-function pushRecent(hex) {
-  const list = loadRecent().filter(h => h.toUpperCase() !== hex.toUpperCase());
-  list.unshift(hex);
-  saveRecent(list);
-  renderRecent();
-  showToast(`已保存 ${hex} 到最近`);
-}
-
-// Keyboard shortcuts
-document.addEventListener('keydown', async e => {
-  if (e.target.matches('input, textarea')) return;
-  if (e.ctrlKey || e.metaKey || e.altKey) return;
-  const k = e.key.toLowerCase();
-  if (k === 'c') {
-    const hex = state.a === 255 ? rgbToHex(state, false) : rgbToHex(state, true);
-    if (await copyText(hex)) showToast(`已复制 ${hex}`);
-  } else if (k === 's') {
-    pushRecent(rgbToHex(state, state.a !== 255));
-  }
-});
-
-renderRecent();
-
-// Initial render
-renderAll('init');
-}
-initTextPreviewUx();
 
 //
 // ============================================================
@@ -1489,7 +936,6 @@ function setFrameCSharpSnippet() {
 
 // 适用于 RitsuLib
 private static readonly Material? _poolFrameMaterial = MaterialUtils.CreateHsvShaderMaterial(${frameFloat(frameState.h)}, ${frameFloat(frameState.s)}, ${frameFloat(frameState.v)});
-
 public override Material? PoolFrameMaterial => _poolFrameMaterial;
 
 // 适用于 BaseLib

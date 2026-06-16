@@ -9,7 +9,7 @@ hide_meta: true
 
 <style>
 @import url("../preview-assets/preview-tools.css");
-@import url("../preview-assets/dialogue-preview.css");
+@import url("../preview-assets/dialogue-preview.css?v=20260616-mobile1");
 </style>
 
 <div class="tp-root preview-tool dp-root" data-dialogue-preview-tool>
@@ -71,6 +71,7 @@ hide_meta: true
 <div class="dp-json-header">
 <span>JSON</span>
 <div class="dp-json-actions">
+<label class="dp-json-only"><input type="checkbox" id="dpJsonOnlyCurrent"> 仅展示当前角色</label>
 <button type="button" id="dpCopyJson" class="dp-btn-ghost">复制</button>
 </div>
 </div>

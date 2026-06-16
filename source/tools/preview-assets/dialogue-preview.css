@@ -1,10 +1,10 @@
 /* Dialogue Preview Tool */
 
-/* Page-level full-screen layout */
-body:has(.dp-root) { overflow: hidden; }
-.kira-content:has(.dp-root) { overflow: hidden !important; }
-
+/* Page-level full-screen layout (desktop only) */
 @media (min-width: 1001px) {
+  body:has(.dp-root) { overflow: hidden; }
+  .kira-content:has(.dp-root) { overflow: hidden !important; }
+
   body:has(.dp-root) .kira-main-content {
     height: 100% !important;
     min-height: 0 !important;
@@ -362,7 +362,20 @@ body:has(.dp-root) { overflow: hidden; }
   gap: 8px;
   flex-wrap: wrap;
 }
-.dp-json-actions { display: flex; gap: 4px; flex-wrap: wrap; }
+.dp-json-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.dp-json-only {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-ui, system-ui);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: rgba(255,246,226,0.7);
+  cursor: pointer;
+  user-select: none;
+}
+.dp-json-only input { margin: 0; cursor: pointer; }
 .dp-json textarea {
   flex: 1 1 auto;
   width: 100%;
@@ -686,4 +699,43 @@ body:has(.dp-root) { overflow: hidden; }
   flex-direction: column;
   gap: 5px;
   padding-right: 4px;
+}
+
+/* Mobile: single-column stacked layout, allow page scrolling
+   Placed at end of file to win specificity ties against earlier desktop rules. */
+@media (max-width: 1000px) {
+  .tp-root.dp-root {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0;
+    overflow: visible !important;
+  }
+  .dp-root .tp-cols {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    padding: 12px;
+  }
+  .dp-root .tp-card {
+    overflow: visible !important;
+  }
+  .dp-visual,
+  .dp-json {
+    overflow: visible !important;
+  }
+  .dp-json textarea {
+    max-height: 50vh;
+  }
+  .dp-preview-area {
+    overflow: visible !important;
+  }
+  .dp-preview-stage {
+    overflow: visible !important;
+    min-height: 360px;
+  }
+  .dp-meta-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .dp-root .dp-sets {
+    overflow: visible !important;
+  }
 }
