@@ -119,10 +119,17 @@ RitsuLibFramework.RegisterTouchOfOrobasRefinementMapping<TestRelic, Akabeko>();
 }
 ```
 
-`色彩哲学家`事件会产生三个角色的卡池。默认不接收你的角色，需要给你的卡池实现`IModColorfulPhilosophersCardPool`接口。
+`色彩哲学家`事件会产生三个角色的卡池。默认不接收你的角色，需要给你的卡池实现`IModColorfulPhilosophersCardPool`接口以及本地化文本。
 
 ```csharp
 public class TestCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCardPool {}
+```
+
+另外需要在你自己的`events.json`里写本地化文本（其中的ID是你卡池的`EnergyColorName`的大写）：
+
+```json
+  "COLORFUL_PHILOSOPHERS.pages.INITIAL.options.TEST.title": "淡蓝色",
+  "COLORFUL_PHILOSOPHERS.pages.INITIAL.options.TEST.description": "获得[blue]{Cards}[/blue]张戈多的卡牌。",
 ```
 
 ## 创建人物
@@ -133,9 +140,11 @@ public class TestCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCardP
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Data.Models;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Characters;
+using STS2RitsuLib.Scaffolding.Godot;
 
 namespace Test.Scripts;
 

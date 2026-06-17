@@ -99,7 +99,7 @@ protected override IEnumerable<DynamicVar> CanonicalVars => [
 ```csharp
 using STS2RitsuLib;
 using STS2RitsuLib.Data;
-using STS2RitsuLib.Modding;
+using STS2RitsuLib.Utils.Persistence;
 
 namespace Test.Scripts.Data;
 

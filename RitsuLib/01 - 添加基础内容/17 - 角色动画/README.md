@@ -9,7 +9,9 @@
 使用该系统仍然推荐保留`VisualsPath`和`TryCreateCreatureVisuals`。另外你的场景需要至少有一个`Sprite2D`类型的节点（例如把`Visuals`改成该类型）。
 
 ```csharp
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Scaffolding.Characters;
+using STS2RitsuLib.Scaffolding.Godot;
 using STS2RitsuLib.Scaffolding.Visuals;
 
 namespace Test.Scripts;
@@ -19,7 +21,7 @@ public sealed class TestCharacter
 {
     public override CharacterAssetProfile AssetProfile => new( // 如果你用人物那章和ironclad merge的用法可以保留你的写法
         Scenes: new(
-            VisualsPath = "res://Test/scenes/characters/test_visuals.tscn", // 需要保留
+            VisualsPath: "res://Test/scenes/characters/test_visuals.tscn" // 需要保留
         ),
         VisualCues: ModVisualCues.CueSet()
             // idle动画使用单图
@@ -32,11 +34,10 @@ public sealed class TestCharacter
                 .Frame("res://Test/images/character/attack_02.png", 0.06f)
                 .Frame("res://Test/images/character/attack_03.png", 0.08f))
             .Single("dead", "res://Test/images/character/dead.png")
-            .Build(), // 最后需要调用一次build
-    )
+            .Build() // 最后需要调用一次build
+    );
 
     protected override NCreatureVisuals? TryCreateCreatureVisuals() => RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!); // 需要保留
-    };
 }
 ```
 
@@ -111,8 +112,9 @@ public sealed class TestCharacter
 
 ```csharp
 using Godot;
-using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Scaffolding.Characters;
+using STS2RitsuLib.Scaffolding.Godot;
 
 namespace Test.Scripts;
 

@@ -142,11 +142,11 @@ public static class TestReflectedSettings
     [ModSettingsBinding(BindingSource = ModSettingsReflectionBindingSource.Global)]
     public static bool Enabled { get; set; } = true;
 
-    [ModSettingsIntSlider("volume", "general", MinValue = 0, MaxValue = 100, Step = 5)]
+    [ModSettingsIntSlider("volume", "general", 0, 100, 5)]
     [ModSettingsBinding(BindingSource = ModSettingsReflectionBindingSource.Global)]
     public static int Volume { get; set; } = 80;
 
-    [ModSettingsButton("reset", "general", ButtonLabel = "重置音量")]
+    [ModSettingsButton("reset", "general", ButtonText = "重置音量")]
     public static void ResetVolume() => Volume = 80;
 }
 ```
