@@ -50,7 +50,7 @@ public class TestMonster : ModMonsterTemplate
     );
 
     // 如果你挂载了自己的自定义脚本，使用这个即可，不需要上面的
-    // public override string? CustomVisualPath => "res://Test/scenes/test_monster.tscn";
+    // public override string? CustomVisualsPath => "res://Test/scenes/test_monster.tscn";
 
 
     // 战斗开始时，在这里给自己上buff之类
