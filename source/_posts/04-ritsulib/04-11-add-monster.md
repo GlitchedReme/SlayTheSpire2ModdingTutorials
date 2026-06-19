@@ -13,6 +13,7 @@ categories:
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Ascension;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
@@ -56,8 +57,7 @@ public class TestMonster : ModMonsterTemplate
     // 战斗开始时，在这里给自己上buff之类
     public override async Task AfterAddedToRoom()
     {
-        await PowerCmd.Apply<StrengthPower>(Creature, 2m, Creature, null);
-        //await PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), Creature, 2m, Creature, null); // 测试版
+        await PowerCmd.Apply<StrengthPower>(new ThrowingPlayerChoiceContext(), Creature, 2m, Creature, null);
     }
 
     protected override MonsterMoveStateMachine GenerateMoveStateMachine()

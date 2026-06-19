@@ -22,8 +22,7 @@ public class TestPower : CustomPowerModel
     // 抽牌后给予玩家力量
     public override async Task AfterCardDrawn(PlayerChoiceContext choiceContext, CardModel card, bool fromHandDraw)
     {
-        await PowerCmd.Apply<StrengthPower>(Owner, Amount, Owner, null);
-        // await PowerCmd.Apply<StrengthPower>(choiceContext, Owner, Amount, Owner, null); // 测试版
+        await PowerCmd.Apply<StrengthPower>(choiceContext, Owner, Amount, Owner, null);
     }
 }
 ```

@@ -85,7 +85,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
   "author": "作者名",
   "description": "Mod 描述",
   "version": "0.1.0",
-  "min_game_version": "0.105.0", // 你的mod兼容的最小游戏版本（测试版新增）
+  "min_game_version": "0.107.1", // 你的mod兼容的最小游戏版本
   "has_pck": true,         // 是否有 .pck 资源包
   "has_dll": true,        // 是否有 .dll 代码
   "dependencies": [],     // 依赖的其他mod id
@@ -93,11 +93,9 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 }
 ```
 
-* `0.105.0`以后，所有版本的字符串必须符合[标准版本语义](https://semver.org/)。简单来说必须是`X.X.X`三段，而不能是两段了。
+* 所有版本的字符串必须符合[标准版本语义](https://semver.org/)。简单来说必须是`X.X.X`三段，而不能是两段了。
 
-正式版添加依赖（填入其他mod在这个json的id）：`"dependencies": ["AnotherMod"]`
-
-* 测试版添加依赖参考：
+依赖的写法：
 
 > ```json
 >   "dependencies": [

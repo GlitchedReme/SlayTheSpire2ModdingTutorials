@@ -15,7 +15,6 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -59,21 +58,11 @@ public class TestEnchantment : ModEnchantmentTemplate
     }
 
     // 修改卡牌获得的格挡值，返回增加的改变量。
-    public override decimal EnchantBlockAdditive(decimal originalBlock, ValueProp props)
+    public override decimal EnchantBlockAdditive(decimal originalBlock)
     {
-        if (!props.IsPoweredCardOrMonsterMoveBlock())
-        {
-            return 0m;
-        }
         // 获得格挡额外增加Amount数量。这个数量是你给予附魔时指定的。
         return Amount;
     }
-
-    // 0.106的写法
-    // public override decimal EnchantBlockAdditive(decimal originalBlock)
-    // {
-    //     return Amount;
-    // }
 
     // 当附魔的卡牌被打出时调用。
     public override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay? cardPlay)
