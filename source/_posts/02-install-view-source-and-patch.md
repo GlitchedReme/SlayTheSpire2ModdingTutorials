@@ -91,3 +91,17 @@ https://github.com/GDRETools/gdsdecomp
 * 把`{modid}.sln`的名字修改成你想要的，以及里面关于你的`csproj`的那部分。
 
 * 然后重新打包。不要忘记把你之前名字的mod删了。
+
+## 上传mod
+
+下载官方mod上传器： https://github.com/megacrit/sts2-mod-uploader
+
+然后根据说明进行即可。
+
+### 补充说明
+
+- mod预览图不能大于1MB。
+- 建议描述、changelog直接删除，之后在工坊改就行。
+- tags无法在工坊改，先看有哪些常用tag。
+- 不要忘了更改可见性。
+- 建议写个cmd,bat,sh等脚本来自动化上传。
