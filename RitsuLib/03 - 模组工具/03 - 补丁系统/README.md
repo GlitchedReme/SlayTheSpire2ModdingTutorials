@@ -10,9 +10,7 @@
 
 ```csharp
 using MegaCrit.Sts2.Core.Logging;
-using MegaCrit.Sts2.Core.Modding;
-using STS2RitsuLib;
-using STS2RitsuLib.Patching.Core;
+using MegaCrit.Sts2.Core.Nodes;
 using STS2RitsuLib.Patching.Models;
 
 namespace Test.Scripts;
@@ -41,6 +39,13 @@ public class LogReleaseGamePatch : IPatchMethod
 ```
 
 ```csharp
+using MegaCrit.Sts2.Core.Logging;
+using MegaCrit.Sts2.Core.Modding;
+using STS2RitsuLib;
+using STS2RitsuLib.Patching.Core; // RegisterPatch<T> 等扩展方法在此命名空间
+
+namespace Test.Scripts;
+
 [ModInitializer(nameof(Init))]
 public class Entry
 {
@@ -69,7 +74,7 @@ public class Entry
 一个类型统一注册多个补丁：
 
 ```csharp
-using STS2RitsuLib.Patching.Core;
+using STS2RitsuLib.Patching.Core; // ModPatcher + RegisterPatch<T> 扩展方法
 using STS2RitsuLib.Patching.Models;
 
 namespace Test.Scripts;
@@ -84,7 +89,7 @@ public sealed class MyPatchSet : IModPatches
 }
 ```
 
-注册方式：`patcher.RegisterPatches<MyPatchSet>();`
+注册方式：`patcher.RegisterPatches<MyPatchSet>();`（同样需要 `using STS2RitsuLib.Patching.Core;`）
 
 ## 忽略缺失目标
 
