@@ -1,3 +1,58 @@
+此处记录一些可能会导致你修改代码的更改，并不是所有修改。
+
+---
+
+## 0.106测试版 至 0.107测试版
+
+### `ActModel` 新增 abstract 成员
+
+```csharp
+public abstract int Index { get; }
+public abstract bool IsDefault { get; }
+public abstract bool IsUnlocked(UnlockState unlockState);
+```
+
+任何继承 `ActModel` 的 mod 类型**必须**实现这三个新成员，否则编译失败。
+
+### AbstractModel 新增 virtual 方法
+
+```csharp
+// 卡牌关键词修饰
+public virtual bool TryModifyKeywordsInCombat(CardModel card, ISet<CardKeyword> keywords)
+
+// 金币修饰（替代旧的 ShouldGainGold 概念）
+public virtual decimal ModifyGoldGained(Player player, decimal amount)
+
+// Power Amount 拆分为加法和乘法
+public virtual decimal ModifyPowerAmountGivenAdditive(PowerModel power, Creature giver, decimal amount, Creature? target, CardModel? cardSource)
+public virtual decimal ModifyPowerAmountGivenMultiplicative(PowerModel power, Creature giver, decimal amount, Creature? target, CardModel? cardSource)
+
+// 金币修饰后通知
+public virtual Task AfterModifyingGoldGained(Player player, decimal amount)
+```
+
+### 删除的方法
+
+| sts2106 | 替代 |
+|---|---|
+| `ModifyPowerAmountGiven(...)` | `ModifyPowerAmountGivenAdditive` + `ModifyPowerAmountGivenMultiplicative` |
+| `ShouldGainGold(decimal, Player)` | 改用 `ModifyGoldGained` + 检查返回值 |
+
+### CardModel 新增属性
+
+```csharp
+public virtual string Title
+```
+
+卡牌模型现在可以直接获取标题文本。之前需要通过 LocString 查询，现在有直接的 Title 属性。
+
+## EncounterModel 变更
+
+新增：
+```csharp
+public virtual float CalculateGoldProportion(CombatState combatState)
+```
+
 ## 0.105测试版 至 0.106测试版
 
 ## 变量变动
