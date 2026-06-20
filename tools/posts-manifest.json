@@ -60,6 +60,12 @@
       "post": "10-patch.md",
       "permalink": "docs/10-patch/",
       "title": "Patch"
+    },
+    {
+      "source": "Basics/11 - 上传工坊/README.md",
+      "post": "11-upload-workshop.md",
+      "permalink": "docs/11-upload-workshop/",
+      "title": "上传工坊"
     }
   ],
   "baselib": {

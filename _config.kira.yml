@@ -54,6 +54,7 @@ docsTree:
                     { title: 07 启动项参数, path: /docs/08-launch-arguments/ },
                     { title: 08 控制台指令, path: /docs/09-console-commands/ },
                     { title: 09 Patch, path: /docs/10-patch/ },
+                    { title: 10 上传工坊, path: /docs/11-upload-workshop/ },
                 ],
         },
         {
