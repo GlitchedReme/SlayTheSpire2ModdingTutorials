@@ -1,4 +1,4 @@
-可以使用 RitsuLib 提供的 `ModCustomReward` 基类来极简地实现自定义奖励。
+可以使用 RitsuLib 提供的 `ModCustomReward` 基类来实现自定义奖励。
 
 `ModCustomReward` 在原版 `Reward` 基类的基础上进行了封装，它可以帮你：
 1. **自动处理图标 UI**：不用手写繁琐的 Godot 节点层级，只需提供一个 `res://` 图标资源路径。
