@@ -86,9 +86,11 @@ protected override IEnumerable<DynamicVar> CanonicalVars => [
 
 `RunSavedData`可用于一局游戏全局的数据保存，也包括联机模式下每个玩家单独的数据。请查看对应章节（`RitsuLib/02 - 玩法基底/09 - 局内数据`）。
 
-## 跨局的数据持久化（ModDataStore）
+此功能适用于针对一局游戏的全局配置，如果你想要战斗中的数据保存，使用 `SavedAttachedState` 和 `SavedProperty` 更合适。
 
-要想实现**一直存在的跨局数据**（例如：解锁进度、击杀统计、你的 Mod 的独立设置面板参数），你需要使用更底层的存储方案：`ModDataStore`。
+## 全游戏的数据持久化（ModDataStore）
+
+要想实现**一直存在的数据**（例如：解锁进度、击杀统计、你的 Mod 的独立设置面板参数），使用`ModDataStore`。
 
 `RitsuLib` 的这一套持久化架构提供全自动的文件读写和分发处理，支持按存档槽位隔离、或者全存档通用配置。
 

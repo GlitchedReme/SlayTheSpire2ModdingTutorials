@@ -1,6 +1,6 @@
 > 以下示例默认已经在 `Entry.Init()` 中调用了 `ModTypeDiscoveryHub.RegisterModAssembly(...)`，否则自动注册不会生效。
 
-`RitsuLib` 提供自定义顶栏按钮，支持图标、点击、可见性、打开态摇摆和计数徽章。
+`RitsuLib` 提供自定义顶栏按钮注册。
 
 ## 使用方式
 
@@ -43,13 +43,13 @@ public class RecipeButtonHandler : IModTopBarButtonHandler
 
     public bool IsOpen(ModTopBarButtonContext ctx)
     {
-        // 关联界面是否已打开；如果打开，按钮会持续动态摆动
+        // 关联界面是否已打开。如果打开，按钮会持续动态摆动
         return ModScreenService.CurrentCapstoneScreen is MyRecipeScreen;
     }
 
     public int GetCount(ModTopBarButtonContext ctx)
     {
-        // 角标数字；返回 -1 表示不显示徽章
+        // 角标数字；返回 -1 表示不显示
         return -1;
     }
 }
