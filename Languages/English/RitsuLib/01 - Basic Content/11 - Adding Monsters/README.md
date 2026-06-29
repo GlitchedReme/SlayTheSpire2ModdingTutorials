@@ -13,7 +13,7 @@ using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
-using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Scaffolding.Godot;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -43,8 +43,9 @@ public class TestMonster : ModMonsterTemplate
         VisualsScenePath: "res://Test/scenes/test_monster.tscn"
     );
 
-    // If you mount your own custom script, use this instead — no need for the above
-    // public override string? CustomVisualsPath => "res://Test/scenes/test_monster.tscn";
+    // Auto-convert monster scene so you don't need to manually mount scripts. Copy as-is.
+    protected override NCreatureVisuals? TryCreateCreatureVisuals() => RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.VisualsScenePath!);
+
 
 
     // When combat starts, apply buffs and such here
