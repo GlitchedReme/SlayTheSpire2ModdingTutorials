@@ -38,7 +38,7 @@ public class TestRelic : CustomRelicModel
 
 Then place an image at `test/images/relics/test_relic.png`. The path doesn't have to be `test` — organize as you like, same as the card art section. The three icon paths are all set to the same image here for simplicity; you can use separate images.
 
-![Example relic](../../../../images/image13.png)
+![Example relic](../../../../images/image13.webp)
 
 Then create a localization file: `{modId}/localization/{Language}/relics.json`.
 

@@ -102,7 +102,7 @@ The ID format is `{namespace first segment uppercase}-{class name in UPPER_SNAKE
 }
 ```
 
-![alt text](../../../../images/image27.png)
+![alt text](../../../../images/image27.webp)
 
 Example scene `test_ancient.tscn`:
 ```

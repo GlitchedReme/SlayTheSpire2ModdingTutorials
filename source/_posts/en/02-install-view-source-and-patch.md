@@ -27,7 +27,7 @@ https://github.com/GDRETools/gdsdecomp
 
 3. If you run into network issues, click `Export Settings...` and turn off `Download Plugins`.
 
-![alt text](../../../images/image7.png)
+![alt text](../../../images/image7.webp)
 
 4. Once exported, import `project.godot` with Godot. You don't need the project to actually run inside Godot for modding.
 
@@ -48,10 +48,10 @@ Use the `Harmony` library for code modifications — it's the equivalent of STS1
 Refer to the official docs: https://harmony.pardeike.net/articles/basics.html
 
 Quick reference:
-![alt text](../../../images/image8.png)
+![alt text](../../../images/image8.webp)
 
 Which corresponds to this source code:
-![alt text](../../../images/image9.png)
+![alt text](../../../images/image9.webp)
 
 See the Patch chapter for details.
 

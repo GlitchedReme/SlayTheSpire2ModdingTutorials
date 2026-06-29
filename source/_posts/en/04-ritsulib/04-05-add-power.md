@@ -66,7 +66,7 @@ Add a JSON file at `{ModId}/localization/{Language}/powers.json`.
 
 Then use `PowerCmd.Apply<TestPower>(...)` to grant it. Or use the console: `power TEST_POWER_TEST_POWER 1 0`.
 
-![alt text](../../../../images/image25.png)
+![alt text](../../../../images/image25.webp)
 
 ## Final Project Reference
 

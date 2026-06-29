@@ -210,7 +210,7 @@ public class TestCharacter : PlaceholderCharacterModel
 
 No special requirements. Create a new scene in Godot of type `Control` and build it however you like. Reference:
 
-![Character background](../../../images/image17.png)
+![Character background](../../../images/image17.webp)
 
 ## Custom Character Visuals
 
@@ -233,7 +233,7 @@ TestCharacter (Node2D)
 * Characters are displayed above the x-axis.
 * For 3D models, create a hierarchy of `visuals → subviewportcontainer → subviewport`, then add `camera3d` and any 3D models inside `subviewport`. Adjust the camera in the 3D view until it looks correct in 2D. Set `subviewport`'s `transparent` to `true`.
 
-![alt text](../../../images/image18.png)
+![alt text](../../../images/image18.webp)
 
 * The template assets include a full-screen single-image scene. Just swap the image for your character background.
 
@@ -270,7 +270,7 @@ TestEnergyCounter (Control)
 * Nodes marked `%` must be set as unique names. Don't rename them. `Label` must also keep its name.
 * `RotationLayers` contains layers that need to rotate. You can leave it empty.
 
-![alt text](../../../images/image19.png)
+![alt text](../../../images/image19.webp)
 
 Since `BaseLib` handles the wiring, your nodes don't need scripts attached.
 
@@ -463,17 +463,17 @@ Don't forget to add `ScriptManagerBridge.LookupScriptsInAssembly(typeof(Entry).A
 
 * Open `Project → Project Settings` and disable `Convert Text Resources to Binary`.
 
-![3](../../../images/image16.png)
+![3](../../../images/image16.webp)
 
-![alt text](../../../images/image20.png)
+![alt text](../../../images/image20.webp)
 
 ## Template Assets
 
 <div style="display:flex; gap:8px; flex-wrap:nowrap;">
-    <img src="../../../images/image21.png" alt="image21" style="width:24%;" />
-    <img src="../../../images/image22.png" alt="image22" style="width:24%;" />
-    <img src="../../../images/energy_test.png" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
-    <img src="../../../images/energy_test_big.png" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../../images/image21.webp" alt="image21" style="width:24%;" />
+    <img src="../../../images/image22.webp" alt="image22" style="width:24%;" />
+    <img src="../../../images/energy_test.webp" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../../images/energy_test_big.webp" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
 </div>
 
 ### test_bg.tscn

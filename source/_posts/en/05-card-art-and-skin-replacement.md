@@ -43,13 +43,13 @@ Spire uses Spine version `4.2.43`. Versions below this cannot be used directly. 
 
 * Your combat character model needs these animation names: `idle_loop` (idle loop), `attack` (attack animation), `cast` (power card animation), `hurt` (taking damage), `die` (death).
 
-![1](../../../images/image14.png)
+![1](../../../images/image14.webp)
 
-![2](../../../images/image15.png)
+![2](../../../images/image15.webp)
 
 * If you run into issues, open `Project → Project Settings` and disable `Convert Text Resources to Binary`.
 
-![3](../../../images/image16.png)
+![3](../../../images/image16.webp)
 
 ~~Then you can reference this to replace characters: (this only replaces the combat character without playing the initial animation, for reference only)~~ The old code had too few features. Removed to avoid misleading newcomers.
 

@@ -462,19 +462,19 @@ void fragment() {
 
 For the node you want to apply the shader to (e.g. SpriteAnimation2D, Sprite2D, etc.), click CanvasItem - Material, create a new ShaderMaterial, then quickly load the shader.
 
-![fx_shader_3.png](../../../images/fx_shader_3.png)
+![fx_shader_3.png](../../../images/fx_shader_3.webp)
 
 Then click the shader to adjust various parameters in the panel below.
 
 Includes glow, exposure, blur, motion blur, sharpen, distortion, hue, outline, swirl, ripple, chromatic aberration (RGB separation), and other common post-processing effects.
 
-![fx_shader_4.png](../../../images/fx_shader_4.png)
+![fx_shader_4.png](../../../images/fx_shader_4.webp)
 
 ### 2. Area Effects
 
 Look at the Regent's attack hit effect `starry_impact` and `scream` from the vanilla game:
-![fx_shader_1.png](../../../images/fx_shader_1.png)
-![fx_shader_2.png](../../../images/fx_shader_2.png)
+![fx_shader_1.png](../../../images/fx_shader_1.webp)
+![fx_shader_2.png](../../../images/fx_shader_2.webp)
 Notice that the `vfx_distortion`-related effects are screen distortion effects — they appear as a distorted area on screen.
 
 Shaders are pure code, which makes them AI-friendly. To replicate a similar effect, just extract the gdshader source, feed it to AI, and have it implement what you need.

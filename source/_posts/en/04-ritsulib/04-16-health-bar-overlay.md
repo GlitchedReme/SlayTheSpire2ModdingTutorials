@@ -7,7 +7,7 @@ categories:
 ---
 You can use this feature to create health bar overlays similar to `Poison` or `Doom`.
 
-![alt text](../../../../images/image34.png)
+![alt text](../../../../images/image34.webp)
 
 ## Code
 

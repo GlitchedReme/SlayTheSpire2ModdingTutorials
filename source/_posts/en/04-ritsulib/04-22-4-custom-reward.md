@@ -8,20 +8,13 @@ categories:
 ---
 You can use the `ModCustomReward` base class provided by RitsuLib to implement custom rewards.
 
-`ModCustomReward` wraps the vanilla `Reward` base class and helps you:
-1. **Auto-handle icon UI**: no need to manually write tedious Godot node hierarchies; just provide a `res://` icon resource path.
-2. **Auto-read localization text**: defaults to reading from the `gameplay_ui` table; the Description Key defaults to the reward ID assigned during registration.
-3. **Assist with save/load**: inject your persistent Payload (e.g., saving randomly generated gold amount per instance) via the `IModSerializableReward` interface, and have RitsuLib deserialize it back on load.
-
-Implementing a complete custom reward involves three steps: Register → Write the reward class → Grant the reward to the player.
-
 ---
 
 ## 1. Register the Reward Type
 
-Every custom reward needs a `RewardType` identifier. `RewardType` is a vanilla enum; RitsuLib assigns a deterministic extended value for each mod through its dynamic registration mechanism.
+Every custom reward needs a `RewardType` identifier. `RewardType` is an enum compatible with the vanilla one.
 
-Register in `Entry.Init()`:
+Register in `Entry.Init()` (or in your own management class — just don't forget to register):
 
 ```csharp
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -45,21 +38,17 @@ public static class Entry
 
     public static void Init()
     {
-        // Register a reward without a Payload: when loading, simply new up a new instance
+        // Register a reward without any save data: simply new up a fresh instance on load
         TokenRewardType = ModRewardRegistry.For(ModId)
             .RegisterOwned(
-                // Local stem, corresponds to ID, ultimately generating MYMOD_REWARD_TOKEN
+                // Reward ID, ultimately generating MYMOD_REWARD_TOKEN
                 "token",
-                // Factory: used by RitsuLib to reconstruct the saved reward as a runtime object on load
+                // Factory function, used to reconstruct saved rewards into runtime objects on load
                 (save, player, json) => new MyTokenReward(player))
             .RewardType;
     }
 }
 ```
-
-* `RegisterOwned` returns `ModRewardDefinition`, whose `RewardType` field is the identifier for this reward.
-* The factory signature is `(SerializableReward save, Player player, string? json) => Reward`. `json` is the string returned by `ToModRewardJson()`, and is `null` when there is no Payload.
-
 ---
 
 ## 2. Write the Reward Class
@@ -80,19 +69,25 @@ public class MyTokenReward : ModCustomReward
     // Required constructor; passes the owning player to the base Reward class
     public MyTokenReward(Player player) : base(player) { }
 
-    // [Required] Return the RewardType you registered in Init
+    // [Required] Use the RewardType you registered in Init
     public override RewardType ModRewardType => Entry.TokenRewardType;
 
-    // [Optional] Icon resource path; if not specified, only an empty container is shown
+    // [Optional] Icon resource path. If null, only an empty container is shown
     protected override string? RewardIconPath => "res://MyMod/images/rewards/token.png";
 
-    // [Optional] The LocTable file name where the description text resides (default gameplay_ui)
-    protected override string DescriptionLocTable => "gameplay_ui";
+    // [Optional] LocTable file name for the description text (default gameplay_ui)
+    // protected override string DescriptionLocTable => "gameplay_ui";
+
 
     // [Optional] Description Key; if not specified, the ID assigned at registration is used (here MYMOD_REWARD_TOKEN)
     // protected override string DescriptionLocKey => "MYMOD_REWARD_TOKEN";
 
-    // [Must implement] The actual effect executed when the player clicks this reward
+    // [Must implement] Mark reward content as seen by the player (e.g. cards or potions).
+    public override void MarkContentAsSeen()
+    {
+    }
+
+    // [Must implement] The actual effect when the player clicks this reward
     protected override async Task<bool> OnSelect()
     {
         // Example: give the player 25 gold
@@ -107,7 +102,7 @@ public class MyTokenReward : ModCustomReward
 
 ### Localization Text
 
-`ModCustomReward.Description` resolves using `LocString(DescriptionLocTable, DescriptionLocKey)`. Add to `{modId}/localization/{lang}/gameplay_ui.json`:
+Add to `{modId}/localization/{lang}/gameplay_ui.json`:
 
 ```json
 {
@@ -115,18 +110,16 @@ public class MyTokenReward : ModCustomReward
 }
 ```
 
-> The default Key is the registration ID (`MYMOD_REWARD_TOKEN`), looked up by RitsuLib via `ModRewardRegistry.TryGetId`. If you override `DescriptionLocKey`, make sure the Key matches your localization file.
-
 ---
 
 ## 3. Grant the Reward to the Player
 
-The most common scenario: append one to the extra rewards list at the end of combat:
+For example, write this in a card effect: (for relics or other contexts, just find `CombatState`, e.g. `Owner.CombatState`)
 
 ```csharp
 using MegaCrit.Sts2.Core.Rooms;
 
-if (CombatState.Room is CombatRoom combatRoom)
+if (CombatState.RunState.CurrentRoom is CombatRoom combatRoom)
 {
     combatRoom.AddExtraReward(player, new MyTokenReward(player));
 }
@@ -138,7 +131,6 @@ If you are adding inside a vanilla relic's `OnGetRewards` (or similar callback),
 rewards.Add(new MyTokenReward(Owner));
 ```
 
-Rewards added via `AddExtraReward` automatically go through the full pipeline: `ToSerializable` → Save → Load → Factory reconstruction.
 
 ---
 
@@ -146,7 +138,7 @@ Rewards added via `AddExtraReward` automatically go through the full pipeline: `
 
 If your reward contains **dynamically generated state** (e.g., random gold amount, randomly selected card IDs), to ensure that the reward is not regenerated or lost when the player presses ESC at the rewards screen and reloads, you must write this state into the save.
 
-`ModCustomReward` provides a convenient override based on source-generated JSON:
+`ModCustomReward` provides a convenient override:
 
 ### 1. Define Payload and JSON Context
 
@@ -203,7 +195,7 @@ public class MyTokenReward : ModCustomReward
 }
 ```
 
-> Only JSON-serializable data (`int`, `string`, `record struct` compositions, etc.) should go into the Payload. Do not stuff Godot nodes, `Player` references, or runtime objects in there.
+> Only JSON-serializable data (`int`, `string`, `record struct` compositions, etc.) should go into the Payload. Do not stuff Godot nodes, images, or other objects in there.
 
 If you are already using the `ToSerializable<TPayload>(payload, jsonTypeInfo)` overload, you can skip manually writing `ToModRewardJson`, but you must return `base.ToSerializable<TPayload>(...)` in your `ToSerializable` override. Choose one approach or the other.
 
@@ -211,12 +203,11 @@ If you are already using the `ToSerializable<TPayload>(payload, jsonTypeInfo)` o
 
 ## Multiplayer Sync Rules
 
-The source code comments of `ModCustomReward` contain this line:
-
 > *Reward-set selection is synchronized by vanilla, but reward-specific side effects must either be deterministic on every client or explicitly synchronized by the derived reward.*
+>
+> *（奖励集合中"选了哪个奖励"由原版引擎自动网络同步；但奖励自身造成的副作用必须在所有客户端确定性执行，否则你需要自己显式同步。）*
 
-**What this means:**
-- When the team claims a reward, if player A clicks `MyTokenReward`, vanilla broadcasts the "claim" event to everyone; each client will execute your `OnSelect()` once.
+- For example, when the team claims a reward, if player A clicks `MyTokenReward`, vanilla broadcasts the "claim" event to everyone; each client will execute your `OnSelect()` once.
 - However! If your `OnSelect()` contains **random checks** or **resources that only exist locally**, different clients may produce inconsistent results, leading to disconnection or state divergence.
 
 So ensure the logic in your `OnSelect()`:

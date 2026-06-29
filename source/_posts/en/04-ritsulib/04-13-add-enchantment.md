@@ -92,4 +92,4 @@ How to use:
 * In the console, enter `enchant TEST_ENCHANTMENT_TEST_ENCHANTMENT [amount] [hand index]`.
 * In effects, use `CardCmd.Enchant<TestEnchantment>(card, 2m)`. The second parameter modifies Amount.
 
-![alt text](../../../../images/image32.png)
+![alt text](../../../../images/image32.webp)

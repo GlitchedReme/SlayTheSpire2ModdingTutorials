@@ -58,7 +58,7 @@ Check for existence: `Keywords.Contains(MyKeywords.Unique)`
 
 Can be combined with a singleton (`SingletonModel`) for logic. See the corresponding article.
 
-![alt text](../../../../images/image23.png)
+![alt text](../../../../images/image23.webp)
 
 ## Adding New Dynamic Variables
 
@@ -105,7 +105,7 @@ In simple terms, the effect can be written in `OnPlay` like this, or you can wri
     await CreatureCmd.Heal(cardPlay.Card.Owner.Creature, DynamicVars["Leech"].BaseValue);
 ```
 
-![alt text](../../../../images/image26.png)
+![alt text](../../../../images/image26.webp)
 
 
 ## Adding Card Hover Tips

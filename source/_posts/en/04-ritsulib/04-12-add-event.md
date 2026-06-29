@@ -132,7 +132,7 @@ Create `{modId}/localization/{Language}/events.json`.
 }
 ```
 
-![alt text](../../../../images/image33.png)
+![alt text](../../../../images/image33.webp)
 
 ## Combat event
 
