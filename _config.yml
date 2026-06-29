@@ -108,6 +108,10 @@ ignore:
 ## Themes: https://hexo.io/themes/
 theme: kira
 
+# Markdown renderer
+marked:
+  smartypants: false
+
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
