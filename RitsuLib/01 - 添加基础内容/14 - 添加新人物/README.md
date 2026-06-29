@@ -274,7 +274,7 @@ Ui: new(
 
 没什么要求，Godot里创建一个新的场景，类型为`Control`，自己搭建场景即可。参考：（根节点大小建议为2560x1200，可从最下方复制tscn资源）
 
-![人物背景](../../../images/image17.png)
+![人物背景](../../../images/image17.webp)
 
 ## 自定义战斗模型
 
@@ -306,7 +306,7 @@ TestCharacter (Node2D)
 * 人物显示在x轴上方。
 * 如果想使用3d模型，新建`visuals→subviewportcontainer→subviewport`的层级结构，然后在`subviewport`中添加`camera3d`和任意3d模型，在3d视图中调整视角至2d视图正常显示。最后设置`subviewport`的`transparent`为`true`。
 
-![alt text](../../../images/image18.png)
+![alt text](../../../images/image18.webp)
 
 * 附赠资源提供了一个单图尽可能覆盖全屏的场景，只要把图片换成你的人物背景图即可。
 
@@ -345,7 +345,7 @@ TestEnergyCounter (Control)
 * 后面标`%`的需要作为唯一名称访问。名字不要改，label也是。
 * RotationLayers里放需要旋转的图层。没有也行。
 
-![alt text](../../../images/image19.png)
+![alt text](../../../images/image19.webp)
 
 ## 自定义商店模型
 
@@ -402,7 +402,7 @@ TestCharacterRestSite (Node2D)
 
 越接近白色的部分越先出现，逐步覆盖到黑色。如下的过渡图就是从左到右。
 
-![过渡动画](../../../images/test_transition.png)
+![过渡动画](../../../images/test_transition.webp)
 
 然后创建一个`shader material`类型的资源，并添加配套着色器。代码在最后。
 
@@ -556,15 +556,15 @@ TestCharacterRestSite (Node2D)
 }
 ```
 
-![alt text](../../../images/image20.png)
+![alt text](../../../images/image20.webp)
 
 ## 附赠资源
 
 <div style="display:flex; gap:8px; flex-wrap:nowrap;">
-    <img src="../../../images/image21.png" alt="image21" style="width:24%;" />
-    <img src="../../../images/image22.png" alt="image22" style="width:24%;" />
-    <img src="../../../images/energy_test.png" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
-    <img src="../../../images/energy_test_big.png" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../../images/image21.webp" alt="image21" style="width:24%;" />
+    <img src="../../../images/image22.webp" alt="image22" style="width:24%;" />
+    <img src="../../../images/energy_test.webp" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../../images/energy_test_big.webp" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
 </div>
 
 ### test_bg.tscn

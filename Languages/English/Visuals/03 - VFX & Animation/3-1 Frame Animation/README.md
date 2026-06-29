@@ -3,7 +3,7 @@
 
 Frame animation is the most basic VFX form: import multiple **transparent** PNG image sequences into Godot, compose them into an `AnimatedSprite2D` animation, and instantiate/play them in-game.
 
-![fx_frame_6.png](../../../images/fx_frame_6.png)
+![fx_frame_6.png](../../../images/fx_frame_6.webp)
 
 The advantage of frame animation is that it's common and simple — many downloadable and exported effects are in sequence frame format.
 The downside is poor performance; you'll need to scale down and optimize. See the optimization section for details.
@@ -24,16 +24,16 @@ In the Godot editor, create a new scene with a `Node2D` root node and add an `An
 
 Try to create scenes manually through the Godot (Megadot) editor. AI-generated scenes can have various reference errors.
 
-![fx_frame_1.png](../../../images/fx_frame_1.png)
+![fx_frame_1.png](../../../images/fx_frame_1.webp)
 
 Select the AnimatedSprite2D node, then in the inspector panel on the right, create a new SpriteFrames.
-![fx_frame_2.png](../../../images/fx_frame_2.png)
+![fx_frame_2.png](../../../images/fx_frame_2.webp)
 
 Click on this SpriteFrames to open the animation sequence frame editor. Click "Add Frames from File" and import your sequence frames in order.
-![fx_frame_3.png](../../../images/fx_frame_3.png)
+![fx_frame_3.png](../../../images/fx_frame_3.webp)
 
 After import, you'll see the sequence frame chart below. Common buttons are labeled — adjust your effect as needed.
-![fx_frame_4.png](../../../images/fx_frame_4.png)
+![fx_frame_4.png](../../../images/fx_frame_4.webp)
 
 Example scene script reference (AI-generated):
 
@@ -87,5 +87,5 @@ public partial class Effect : AnimatedSprite2D {
 ### 4. Other Tips
 
 - Sometimes your imported frame images are too large in resolution and cause noticeable stuttering in-game. You can scale them down via import settings.
-  ![fx_frame_5.png](../../../images/fx_frame_5.png)
+  ![fx_frame_5.png](../../../images/fx_frame_5.webp)
   Batch-select your images. In the import settings at the top left, choose a lower resolution — e.g. if the original is 1080p, scale to 720/540.

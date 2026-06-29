@@ -111,7 +111,7 @@ public override CardAssetProfile AssetProfile => new(
 
 卡图任意尺寸都可，且不需要裁剪，官方使用的尺寸是普通卡250x190，先古卡250x351。
 
-![示例卡图](../../../images/image10.png)
+![示例卡图](../../../images/image10.webp)
 
 如果你想统一管理卡图路径，也可以额外写一个抽象基类，例如`TestCardModel.cs`，然后其他卡牌类继承这个类即可。
 
@@ -172,7 +172,7 @@ public abstract class TestCardModel : ModCardTemplate
 
 * 如果你在图鉴中看到???是正常的，你只是没遇到这张牌。
 
-![示例卡牌](../../../images/image11.png)
+![示例卡牌](../../../images/image11.webp)
 
 ## 最终项目参考
 

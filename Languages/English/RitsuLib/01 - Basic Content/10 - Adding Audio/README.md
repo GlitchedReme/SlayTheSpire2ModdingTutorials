@@ -8,7 +8,7 @@ Use the FMOD tool that STS2 uses for loading. Some audio loaded via events (such
 
 Go to the official site https://www.fmod.com/download#fmodstudio and download FMOD Studio version 2.03.06.
 
-![alt text](../../../images/image35.png)
+![alt text](../../../images/image35.webp)
 
 After installation, open it.
 
@@ -22,7 +22,7 @@ After downloading, open it.
 
 Click the `Assets` tab on the left, drag your audio into it or right-click `Import Assets`.
 
-![alt text](../../../images/image36.png)
+![alt text](../../../images/image36.webp)
 
 ### Rename banks
 
@@ -30,17 +30,17 @@ Click the `Banks` tab in the middle, rename both banks to your project name, pre
 
 * It is best to delete and recreate `XXX`, but `Master` cannot be deleted and recreated.
 
-![alt text](../../../images/image37.png)
+![alt text](../../../images/image37.webp)
 
 ### Create events
 
 Click the `Events` tab on the left. You can right-click to create a new folder, nest some folders and rename them to prevent collisions with other people's IDs. Then right-click to create a new event.
 
-![alt text](../../../images/image38.png)
+![alt text](../../../images/image38.webp)
 
 Right-click your event, click `Assign To Bank`, and select `Test` or the one you renamed (*not the Master one*).
 
-![alt text](../../../images/image39.png)
+![alt text](../../../images/image39.webp)
 
 Next click `Window - Mixer Routing`. You need to create routing that matches the vanilla game. Here it is `master/sfx`, and place your audio there.
 
@@ -48,7 +48,7 @@ For example, paths in the vanilla game code are like `event:/sfx/heal`, `event:/
 
 This step makes your audio affected by the game's volume and effects — for example, `sfx` is affected by the sound effects volume and `music` is affected by the music volume.
 
-![alt text](../../../images/image41.png)
+![alt text](../../../images/image41.webp)
 
 ### Create sheets
 
@@ -56,11 +56,11 @@ Then click the event you just created and a sheet interface will appear in the m
 
 * In simple terms, a timeline can implement audio splicing or delayed triggering, an action can randomly trigger one of multiple audio clips (right-click add multi instrument), a parameter can adjust audio parameters, etc.
 
-![alt text](../../../images/image42.png)
+![alt text](../../../images/image42.webp)
 
 For example, create a timeline sheet, then click Assets and drag audio assets into the track.
 
-![alt text](../../../images/image40.png)
+![alt text](../../../images/image40.webp)
 
 ### Build
 
@@ -70,14 +70,14 @@ For example, create a timeline sheet, then click Assets and drag audio assets in
 
 * You can also set the auto-build path by clicking `Edit - Preference - Build` and selecting a build path.
 
-![alt text](../../../images/image43.png)
+![alt text](../../../images/image43.webp)
 
 ### Export presets
 
 Godot typically does not directly import `.bank` and `GUIDs.txt`, which may cause these files to be missing from the packaged .pck file, preventing the game from loading the audio at runtime.
 Make sure your export settings under the "Resources" tab have "Filters to export non-resource files/folders" include `.bank` and `GUIDs.txt` (or any other files you need).
 
-![alt text](../../../images/fmod_export_hint.png)
+![alt text](../../../images/fmod_export_hint.webp)
 
 ### Loading in code
 
@@ -140,7 +140,7 @@ If you want to freely play audio files, use this approach.
 
 2. Disable the import for audio you want to load via FMOD, export them as-is. Do the following:
 
-![alt text](../../../images/image46.png)
+![alt text](../../../images/image46.webp)
 
 3. Copy the audio to a directory at the same level as your mod and load it.
 

@@ -23,7 +23,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 《杀戮尖塔2》是用`Godot4.5.1 Mono`开发的，所以你需要安装`Godot4.5.1 Mono`版本的编辑器。
 
 进入[Godot下载界面](https://godotengine.org/download/archive/4.5.1-stable/)，下载并安装编辑器。注意选择`.NET`版本。
-![alt text](../../images/image1.png)
+![alt text](../../images/image1.webp)
 
 或者，你也可以下载制作组自己使用的Godot修改版本[MegaDot](https://megadot.megacrit.com/)。由于暂不清楚这个版本和官方版本的区别，所以建议直接使用官方版本。
 
@@ -47,7 +47,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 记得打开设置把自动保存开了。
 
-![alt text](../../images/image2.png)
+![alt text](../../images/image2.webp)
 
 ## 参考官方文档
 
@@ -57,13 +57,13 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 打开`Godot`创建一个新项目。渲染器尽量使用`Mobile/移动`，以和游戏保持一致。记住你的项目名。
 
-![alt text](../../images/image3.png)
+![alt text](../../images/image3.webp)
 
 ## 创建C#解决方案
 
 点击左上角的“创建C#解决方案”按钮。
 
-![alt text](../../images/image4.png)
+![alt text](../../images/image4.webp)
 
 ## 创建{modid}.json
 
@@ -104,7 +104,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 
 * `VSCode`直接找你项目里的`.csproj`文件编辑。
 
-![alt text](../../images/image44.png)
+![alt text](../../images/image44.webp)
 
 ```xml
 <Project Sdk="Godot.NET.Sdk/4.5.1">
@@ -193,9 +193,9 @@ public class Entry
 
 > 用文本编辑器打开`export_presets.cfg`，将`binary_format/architecture="x86_64"`改为`binary_format/architecture="msil"`。
 
-![alt text](../../images/image5.png)
+![alt text](../../images/image5.webp)
 
-![alt text](../../images/image6.png)
+![alt text](../../images/image6.webp)
 
 ## 了解导出结果
 
@@ -261,7 +261,7 @@ Godot支持命令行导出pck（首先你需要添加一个导出配置），例
 
 然后右键你的项目点击`Publish`即可。一路点OK就行。
 
-![alt text](../../images/image45.png)
+![alt text](../../images/image45.webp)
 
 ## VSCode不启动Godot打包（可选）
 

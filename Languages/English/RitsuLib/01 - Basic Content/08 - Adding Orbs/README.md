@@ -69,7 +69,7 @@ Then create `{modId}/localization/{Language}/orbs.json`.
 
 Use `await OrbCmd.Channel<TestOrb>(choiceContext, cardPlay.Card.Owner)` to channel it.
 
-![alt text](../../../images/image28.png)
+![alt text](../../../images/image28.webp)
 
 `test_orb.tscn`:
 

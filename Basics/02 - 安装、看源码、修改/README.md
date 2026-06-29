@@ -20,7 +20,7 @@ https://github.com/GDRETools/gdsdecomp
 
 3. 如果你遇到网络问题，点击`Export Settings...`把`Download Plugins`关了。
 
-![alt text](../../images/image7.png)
+![alt text](../../images/image7.webp)
 
 4. 等项目导出完，使用godot导入`project.godot`即可。做mod并不需要能在godot里运行这个项目。
 
@@ -41,10 +41,10 @@ https://github.com/GDRETools/gdsdecomp
 参考官方文档即可： https://harmony.pardeike.net/articles/basics.html
 
 简单参考：
-![alt text](../../images/image8.png)
+![alt text](../../images/image8.webp)
 
 相当于对源码：
-![alt text](../../images/image9.png)
+![alt text](../../images/image9.webp)
 
 具体参考Patch一节。
 

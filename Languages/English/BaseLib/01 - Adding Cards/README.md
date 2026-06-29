@@ -96,7 +96,7 @@ public class TestCard : TestCardModel
 }
 ```
 
-![Example card art](../../images/image10.png)
+![Example card art](../../images/image10.webp)
 
 You can also create an `abstract` base class to avoid repeating the portrait path on every card and to centralize custom functionality.
 
@@ -135,7 +135,7 @@ Press `~` to open the console and type `card TEST-TEST_CARD` to get the card.
 * You must be in combat to use the command to get this card.
 * If you see ??? in the card library, that's normal — you just haven't encountered the card yet.
 
-![Example card](../../images/image11.png)
+![Example card](../../images/image11.webp)
 
 ## Final Project Reference
 

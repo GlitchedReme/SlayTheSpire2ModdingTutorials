@@ -32,4 +32,4 @@ Add a localization file: `{modId}/localization/{Language}/powers.json`.
 
 Then apply it with `PowerCmd.Apply<TestPower>(...)`. Or use the console: `power TEST-TEST_POWER 1 0`.
 
-![alt text](../../images/image25.png)
+![alt text](../../images/image25.webp)

@@ -170,7 +170,7 @@ public class TestEncounter : ModEncounterTemplate
 }
 ```
 
-![alt text](../../../images/image29.png)
+![alt text](../../../images/image29.webp)
 
 ### 多怪物遭遇
 
@@ -241,7 +241,7 @@ TestMultiEncounter (Node2D)
 └── fourth2 (Marker2D)
 ```
 
-![alt text](../../../images/image30.png)
+![alt text](../../../images/image30.webp)
 
 ### 自定义场景遭遇
 
