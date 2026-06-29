@@ -121,7 +121,7 @@ The id here is `{modId}_ANCIENT_{UPPERCASE_SNAKE_CASE of the class name}`. For w
 }
 ```
 
-![alt text](../../../images/image27.png)
+![alt text](../../../images/image27.webp)
 
 Scene example `test_ancient.tscn`:
 ```

@@ -111,7 +111,7 @@ Remember to replace `Test` with your `modid`. `modId` is what you filled in in y
 
 Card art can be any size and does not need to be cropped. The official sizes used are 250×190 for regular cards and 250×351 for Ancient cards.
 
-![Sample card art](../../../images/image10.png)
+![Sample card art](../../../images/image10.webp)
 
 If you want to manage card art paths centrally, you can also write an abstract base class, e.g. `TestCardModel.cs`, and have other card classes inherit from it.
 
@@ -172,7 +172,7 @@ Press `~` to open the console and enter `card TEST_CARD_TEST_CARD` to obtain thi
 
 * If you see `???` in the card library, that's normal — you simply haven't encountered this card yet.
 
-![Sample card](../../../images/image11.png)
+![Sample card](../../../images/image11.webp)
 
 ## Final Project Reference
 

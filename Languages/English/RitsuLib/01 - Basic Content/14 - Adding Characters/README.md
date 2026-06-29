@@ -274,7 +274,7 @@ Ui: new(
 
 No special requirements — create a new scene in Godot with type `Control` and build it yourself. Reference: (recommended root node size is 2560x1200; you can copy the tscn resources from the bottom)
 
-![Character background](../../../images/image17.png)
+![Character background](../../../images/image17.webp)
 
 ## Custom combat model
 
@@ -306,7 +306,7 @@ TestCharacter (Node2D)
 * The character is displayed above the x-axis.
 * If you want to use a 3D model, create a hierarchy of `visuals→subviewportcontainer→subviewport`, then add a `camera3d` and any 3D model inside the `subviewport`. Adjust the perspective in the 3D view until it displays correctly in the 2D view. Finally, set the `subviewport`'s `transparent` to `true`.
 
-![alt text](../../../images/image18.png)
+![alt text](../../../images/image18.webp)
 
 * The bonus resources provide a single-image scene that covers the screen as much as possible — just swap the image for your character background image.
 
@@ -345,7 +345,7 @@ TestEnergyCounter (Control)
 * Items marked with `%` need `Access as Unique Name`. Do not change the names, including `label`.
 * Place layers that need to rotate inside `RotationLayers`. It's fine if there are none.
 
-![alt text](../../../images/image19.png)
+![alt text](../../../images/image19.webp)
 
 ## Custom merchant model
 
@@ -401,7 +401,7 @@ For the transition animation, first prepare a 2560x1200 image, as shown below.
 
 Areas closer to pure white appear first, gradually covering toward black. The transition image shown below goes from left to right.
 
-![Transition animation](../../../images/test_transition.png)
+![Transition animation](../../../images/test_transition.webp)
 
 Then create a resource of type `shader material` and add the accompanying shader. The code is at the end.
 
@@ -555,15 +555,15 @@ You also need the Ancient dialogue JSON. Create `{modId}/localization/{Language}
 }
 ```
 
-![alt text](../../../images/image20.png)
+![alt text](../../../images/image20.webp)
 
 ## Bonus resources
 
 <div style="display:flex; gap:8px; flex-wrap:nowrap;">
-    <img src="../../../images/image21.png" alt="image21" style="width:24%;" />
-    <img src="../../../images/image22.png" alt="image22" style="width:24%;" />
-    <img src="../../../images/energy_test.png" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
-    <img src="../../../images/energy_test_big.png" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../../images/image21.webp" alt="image21" style="width:24%;" />
+    <img src="../../../images/image22.webp" alt="image22" style="width:24%;" />
+    <img src="../../../images/energy_test.webp" alt="energy_test" style="width:24px; height:24px; object-fit:contain; max-width:none; flex:0 0 auto;" />
+    <img src="../../../images/energy_test_big.webp" alt="energy_test_big" style="width:74px; height:74px; object-fit:contain; max-width:none; flex:0 0 auto;" />
 </div>
 
 ### test_bg.tscn

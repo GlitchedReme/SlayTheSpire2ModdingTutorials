@@ -81,4 +81,4 @@ How to use:
 * Console: `enchant TEST-TEST_ENCHANTMENT [amount] [hand card index]`.
 * In code: `CardCmd.Enchant<TestEnchantment>(card, 2m)`. The second parameter sets Amount.
 
-![alt text](../../images/image32.png)
+![alt text](../../images/image32.webp)

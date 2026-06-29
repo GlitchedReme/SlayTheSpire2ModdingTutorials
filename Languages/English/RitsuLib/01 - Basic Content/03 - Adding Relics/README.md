@@ -52,7 +52,7 @@ public class TestRelic : ModRelicTemplate
 
 Then place an image at `Test/images/relics/TestRelic.png`. Here the three images lazily reuse the same file — you can customize the paths yourself.
 
-![Sample relic](../../../images/image13.png)
+![Sample relic](../../../images/image13.webp)
 
 Then write a localization file, `{modId}/localization/{Language}/relics.json`.
 

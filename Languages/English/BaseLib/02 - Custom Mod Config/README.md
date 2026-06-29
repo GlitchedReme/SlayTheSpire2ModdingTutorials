@@ -55,6 +55,6 @@ public sealed class TestModConfig : SimpleModConfig
 }
 ```
 
-![Example config](../../images/image12.png)
+![Example config](../../images/image12.webp)
 
 See the classes under `BaseLib.Config` for more details.

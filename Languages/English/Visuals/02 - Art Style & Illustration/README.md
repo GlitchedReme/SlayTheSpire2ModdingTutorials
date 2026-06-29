@@ -32,19 +32,19 @@ The above covers hand-drawn illustration. You can also create art through other 
 * If you have AI or extracted game assets, you can skip this section.
 * I'll use `Krita` to paint an illustration:
 
-![](../../images/1.png)
+![](../../images/1.webp)
 
 Step one: take a screenshot in-game as reference. This helps maintain visual consistency and avoids a jarring look.
 
-![](../../images/2.png)
+![](../../images/2.webp)
 
 Also gather art reference for the character you want to draw. I recommend `PureRef 2.0` (a reference image tool). You can find installation guides on Bilibili.
 
-![](../../images/11.png)
+![](../../images/11.webp)
 
 Lower the opacity of the in-game screenshot and start sketching. At this stage, get the proportions between the character and enemies right.
 
-![](../../images/6.png)
+![](../../images/6.webp)
 
 Then build on the sketch by analyzing and drawing out the character's defining features.
 
@@ -52,11 +52,11 @@ Then build on the sketch by analyzing and drawing out the character's defining f
 * A character's hairstyle matters a lot in an anime-inspired style. Facial features are secondary. (It's like recognizing someone from far away — you identify them by height, build, and clothing, not their face.)
 * Don't draw too many distinct lines. STS2's art leans toward a Western cartoon style built with color blocks. Too many lines will get in the way later.
 
-![](../../images/10.png)
+![](../../images/10.webp)
 
 Boldly block in the colors like this. Some distortion in perspective and proportions is fine — it actually fits STS2's comic style better.
 
-![](../../images/8.png)
+![](../../images/8.webp)
 
 Finally, keep cutting in shadows and highlights with color blocks. Once the volume reads well, add a few details and you're done.
 

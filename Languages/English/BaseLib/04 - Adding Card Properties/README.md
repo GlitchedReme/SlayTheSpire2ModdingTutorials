@@ -30,7 +30,7 @@ public class MyKeywords
     public override IEnumerable<CardKeyword> CanonicalKeywords => [MyKeywords.Unique];
 ```
 
-![alt text](../../images/image23.png)
+![alt text](../../images/image23.webp)
 
 Check if a card has it: `Keywords.Contains(MyKeywords.Unique)`
 
@@ -81,7 +81,7 @@ To implement the effect in `OnPlay`, or write your own Cmd:
     await CreatureCmd.Heal(cardPlay.Card.Owner.Creature, DynamicVars["Leech"].BaseValue);
 ```
 
-![alt text](../../images/image26.png)
+![alt text](../../images/image26.webp)
 
 ## Adding Card Hover Tips
 

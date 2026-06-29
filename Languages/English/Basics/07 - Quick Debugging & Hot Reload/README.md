@@ -149,7 +149,7 @@ Add the following to your `csproj`:
 
 Click `Add Configuration` in the top right, then `Edit Configuration`, and create a `.NET Executable` configuration with the following setup.
 
-![alt text](../../images/image31.png)
+![alt text](../../images/image31.webp)
 
 * Start in `Debug` mode. (Don't click the green triangle to run directly.)
 

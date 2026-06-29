@@ -149,7 +149,7 @@
 
 点击右上角`Add Configuration`，点击`Edit Configuration`，创建一个`.NET Executable`的配置文件，进行如下配置。
 
-![alt text](../../images/image31.png)
+![alt text](../../images/image31.webp)
 
 * 然后按`Debug`模式启动就可以。（不要点击绿三角直接run）
 

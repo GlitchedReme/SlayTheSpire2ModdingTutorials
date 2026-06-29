@@ -21,7 +21,7 @@ https://github.com/freude916/sts2-quickRestart/blob/main/README.md
 *Slay the Spire 2* is built with `Godot 4.5.1 Mono`, so you need the `Godot 4.5.1 Mono` editor.
 
 Go to the [Godot download page](https://godotengine.org/download/archive/4.5.1-stable/), download and install the editor. Pick the `.NET` version.
-![alt text](../../images/image1.png)
+![alt text](../../images/image1.webp)
 
 You can also use Mega Crit's own modified Godot build [MegaDot](https://megadot.megacrit.com/). The differences from the official version are unclear, so the official version is recommended.
 
@@ -45,7 +45,7 @@ Install [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotn
 
 Turn on auto-save in settings.
 
-![alt text](../../images/image2.png)
+![alt text](../../images/image2.webp)
 
 ## Reference Official Docs
 
@@ -55,13 +55,13 @@ See Godot's official docs for any issues: [C# Development Environment Setup](htt
 
 Open `Godot` and create a new project. Use `Mobile` renderer whenever possible to match the game. Remember your project name.
 
-![alt text](../../images/image3.png)
+![alt text](../../images/image3.webp)
 
 ## Create a C# Solution
 
 Click the "Create C# Solution" button in the top left.
 
-![alt text](../../images/image4.png)
+![alt text](../../images/image4.webp)
 
 ## Create {modid}.json
 
@@ -101,7 +101,7 @@ Open your `.csproj` file and <b>*replace*</b> it with the following:
 * `Rider`: right-click your project, click `Edit - Edit csproj`.
 * `VSCode`: edit the `.csproj` file directly in your project.
 
-![alt text](../../images/image44.png)
+![alt text](../../images/image44.webp)
 
 ```xml
 <Project Sdk="Godot.NET.Sdk/4.5.1">
@@ -190,9 +190,9 @@ Back in the Godot editor, go to Project → Export, click `Add` at the top to ad
 
 > Open `export_presets.cfg` in a text editor and change `binary_format/architecture="x86_64"` to `binary_format/architecture="msil"`.
 
-![alt text](../../images/image5.png)
+![alt text](../../images/image5.webp)
 
-![alt text](../../images/image6.png)
+![alt text](../../images/image6.webp)
 
 ## Understanding the Output
 
@@ -258,7 +258,7 @@ Add the following to your `csproj`:
 
 Then right-click your project and click `Publish`. Click OK through the prompts.
 
-![alt text](../../images/image45.png)
+![alt text](../../images/image45.webp)
 
 ## VSCode Without Launching Godot (Optional)
 

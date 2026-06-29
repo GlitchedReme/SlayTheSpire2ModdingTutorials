@@ -1,6 +1,6 @@
 你可以使用该功能制作类似`中毒` `灾厄`的血条覆盖层。
 
-![alt text](../../../images/image34.png)
+![alt text](../../../images/image34.webp)
 
 ## 代码
 

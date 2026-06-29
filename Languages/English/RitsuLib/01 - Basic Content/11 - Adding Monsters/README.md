@@ -170,7 +170,7 @@ public class TestEncounter : ModEncounterTemplate
 }
 ```
 
-![alt text](../../../images/image29.png)
+![alt text](../../../images/image29.webp)
 
 ### Multi-monster encounter
 
@@ -241,7 +241,7 @@ TestMultiEncounter (Node2D)
 └── fourth2 (Marker2D)
 ```
 
-![alt text](../../../images/image30.png)
+![alt text](../../../images/image30.webp)
 
 ### Custom scene encounter
 
