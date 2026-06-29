@@ -11,13 +11,13 @@
 									</strong></h1>
 							</div>
 							<% if (!page.hide_meta) { %>
+							<% var pPath = String(page.path || page.permalink || ""); var isEn = pPath === "/en" || pPath.indexOf("/en/") === 0; %>
 							<div class="kira-post-meta kira-rainbow" style="margin:10px 0!important;">
-								<a><i class="kirafont icon-calendar-fill"></i><%- date(page.date, "YYYY年MM月DD日" ) %></a>
+								<a><i class="kirafont icon-calendar-fill"></i><%- isEn ? date(page.date, "MMM DD, YYYY") : date(page.date, "YYYY年MM月DD日") %></a>
 								<a><i class="kirafont icon-edit-fill"></i>
-									<%= wordcount(page.content) %> 字
+									<%= wordcount(page.content) %> <%= isEn ? 'words' : '字' %>
 								</a>
-								<a><i class="kirafont icon-time-circle-fill"></i>大概 <%= min2read(page.content, {cn: 250,
-										en: 160}) %> 分钟</a>
+								<a><i class="kirafont icon-time-circle-fill"></i><%= isEn ? 'About ' : '大概 ' %><%= min2read(page.content, {cn: 250, en: 160}) %> <%= isEn ? 'min read' : '分钟' %></a>
 								<% var postAuthor = page.author || config.author; %>
 								<% if (postAuthor) { %>
 								<a class="kira-post-meta-author"><i class="kirafont icon-user"></i><%= postAuthor %></a>
@@ -27,7 +27,7 @@
 							<%- image_auto_lazyload(page.content) %>
 						</article>
 
-						<% if (!page.reprinted){ %> <%- partial('components/copyright') %>
+						<% if (!page.reprinted){ %> <%- partial('components/copyright', { isEn: isEn }) %>
 								<% } %>
 											<% if (page.comments){ %>
 												<div class="kira-post-footer">

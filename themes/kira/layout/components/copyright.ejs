@@ -1,9 +1,10 @@
+<% if (typeof isEn === 'undefined') { var cpPath = String(page.path || page.permalink || ""); var isEn = cpPath === "/en" || cpPath.indexOf("/en/") === 0; } %>
 <% if (page.hide_copyright !==true && theme.copyright || page.copyright) { %>
         <div class="kira-post-copyright">
                     <% if (page.copyright) { %>
                         <%- page.copyright %>
                             <% } else { %>
-                                <%- theme.copyright %>
+                                <%- isEn ? 'This work is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a>.' : theme.copyright %>
                                     <% } %>
         </div>
         <% } %>

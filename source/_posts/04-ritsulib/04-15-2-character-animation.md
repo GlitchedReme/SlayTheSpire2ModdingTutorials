@@ -34,8 +34,8 @@ public sealed class TestCharacter
         VisualCues: ModVisualCues.CueSet()
             // idle动画使用单图
             .Single("idle", "res://Test/images/character/idle.png")
-            .Single("hit", "res://Test/images/character/hit.png")
-            // .Single("hit", "res://Test/images/character/hit.png", 0.5f) // 对于ritsulib0.3.9及以上版本，可以设置单图的持续时间
+            .Single("hit", "res://Test/images/character/hit.png", 0.5f) // 持续0.5秒
+            // .Single("hit", "res://Test/images/character/hit.png") // 或者永久切换
             // attack动画使用帧动画
             .Sequence("attack", seq => seq
                 .Frame("res://Test/images/character/attack_01.png", 0.06f)
@@ -80,10 +80,6 @@ public sealed class TestCharacter
 ```
 
 这里`idle`和`relaxed`默认是循环的，其他动画播放结束后自动回到`idle`。
-
-> 对于0.3.9版本以下，单帧`Single`或者单帧`Sequence`无法设置持续时间，所以如果你都用静态帧的话推荐用0.3.9版本以上的`RitsuLib`。
-
-> 0.3.9版本以上，单图动画可以设置持续时间，例如`Single("hit", "res://Test/images/character/hit.png", 0.5f)`。
 
 角色在商店、篝火等世界场景里也可以使用程序化 cue，不一定要单独做一个完整场景：
 

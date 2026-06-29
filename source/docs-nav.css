@@ -520,6 +520,7 @@
     width: 44px !important;
     min-width: 44px !important;
     max-width: 44px !important;
+    overflow: visible !important;
 }
 
 .kira-sidebar.is-collapsed .kira-sidebar-inner {
@@ -704,6 +705,15 @@
 
 .kira-content .kira-main-content {
     background-color: transparent !important;
+    border-radius: 10px;
+    padding: 20px !important;
+}
+
+.kira-content .kira-main-content .kira-post-copyright,
+.kira-content .kira-main-content .kira-post-footer,
+.kira-content .kira-main-content .kira-page-nav {
+    background-color: rgba(255, 255, 255, 0.46) !important;
+    border-radius: 8px;
 }
 
 .kira-content .kira-main-content .kira-post-copyright,
@@ -881,6 +891,7 @@
     }
 }
 
+
 .kira-list-item.true {
     background: #bb6516 !important;
     box-shadow: 0 2px 14px rgba(187, 101, 22, 0.55) !important;
@@ -962,16 +973,17 @@
         overflow: hidden !important;
         justify-content: flex-start !important;
         box-sizing: border-box;
-        padding: 8px 14px;
-        gap: 14px;
+        padding: 8px 4px 8px 0;
+        gap: 12px;
     }
 
     .kira-sidebar {
-        width: 280px;
-        min-width: 280px;
-        max-width: 280px;
+        width: 300px;
+        min-width: 300px;
+        max-width: 300px;
         height: 100%;
         max-height: 100%;
+        margin-left: -8px;
     }
 
     .kira-content {
@@ -981,12 +993,10 @@
         min-width: 0 !important;
         height: 100% !important;
         max-height: 100% !important;
-        margin-top: 0 !important;
-        margin-bottom: 0 !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
+        margin: 0 !important;
         scrollbar-gutter: stable;
     }
+
 
     .kira-content::-webkit-scrollbar {
         width: var(--kira-scrollbar-size) !important;
@@ -1369,15 +1379,11 @@
         color: #fff !important;
     }
 
-    #kira-sidebar-collapse,
-    #kira-sidebar-reopen {
-        display: none !important;
-    }
-
     #sidebar.is-collapsed {
         width: 88vw !important;
         min-width: 0 !important;
         max-width: 88vw !important;
+        transform: translateX(0%) !important;
     }
 
     #sidebar.is-collapsed .kira-sidebar-inner {
@@ -1402,7 +1408,6 @@
         z-index: 200;
         margin-top: 0;
     }
-
     #kira-toc-column .kira-chapters-panel {
         display: none !important;
     }
@@ -1424,4 +1429,114 @@
     max-width: 22px !important;
     height: 22px !important;
     filter: brightness(0) invert(1) !important;
+}
+
+/* ── Language switch button ─────────────────────────────────────────── */
+.kira-lang-switch {
+    pointer-events: auto;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 50%;
+    cursor: pointer;
+    color: #ffffff;
+    background-color: rgba(187, 101, 22, 0.92);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.42);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, background-color 0.22s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.kira-lang-switch:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 10px 28px rgba(187, 101, 22, 0.5);
+}
+
+.kira-lang-switch:focus,
+.kira-lang-switch:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(187, 101, 22, 0.45);
+}
+
+.kira-lang-switch.is-english {
+    background-color: rgba(44, 164, 191, 0.92);
+}
+
+.kira-lang-switch.is-english:hover {
+    box-shadow: 0 10px 28px rgba(44, 164, 191, 0.5);
+}
+
+.kira-lang-switch-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    transform: rotateY(0deg);
+    transition: transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-style: preserve-3d;
+    backface-visibility: visible;
+}
+
+.kira-lang-switch:hover .kira-lang-switch-inner {
+    transform: rotateY(180deg);
+}
+
+/* Full spin on click, takes precedence over the hover half-flip. */
+.kira-lang-switch.is-flipping .kira-lang-switch-inner {
+    transform: rotateY(360deg);
+}
+
+.kira-lang-switch-icon {
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+
+.kira-lang-switch-tip {
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%) translateX(6px);
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: rgba(12, 16, 22, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #e8edf2;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.kira-lang-switch:hover .kira-lang-switch-tip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* Fixed placement for pages without the floating stack (e.g. tool pages). */
+.kira-lang-switch-fixed {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 300;
+    pointer-events: none;
+}
+
+.kira-lang-switch-fixed .kira-lang-switch {
+    pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kira-lang-switch-inner {
+        transition: none;
+    }
 }

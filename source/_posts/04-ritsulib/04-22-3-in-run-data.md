@@ -6,7 +6,9 @@ author: alkaid616
 categories:
 - Basics
 ---
-`RitsuLib` 提供了 `RunSavedData` 和 `PlayerRunSavedData` 来帮助你极简地实现局内数据持久化，同时还自带了**开局大厅暂存**和**多人联机同步**的支持。
+`RitsuLib` 提供了 `RunSavedData` 和 `PlayerRunSavedData` 来帮助你实现局内数据持久化，同时还自带了**开局大厅暂存**和**多人联机同步**的支持。
+
+此功能适用于针对一局游戏的全局配置，如果你想要战斗中的数据保存，使用 `SavedAttachedState` 和 `SavedProperty` 更合适。
 
 ---
 

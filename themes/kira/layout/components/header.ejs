@@ -1,12 +1,12 @@
 <div class="kira-header">
     <a
         class="kira-drawer-button mdui-ripple"
-        title="导航栏"
+        title="<%= isEnglish ? 'Navigation' : '导航栏' %>"
         onclick="document.querySelector('.kira-sidebar-modal').classList.add('show');document.querySelector('.kira-sidebar#sidebar').classList.add('show');"
     >
         <i class="kirafont icon-menu"></i>
     </a>
-    <a class="kira-header-home" href="<%- url_for('/') %>" title="<%= config.title %>">
+    <a class="kira-header-home" href="<%- url_for(isEnglish ? '/en/' : '/') %>" title="<%= config.title %>">
         <img
 			src="<%= theme.avatar %>"
 			alt="<%= config.author || config.title %>"
@@ -17,7 +17,7 @@
         href="https://github.com/GlitchedReme/SlayTheSpire2ModdingTutorials"
         target="_blank"
         rel="noopener noreferrer"
-        title="GitHub 仓库"
+        title="<%= isEnglish ? 'GitHub Repository' : 'GitHub 仓库' %>"
     >
         <i class="kirafont icon-github"></i>
     </a>

@@ -1,24 +1,25 @@
 <div class="kira-right-column" id="kira-toc-column">
-	<button type="button" class="kira-panel-reopen kira-panel-reopen--toc" id="kira-toc-reopen" hidden title="展开本页目录" aria-label="展开本页目录">
+	<button type="button" class="kira-panel-reopen kira-panel-reopen--toc" id="kira-toc-reopen" hidden title="<%= isEnglish ? 'Expand TOC' : '展开本页目录' %>" aria-label="<%= isEnglish ? 'Expand TOC' : '展开本页目录' %>">
 		<i class="kirafont icon-caret-up kira-reopen-icon" aria-hidden="true"></i>
 	</button>
 	<div class="kira-chapters-panel" id="kira-chapters-panel">
 		<div class="kira-panel-header">
-			<div class="kira-chapters-title">本页目录</div>
-			<button type="button" class="kira-collapse-toggle" id="kira-toc-collapse" aria-expanded="true" aria-controls="kira-chapters-body" title="折叠本页目录" aria-label="折叠本页目录">
+			<div class="kira-chapters-title"><%= isEnglish ? 'On This Page' : '本页目录' %></div>
+			<button type="button" class="kira-collapse-toggle" id="kira-toc-collapse" aria-expanded="true" aria-controls="kira-chapters-body" title="<%= isEnglish ? 'Collapse TOC' : '折叠本页目录' %>" aria-label="<%= isEnglish ? 'Collapse TOC' : '折叠本页目录' %>">
 				<i class="kirafont icon-caret-up kira-collapse-icon" aria-hidden="true"></i>
 			</button>
 		</div>
 		<div class="kira-chapters-body" id="kira-chapters-body">
-			<nav class="kira-chapters-nav kira-scrollbar" aria-label="文章目录">
+			<nav class="kira-chapters-nav kira-scrollbar" aria-label="<%= isEnglish ? 'Table of Contents' : '文章目录' %>">
 				<ul id="kira-chapters-list"></ul>
 			</nav>
 		</div>
 	</div>
 	<div class="kira-floating-stack">
+		<%- include("lang-switch") %>
 		<%- include("community-dock") %>
 		<a onclick="document.querySelector('#kira-top-header').scrollIntoView({behavior: 'smooth'});" class="kira-backtotop"
-			aria-label="回到顶部" title="回到顶部">
+			aria-label="<%= isEnglish ? 'Back to top' : '回到顶部' %>" title="<%= isEnglish ? 'Back to top' : '回到顶部' %>">
 			<button class="mdui-fab mdui-ripple">
 				<i class="kirafont icon-caret-up"></i>
 			</button>

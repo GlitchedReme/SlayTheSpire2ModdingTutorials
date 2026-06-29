@@ -484,6 +484,7 @@ customScripts:
     - docs-anchors
     - docs-panels
     - community-qq
+    - lang-switch
 
 # 友链配置
 friends:

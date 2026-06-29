@@ -8,10 +8,19 @@ const path = require("path");
 const { execFileSync } = require("child_process");
 
 const ROOT = path.resolve(__dirname, "..");
-const POSTS_DIR = path.join(ROOT, "source", "_posts");
+const LANG = (function () {
+  const idx = process.argv.indexOf("--lang");
+  return idx >= 0 ? process.argv[idx + 1] : null;
+})();
+const IS_EN = LANG === "en";
+const POSTS_DIR = IS_EN
+  ? path.join(ROOT, "source", "_posts", "en")
+  : path.join(ROOT, "source", "_posts");
 const IMAGES_SRC = path.join(ROOT, "images");
 const IMAGES_DST = path.join(ROOT, "source", "images");
-const MANIFEST = path.join(__dirname, "posts-manifest.json");
+const MANIFEST = IS_EN
+  ? path.join(__dirname, "posts-manifest-en.json")
+  : path.join(__dirname, "posts-manifest.json");
 
 function readManifestEntries(manifest) {
   const entries = [];
@@ -130,10 +139,10 @@ function transformBody(body, entry, permalinkMap) {
 
 function buildPermalinkMap(entries) {
   const map = [];
-  map.push(["../README.md", "/"]);
-  map.push(["../../README.md", "/"]);
-  map.push(["../README.md#", "/#"]);
-  map.push(["../../README.md#", "/#"]);
+  map.push(["../README.md", IS_EN ? "/en/" : "/"]);
+  map.push(["../../README.md", IS_EN ? "/en/" : "/"]);
+  map.push(["../README.md#", IS_EN ? "/en/#" : "/#"]);
+  map.push(["../../README.md#", IS_EN ? "/en/#" : "/#"]);
   for (const e of entries) {
     const dir = path.dirname(e.source).replace(/\\/g, "/");
     const permalink = e.permalink.startsWith("/") ? e.permalink : `/${e.permalink}`;

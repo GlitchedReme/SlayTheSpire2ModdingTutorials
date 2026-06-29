@@ -1,17 +1,14 @@
 <!DOCTYPE html>
-<html <% if (config.language) { %>
-	lang="<%- config.language %>"<% } %>>
+<% var pagePath = String(page.path || page.source || page.permalink || ""); %>
+<% var isEnglish = pagePath === "/en" || pagePath.indexOf("/en/") === 0 || pagePath.indexOf("en/") === 0; %>
+<% var isToolPage = /^tools\//.test(pagePath) || /\/tools\//.test(pagePath) || /^en\/tools\//.test(pagePath); %>
+<html lang="<%= isEnglish ? 'en' : (config.language || 'zh-CN') %>">
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<% if (config.description) { %>
-			<meta name="description" content="<%= config.description %>" />
-			<meta property="og:description" content="<%= config.description %>" />
-		<% } %>
-		<% if (page.description) { %>
-			<meta name="description" content="<%= page.description %>" />
-			<meta property="og:description" content="<%= page.description %>" />
+		<% var desc = page.description || config.description; if (desc) { %>
+			<meta name="description" content="<%= desc %>" />
+			<meta property="og:description" content="<%= desc %>" />
 		<% } %>
 		<% if (config.keywords) { %>
 			<meta name="keywords" content="<%= config.keywords %>" />
@@ -62,18 +59,14 @@
 		<%- js(["deps/js/APlayer.min", "deps/js/Meting.min"]) %>
 	</head>
 
-	<%
-		var pagePath = String(page.path || page.source || page.permalink || "");
-		var isToolPage = /^tools\//.test(pagePath) || /\/tools\//.test(pagePath);
-	%>
 	<body class="<%= isToolPage ? 'kira-tools-page' : '' %>">
 		<div
 			class="kira-background"
 			style="background-image: url('<%= theme.background.path %>')"
 		></div>
-		<%- include("components/header") %>
+		<%- partial("components/header", { isEnglish: isEnglish }) %>
 		<div class="kira-body">
-			<%- include("components/sidebar") %>
+			<%- partial("components/sidebar", { isEnglish: isEnglish }) %>
 			<div class="kira-content">
 				<div id="kira-top-header"></div>
 				<div class="kira-main-content">
@@ -81,7 +74,9 @@
 				</div>
 			</div>
 			<% if (!isToolPage) { %>
-				<%- include("components/right-column") %>
+				<%- partial("components/right-column", { isEnglish: isEnglish, pagePath: pagePath }) %>
+			<% } else { %>
+				<%- partial("components/lang-switch", { isEnglish: isEnglish, pagePath: pagePath }) %>
 			<% } %>
 		</div>
 	</body>

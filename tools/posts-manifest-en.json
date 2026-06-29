@@ -1,0 +1,538 @@
+{
+  "home": {
+    "source": "Languages/English/README.md",
+    "post": "00-home.md",
+    "permalink": "en/",
+    "title": "Slay the Spire 2 Modding Guide",
+    "categories": []
+  },
+  "basics": [
+    {
+      "source": "Languages/English/Basics/01 - Environment Setup/README.md",
+      "post": "01-env-setup.md",
+      "permalink": "en/docs/01-env-setup/",
+      "title": "Environment Setup"
+    },
+    {
+      "source": "Languages/English/Basics/02 - Installation, Source Code & Modifications/README.md",
+      "post": "02-install-view-source-and-patch.md",
+      "permalink": "en/docs/02-install-view-source-and-patch/",
+      "title": "Installation, Source Code & Modifications"
+    },
+    {
+      "source": "Languages/English/Basics/03 - Choosing a Base Library/README.md",
+      "post": "03-choose-base-library.md",
+      "permalink": "en/docs/03-choose-base-library/",
+      "title": "Choosing a Base Library"
+    },
+    {
+      "source": "Languages/English/Basics/05 - Variables & Descriptions/README.md",
+      "post": "05-variable-and-description.md",
+      "permalink": "en/docs/05-variable-and-description/",
+      "title": "Variables & Descriptions"
+    },
+    {
+      "source": "Languages/English/Basics/06 - Ancient Dialogues/README.md",
+      "post": "08-ancient-dialogue.md",
+      "permalink": "en/docs/08-ancient-dialogue/",
+      "title": "Ancient Dialogues"
+    },
+    {
+      "source": "Languages/English/Basics/07 - Quick Debugging & Hot Reload/README.md",
+      "post": "07-quick-debug-and-hot-reload.md",
+      "permalink": "en/docs/07-quick-debug-and-hot-reload/",
+      "title": "Quick Debugging & Hot Reload"
+    },
+    {
+      "source": "Languages/English/Basics/08 - Launch Parameters/README.md",
+      "post": "08-launch-arguments.md",
+      "permalink": "en/docs/08-launch-arguments/",
+      "title": "Launch Parameters"
+    },
+    {
+      "source": "Languages/English/Basics/09 - Console Commands/README.md",
+      "post": "09-console-commands.md",
+      "permalink": "en/docs/09-console-commands/",
+      "title": "Console Commands"
+    },
+    {
+      "source": "Languages/English/Basics/10 - Patch/README.md",
+      "post": "10-patch.md",
+      "permalink": "en/docs/10-patch/",
+      "title": "Patch"
+    },
+    {
+      "source": "Languages/English/Basics/11 - Workshop Upload/README.md",
+      "post": "11-upload-workshop.md",
+      "permalink": "en/docs/11-upload-workshop/",
+      "title": "Workshop Upload"
+    }
+  ],
+  "baselib": {
+    "overview": {
+      "source": "Languages/English/BaseLib/README.md",
+      "post": "03-baselib.md",
+      "permalink": "en/docs/03-baselib/",
+      "title": "BaseLib"
+    },
+    "articles": [
+      {
+        "source": "Languages/English/BaseLib/01 - Adding Cards/README.md",
+        "post": "03-baselib/03-01-add-card.md",
+        "permalink": "en/docs/03-baselib/03-01-add-card/",
+        "title": "Adding Cards"
+      },
+      {
+        "source": "Languages/English/BaseLib/02 - Custom Mod Config/README.md",
+        "post": "03-baselib/03-02-mod-config.md",
+        "permalink": "en/docs/03-baselib/03-02-mod-config/",
+        "title": "Custom Mod Config"
+      },
+      {
+        "source": "Languages/English/BaseLib/03 - Adding Relics/README.md",
+        "post": "03-baselib/03-03-add-relic.md",
+        "permalink": "en/docs/03-baselib/03-03-add-relic/",
+        "title": "Adding Relics"
+      },
+      {
+        "source": "Languages/English/BaseLib/04 - Adding Card Properties/README.md",
+        "post": "03-baselib/03-04-card-properties.md",
+        "permalink": "en/docs/03-baselib/03-04-card-properties/",
+        "title": "Adding Card Properties"
+      },
+      {
+        "source": "Languages/English/BaseLib/05 - Adding Powers/README.md",
+        "post": "03-baselib/03-05-add-power.md",
+        "permalink": "en/docs/03-baselib/03-05-add-power/",
+        "title": "Adding Powers"
+      },
+      {
+        "source": "Languages/English/BaseLib/06 - Adding Potions/README.md",
+        "post": "03-baselib/03-06-add-potion.md",
+        "permalink": "en/docs/03-baselib/03-06-add-potion/",
+        "title": "Adding Potions"
+      },
+      {
+        "source": "Languages/English/BaseLib/07 - Adding Ancients/README.md",
+        "post": "03-baselib/03-07-add-ancient.md",
+        "permalink": "en/docs/03-baselib/03-07-add-ancient/",
+        "title": "Adding Ancients"
+      },
+      {
+        "source": "Languages/English/BaseLib/08 - Adding Orbs/README.md",
+        "post": "03-baselib/03-08-add-orb.md",
+        "permalink": "en/docs/03-baselib/03-08-add-orb/",
+        "title": "Adding Orbs"
+      },
+      {
+        "source": "Languages/English/BaseLib/09 - In-Run Saving/README.md",
+        "post": "03-baselib/03-09-run-save.md",
+        "permalink": "en/docs/03-baselib/03-09-run-save/",
+        "title": "In-Run Saving"
+      },
+      {
+        "source": "Languages/English/BaseLib/10 - Mod Interop/README.md",
+        "post": "03-baselib/03-10-mod-integration.md",
+        "permalink": "en/docs/03-baselib/03-10-mod-integration/",
+        "title": "Mod Interop"
+      },
+      {
+        "source": "Languages/English/BaseLib/11 - Adding Monsters/README.md",
+        "post": "03-baselib/03-11-add-monster.md",
+        "permalink": "en/docs/03-baselib/03-11-add-monster/",
+        "title": "Adding Monsters"
+      },
+      {
+        "source": "Languages/English/BaseLib/12 - Adding Events/README.md",
+        "post": "03-baselib/03-12-add-event.md",
+        "permalink": "en/docs/03-baselib/03-12-add-event/",
+        "title": "Adding Events"
+      },
+      {
+        "source": "Languages/English/BaseLib/13 - Adding Enchantments/README.md",
+        "post": "03-baselib/03-13-add-enchantment.md",
+        "permalink": "en/docs/03-baselib/03-13-add-enchantment/",
+        "title": "Adding Enchantments"
+      },
+      {
+        "source": "Languages/English/BaseLib/14 - Adding Characters/README.md",
+        "post": "04-add-new-character.md",
+        "permalink": "en/docs/04-add-new-character/",
+        "title": "Adding Characters"
+      },
+      {
+        "source": "Languages/English/BaseLib/15 - Adding Singletons/README.md",
+        "post": "03-baselib/03-15-add-singleton.md",
+        "permalink": "en/docs/03-baselib/03-15-add-singleton/",
+        "title": "Adding Singletons"
+      },
+      {
+        "source": "Languages/English/BaseLib/16 - Max Hand Size/README.md",
+        "post": "03-baselib/03-16-max-hand-size.md",
+        "permalink": "en/docs/03-baselib/03-16-max-hand-size/",
+        "title": "Max Hand Size"
+      }
+    ]
+  },
+  "ritsulib": {
+    "overview": {
+      "source": "Languages/English/RitsuLib/README.md",
+      "post": "04-ritsulib.md",
+      "permalink": "en/docs/04-ritsulib/",
+      "title": "RitsuLib"
+    },
+    "chapters": [
+      {
+        "id": "basic-content",
+        "articles": [
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/01 - Adding Cards/README.md",
+            "post": "04-ritsulib/04-01-add-card.md",
+            "permalink": "en/docs/04-ritsulib/04-01-add-card/",
+            "title": "Adding Cards"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/02 - Custom Config/README.md",
+            "post": "04-ritsulib/04-02-custom-config.md",
+            "permalink": "en/docs/04-ritsulib/04-02-custom-config/",
+            "title": "Custom Config"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/03 - Adding Relics/README.md",
+            "post": "04-ritsulib/04-03-add-relic.md",
+            "permalink": "en/docs/04-ritsulib/04-03-add-relic/",
+            "title": "Adding Relics"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/04 - Adding Card Properties/README.md",
+            "post": "04-ritsulib/04-04-card-properties.md",
+            "permalink": "en/docs/04-ritsulib/04-04-card-properties/",
+            "title": "Adding Card Properties"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/05 - Adding Powers/README.md",
+            "post": "04-ritsulib/04-05-add-power.md",
+            "permalink": "en/docs/04-ritsulib/04-05-add-power/",
+            "title": "Adding Powers"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/06 - Adding Potions/README.md",
+            "post": "04-ritsulib/04-06-add-potion.md",
+            "permalink": "en/docs/04-ritsulib/04-06-add-potion/",
+            "title": "Adding Potions"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/07 - Adding Ancients/README.md",
+            "post": "04-ritsulib/04-07-add-ancient.md",
+            "permalink": "en/docs/04-ritsulib/04-07-add-ancient/",
+            "title": "Adding Ancients"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/08 - Adding Orbs/README.md",
+            "post": "04-ritsulib/04-08-add-orb.md",
+            "permalink": "en/docs/04-ritsulib/04-08-add-orb/",
+            "title": "Adding Orbs"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/09 - Adding Timelines/README.md",
+            "post": "04-ritsulib/04-09-add-timeline.md",
+            "permalink": "en/docs/04-ritsulib/04-09-add-timeline/",
+            "title": "Adding Timelines"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/10 - Adding Audio/README.md",
+            "post": "04-ritsulib/04-10-add-audio.md",
+            "permalink": "en/docs/04-ritsulib/04-10-add-audio/",
+            "title": "Adding Audio"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/11 - Adding Monsters/README.md",
+            "post": "04-ritsulib/04-11-add-monster.md",
+            "permalink": "en/docs/04-ritsulib/04-11-add-monster/",
+            "title": "Adding Monsters"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/12 - Adding Events/README.md",
+            "post": "04-ritsulib/04-12-add-event.md",
+            "permalink": "en/docs/04-ritsulib/04-12-add-event/",
+            "title": "Adding Events"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/13 - Adding Enchantments/README.md",
+            "post": "04-ritsulib/04-13-add-enchantment.md",
+            "permalink": "en/docs/04-ritsulib/04-13-add-enchantment/",
+            "title": "Adding Enchantments"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/14 - Adding Characters/README.md",
+            "post": "04-ritsulib/04-14-add-new-character.md",
+            "permalink": "en/docs/04-ritsulib/04-14-add-new-character/",
+            "title": "Adding Characters"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/15 - Adding Singletons/README.md",
+            "post": "04-ritsulib/04-15-add-singleton.md",
+            "permalink": "en/docs/04-ritsulib/04-15-add-singleton/",
+            "title": "Adding Singletons"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/16 - Adding Card Pools/README.md",
+            "post": "04-ritsulib/04-15-1-add-card-pool.md",
+            "permalink": "en/docs/04-ritsulib/04-15-1-add-card-pool/",
+            "title": "Adding Card Pools",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/17 - Character Animation/README.md",
+            "post": "04-ritsulib/04-15-2-character-animation.md",
+            "permalink": "en/docs/04-ritsulib/04-15-2-character-animation/",
+            "title": "Character Animation",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/18 - Adding Components/README.md",
+            "post": "04-ritsulib/04-18-add-capability.md",
+            "permalink": "en/docs/04-ritsulib/04-18-add-capability/",
+            "title": "Adding Components"
+          }
+        ]
+      },
+      {
+        "id": "gameplay",
+        "articles": [
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/01 - Health Bar Overlay/README.md",
+            "post": "04-ritsulib/04-16-health-bar-overlay.md",
+            "permalink": "en/docs/04-ritsulib/04-16-health-bar-overlay/",
+            "title": "Health Bar Overlay"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/02 - Max Hand Size/README.md",
+            "post": "04-ritsulib/04-18-max-hand-size.md",
+            "permalink": "en/docs/04-ritsulib/04-18-max-hand-size/",
+            "title": "Max Hand Size"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/03 - Card Hand Glow/README.md",
+            "post": "04-ritsulib/04-19-hand-outline.md",
+            "permalink": "en/docs/04-ritsulib/04-19-hand-outline/",
+            "title": "Card Hand Glow"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/04 - Custom Card Piles/README.md",
+            "post": "04-ritsulib/04-20-custom-card-pile.md",
+            "permalink": "en/docs/04-ritsulib/04-20-custom-card-pile/",
+            "title": "Custom Card Piles",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/05 - Top Bar Buttons/README.md",
+            "post": "04-ritsulib/04-21-top-bar-button.md",
+            "permalink": "en/docs/04-ritsulib/04-21-top-bar-button/",
+            "title": "Top Bar Buttons",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/06 - Toast Notifications/README.md",
+            "post": "04-ritsulib/04-22-notification.md",
+            "permalink": "en/docs/04-ritsulib/04-22-notification/",
+            "title": "Toast Notifications",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/07 - Extra Badges/README.md",
+            "post": "04-ritsulib/04-22-1-extra-badge.md",
+            "permalink": "en/docs/04-ritsulib/04-22-1-extra-badge/",
+            "title": "Extra Badges",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/08 - Common Utilities/README.md",
+            "post": "04-ritsulib/04-22-2-common-tools.md",
+            "permalink": "en/docs/04-ritsulib/04-22-2-common-tools/",
+            "title": "Common Utilities",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/09 - In-Run Data/README.md",
+            "post": "04-ritsulib/04-22-3-in-run-data.md",
+            "permalink": "en/docs/04-ritsulib/04-22-3-in-run-data/",
+            "title": "In-Run Data",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/10 - Custom Rewards/README.md",
+            "post": "04-ritsulib/04-22-4-custom-reward.md",
+            "permalink": "en/docs/04-ritsulib/04-22-4-custom-reward/",
+            "title": "Custom Rewards",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/11 - Custom Targets/README.md",
+            "post": "04-ritsulib/04-22-5-custom-targeting.md",
+            "permalink": "en/docs/04-ritsulib/04-22-5-custom-targeting/",
+            "title": "Custom Targets",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/12 - Right Click Interaction/README.md",
+            "post": "04-ritsulib/04-22-6-right-click.md",
+            "permalink": "en/docs/04-ritsulib/04-22-6-right-click/",
+            "title": "Right Click Interaction"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/13 - Secondary Resources/README.md",
+            "post": "04-ritsulib/04-22-7-secondary-resources.md",
+            "permalink": "en/docs/04-ritsulib/04-22-7-secondary-resources/",
+            "title": "Secondary Resources"
+          }
+        ]
+      },
+      {
+        "id": "mod-tools",
+        "articles": [
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/01 - Data Saving/README.md",
+            "post": "04-ritsulib/04-17-data-save.md",
+            "permalink": "en/docs/04-ritsulib/04-17-data-save/",
+            "title": "Data Saving"
+          },
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/02 - Lifecycle Events/README.md",
+            "post": "04-ritsulib/04-23-lifecycle-events.md",
+            "permalink": "en/docs/04-ritsulib/04-23-lifecycle-events/",
+            "title": "Lifecycle Events",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/03 - Patch System/README.md",
+            "post": "04-ritsulib/04-24-patch-system.md",
+            "permalink": "en/docs/04-ritsulib/04-24-patch-system/",
+            "title": "Patch System",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/04 - Update Checker/README.md",
+            "post": "04-ritsulib/04-25-update-checker.md",
+            "permalink": "en/docs/04-ritsulib/04-25-update-checker/",
+            "title": "Update Checker",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/05 - Runtime Hotkeys/README.md",
+            "post": "04-ritsulib/04-26-runtime-hotkey.md",
+            "permalink": "en/docs/04-ritsulib/04-26-runtime-hotkey/",
+            "title": "Runtime Hotkeys",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/06 - Content Registration/README.md",
+            "post": "04-ritsulib/04-27-content-registry.md",
+            "permalink": "en/docs/04-ritsulib/04-27-content-registry/",
+            "title": "Content Registration",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/07 - Node Attachments/README.md",
+            "post": "04-ritsulib/04-28-node-attachment.md",
+            "permalink": "en/docs/04-ritsulib/04-28-node-attachment/",
+            "title": "Node Attachments",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/09 - Data Telemetry/README.md",
+            "post": "04-ritsulib/04-29-telemetry.md",
+            "permalink": "en/docs/04-ritsulib/04-29-telemetry/",
+            "title": "Data Telemetry",
+            "author": "alkaid616"
+          },
+          {
+            "source": "Languages/English/RitsuLib/03 - Mod Utilities/10 - Mod Interop/README.md",
+            "post": "04-ritsulib/04-30-mod-integration.md",
+            "permalink": "en/docs/04-ritsulib/04-30-mod-integration/",
+            "title": "Mod Interop",
+            "author": "alkaid616"
+          }
+        ]
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "source": "Languages/English/Migrations/01 - Release to Beta/README.md",
+      "post": "07-migration-99-100.md",
+      "permalink": "en/docs/07-migration-99-100/",
+      "title": "Release to Beta"
+    },
+    {
+      "source": "Languages/English/Migrations/02 - BaseLib to RitsuLib/README.md",
+      "post": "08-migration-baselib-to-ritsulib.md",
+      "permalink": "en/docs/08-migration-baselib-to-ritsulib/",
+      "title": "BaseLib to RitsuLib"
+    }
+  ],
+  "visuals": [
+    {
+      "source": "Languages/English/Visuals/01 - Card Art & Spine/README.md",
+      "post": "05-card-art-and-skin-replacement.md",
+      "permalink": "en/docs/05-card-art-and-skin-replacement/",
+      "title": "Card Art & Spine"
+    },
+    {
+      "source": "Languages/English/Visuals/02 - Art Style & Illustration/README.md",
+      "post": "06-style-art-drawing.md",
+      "permalink": "en/docs/06-style-art-drawing/",
+      "title": "Art Style & Illustration",
+      "author": "未设置"
+    },
+    {
+      "source": "Languages/English/Visuals/03 - VFX & Animation/3-1 Frame Animation/README.md",
+      "post": "09-01-frame-animation.md",
+      "permalink": "en/docs/09-01-frame-animation/",
+      "title": "Frame Animation",
+      "author": "vitechliu"
+    },
+    {
+      "source": "Languages/English/Visuals/03 - VFX & Animation/3-2 Texture Atlas/README.md",
+      "post": "09-02-texture-atlas.md",
+      "permalink": "en/docs/09-02-texture-atlas/",
+      "title": "Texture Atlas",
+      "author": "vitechliu"
+    },
+    {
+      "source": "Languages/English/Visuals/03 - VFX & Animation/3-3 VFX Playback & Caching/README.md",
+      "post": "09-03-vfx-instantiation.md",
+      "permalink": "en/docs/09-03-vfx-instantiation/",
+      "title": "VFX Playback & Caching",
+      "author": "vitechliu"
+    },
+    {
+      "source": "Languages/English/Visuals/03 - VFX & Animation/3-4 Particle Effects/README.md",
+      "post": "09-04-particle-vfx.md",
+      "permalink": "en/docs/09-04-particle-vfx/",
+      "title": "Particle Effects",
+      "author": "vitechliu"
+    },
+    {
+      "source": "Languages/English/Visuals/03 - VFX & Animation/3-5 WorldEnvironment & Global Lighting/README.md",
+      "post": "09-05-world-environment.md",
+      "permalink": "en/docs/09-05-world-environment/",
+      "title": "WorldEnvironment & Global Lighting",
+      "author": "vitechliu"
+    },
+    {
+      "source": "Languages/English/Visuals/03 - VFX & Animation/3-6 Shaders/README.md",
+      "post": "09-06-shader.md",
+      "permalink": "en/docs/09-06-shader/",
+      "title": "Shaders",
+      "author": "vitechliu"
+    },
+    {
+      "source": "Languages/English/Visuals/03 - VFX & Animation/3-7 Vanilla Game VFX/README.md",
+      "post": "09-07-game-builtin-vfx.md",
+      "permalink": "en/docs/09-07-game-builtin-vfx/",
+      "title": "Vanilla Game VFX",
+      "author": "vitechliu"
+    }
+  ]
+}

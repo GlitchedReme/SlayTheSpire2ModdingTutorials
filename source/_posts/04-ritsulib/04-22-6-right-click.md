@@ -5,7 +5,7 @@ permalink: docs/04-ritsulib/04-22-6-right-click/
 categories:
 - Basics
 ---
-`RitsuLib` 提供了一个完整的右键交互系统，支持卡牌、遗物、能力、药水四种模型的右键点击，自动处理多人同步、控制器兼容和优先级调度。
+`RitsuLib` 提供了一个右键交互系统，支持卡牌、遗物、能力、药水的右键点击，自动处理多人同步、手柄兼容和优先级调度。
 
 > 以下示例默认已经在 `Entry.Init()` 中调用了 `ModTypeDiscoveryHub.RegisterModAssembly(...)`，否则自动注册不会生效。
 

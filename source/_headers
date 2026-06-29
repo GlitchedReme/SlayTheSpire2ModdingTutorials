@@ -1,0 +1,30 @@
+# Cloudflare Pages cache rules
+# Static lib files (fingerprinted, safe to cache aggressively)
+/lib/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts (versioned, safe to cache aggressively)
+/lib/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images (content images)
+/images/*
+  Cache-Control: public, max-age=604800
+
+# Deps (third-party, versioned)
+/deps/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Custom CSS/JS (may change during updates)
+/css/*
+  Cache-Control: public, max-age=7200
+/js/*
+  Cache-Control: public, max-age=7200
+/docs-nav.css
+  Cache-Control: public, max-age=7200
+/docs-*.js
+  Cache-Control: public, max-age=7200
+/community-qq.js
+  Cache-Control: public, max-age=7200
+/lang-switch.js
+  Cache-Control: public, max-age=7200

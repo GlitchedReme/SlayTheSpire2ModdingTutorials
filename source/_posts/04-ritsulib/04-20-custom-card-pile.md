@@ -34,15 +34,18 @@ public class Entry
         var registry = ModCardPileRegistry.For(ModId);
         VoidPile = registry.RegisterOwned("void_pile", new ModCardPileSpec
         {
+            // Scope 决定了牌堆的生命周期，
             // CombatOnly：每次战斗创建，战斗结束时销毁
             // RunPersistent：同一局游戏内可跨战斗保留（仅存于内存，需自行写入存档）
             Scope = ModCardPileScope.CombatOnly,
+            // Style 决定了牌堆按钮放置的位置，
             // Headless：不可见
             // TopBarDeck：顶栏牌组按钮旁
             // BottomLeft：战斗UI左下（抽牌堆附近）
             // BottomRight：战斗UI右下（消耗堆附近）
             // ExtraHand：额外手牌容器
             Style = ModCardPileUiStyle.BottomLeft,
+            // 锚点，见下
             Anchor = ModCardPileAnchor.Default,
             IconPath = "res://Test/images/void_pile.png",
             // 点击打开
@@ -54,33 +57,10 @@ public class Entry
 ```
 
 * `RegisterOwned` 返回 `ModCardPileDefinition`，其 `.PileType` 是运行时操作牌堆的标识。
-* RitsuLib 用 Harmony patch 拦截了原版 `CardPile.Get(PileType, Player)`，所以用你的 `PileType` 可以直接拿到牌堆对象。
 
-## 使用卡牌堆
+## Anchor（摆放位置，描点）
 
-注册后通过 `CardPileCmd.Add` 把卡牌移入自定义牌堆：
-
-```csharp
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Players;
-
-// 单张移入
-await CardPileCmd.Add(card, Entry.VoidPile);
-
-// 获取玩家的牌堆对象，手动读写
-var pile = Entry.VoidPile.GetPile(player);
-foreach (var c in pile.Cards)
-{
-    Logger.Info($"虚空堆中的卡牌: {c.Id}");
-}
-
-// 其他参考原版api即可
-```
-
-## Anchor（锚点）
-
-- `Anchor` 和 `Style` 一起决定按钮或 ExtraHand 挂在哪。不写时等价于 `ModCardPileAnchor.Default`。
+- `Anchor` 和 `Style` 一起决定你的额外卡牌堆挂在哪。不写时等价于 `ModCardPileAnchor.Default`。
 
 ### 写法一：Default
 
@@ -161,7 +141,33 @@ Anchor = ModCardPileAnchor.AtPivot(
 | `ExtraHandBelow`        | `ExtraHand`   | 手牌区域下方，再加 `Offset`                   |
 | `Custom`                | 任意          | 完全自定像素位置，不参与左下/右下自动排队     |
 
+## 使用卡牌堆
+
+和原版api一样，可以通过 `CardPileCmd` 的函数操作卡牌堆，或者 `.GetPile` 扩展方法获得牌堆。
+
+例如参考以下代码，通过 `CardPileCmd.Add` 把卡牌移入自定义牌堆和遍历卡牌：
+
+```csharp
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
+
+// 单张移入
+await CardPileCmd.Add(card, Entry.VoidPile);
+
+// 获取玩家的牌堆对象，手动读写
+var pile = Entry.VoidPile.GetPile(player);
+foreach (var c in pile.Cards)
+{
+    Logger.Info($"虚空堆中的卡牌: {c.Id}");
+}
+
+// 其他参考原版卡牌操作即可
+```
+
 ## 本地化文本
+
+添加鼠标悬浮在牌堆按钮上的提示文本，或者提示卡牌堆为空的对话文本。
 
 在`{modId}/localization/{lang}/static_hover_tips.json`中添加文本。
 

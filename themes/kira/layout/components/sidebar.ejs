@@ -5,17 +5,17 @@
 		</a>
 	</div>
 	<div class="kira-count">
-		<div><span>文章</span>
+		<div><span><%= isEnglish ? 'Posts' : '文章' %></span>
 			<%= site.posts.length %>
 		</div>
-		<div><span>标签</span>
+		<div><span><%= isEnglish ? 'Tags' : '标签' %></span>
 			<%= site.tags.length %>
 		</div>
-		<div><span>分类</span>
+		<div><span><%= isEnglish ? 'Categories' : '分类' %></span>
 			<%= site.categories.length %>
 		</div>
 	</div>
-	<button type="button" class="kira-panel-reopen" id="kira-sidebar-reopen" hidden title="展开导航" aria-label="展开导航">
+	<button type="button" class="kira-panel-reopen" id="kira-sidebar-reopen" hidden title="<%= isEnglish ? 'Expand navigation' : '展开导航' %>" aria-label="<%= isEnglish ? 'Expand navigation' : '展开导航' %>">
 		<i class="kirafont icon-caret-up kira-reopen-icon" aria-hidden="true"></i>
 	</button>
 	<div class="kira-sidebar-inner">
@@ -23,12 +23,12 @@
 			<div class="kira-search-panel">
 				<div class="kira-search-input-wrap">
 					<i class="kirafont icon-search"></i>
-					<input id="kira-search-input" type="search" placeholder="搜索全部文章内容..." autocomplete="off" />
+					<input id="kira-search-input" type="search" placeholder="<%= isEnglish ? 'Search articles…' : '搜索全部文章内容...' %>" autocomplete="off" />
 				</div>
 				<div id="kira-search-results" class="kira-search-results" hidden></div>
 			</div>
 			<button type="button" class="kira-collapse-toggle" id="kira-sidebar-collapse" aria-expanded="true"
-				aria-controls="kira-sidebar-scroll" title="折叠导航" aria-label="折叠导航">
+				aria-controls="kira-sidebar-scroll" title="<%= isEnglish ? 'Collapse navigation' : '折叠导航' %>" aria-label="<%= isEnglish ? 'Collapse navigation' : '折叠导航' %>">
 				<i class="kirafont icon-caret-up kira-collapse-icon" aria-hidden="true"></i>
 			</button>
 		</div>
@@ -36,12 +36,60 @@
 			<div class="kira-list kira-docs-tree kira-explorer">
 				<% if (theme.docsTree && theme.docsTree.length) { %>
 					<ul class="kira-explorer-list kira-explorer-root">
-						<% var nodeCounter=0; function renderExplorer(nodes, level) { (nodes ||
+						<% var nodeCounter=0; var enPagePath = isEnglish ? String(page.path || "").replace(/^en\//, "") : null;
+						// Simple structural English labels
+						var EN_LABEL = { '首页':'Home','基础':'Basics','迁移':'Migrations','视觉':'Visuals',
+						  '工具':'Tools','01 添加基础内容':'01 Basic Content','02 玩法基底':'02 Gameplay Foundation',
+						  '03 模组工具':'03 Mod Utilities','03 特效与动画':'VFX & Animation' };
+						var EN_TITLE = {
+						  '/': 'Home','/docs/01-env-setup/': 'Environment Setup','/docs/02-install-view-source-and-patch/': 'Installation, Source Code & Modifications','/docs/03-choose-base-library/': 'Choosing a Base Library',
+						  '/docs/05-variable-and-description/': 'Variables & Descriptions','/docs/08-ancient-dialogue/': 'Ancient Dialogues','/docs/07-quick-debug-and-hot-reload/': 'Quick Debugging & Hot Reload',
+						  '/docs/08-launch-arguments/': 'Launch Parameters','/docs/09-console-commands/': 'Console Commands','/docs/10-patch/': 'Patch','/docs/11-upload-workshop/': 'Workshop Upload',
+						  '/docs/03-baselib/': 'BaseLib','/docs/03-baselib/03-01-add-card/': 'Adding Cards','/docs/03-baselib/03-02-mod-config/': 'Custom Mod Config',
+						  '/docs/03-baselib/03-03-add-relic/': 'Adding Relics','/docs/03-baselib/03-04-card-properties/': 'Adding Card Properties','/docs/03-baselib/03-05-add-power/': 'Adding Powers',
+						  '/docs/03-baselib/03-06-add-potion/': 'Adding Potions','/docs/03-baselib/03-07-add-ancient/': 'Adding Ancients','/docs/03-baselib/03-08-add-orb/': 'Adding Orbs',
+						  '/docs/03-baselib/03-09-run-save/': 'In-Run Saving','/docs/03-baselib/03-10-mod-integration/': 'Mod Interop','/docs/03-baselib/03-11-add-monster/': 'Adding Monsters',
+						  '/docs/03-baselib/03-12-add-event/': 'Adding Events','/docs/03-baselib/03-13-add-enchantment/': 'Adding Enchantments','/docs/03-baselib/03-15-add-singleton/': 'Adding Singletons',
+						  '/docs/03-baselib/03-16-max-hand-size/': 'Max Hand Size','/docs/04-add-new-character/': 'Adding Characters',
+						  '/docs/04-ritsulib/': 'RitsuLib','/docs/04-ritsulib/04-01-add-card/': 'Adding Cards','/docs/04-ritsulib/04-02-custom-config/': 'Custom Config',
+						  '/docs/04-ritsulib/04-03-add-relic/': 'Adding Relics','/docs/04-ritsulib/04-04-card-properties/': 'Adding Card Properties','/docs/04-ritsulib/04-05-add-power/': 'Adding Powers',
+						  '/docs/04-ritsulib/04-06-add-potion/': 'Adding Potions','/docs/04-ritsulib/04-07-add-ancient/': 'Adding Ancients','/docs/04-ritsulib/04-08-add-orb/': 'Adding Orbs',
+						  '/docs/04-ritsulib/04-09-add-timeline/': 'Adding Timelines','/docs/04-ritsulib/04-10-add-audio/': 'Adding Audio','/docs/04-ritsulib/04-11-add-monster/': 'Adding Monsters',
+						  '/docs/04-ritsulib/04-12-add-event/': 'Adding Events','/docs/04-ritsulib/04-13-add-enchantment/': 'Adding Enchantments','/docs/04-ritsulib/04-14-add-new-character/': 'Adding Characters',
+						  '/docs/04-ritsulib/04-15-add-singleton/': 'Adding Singletons','/docs/04-ritsulib/04-15-1-add-card-pool/': 'Adding Card Pools','/docs/04-ritsulib/04-15-2-character-animation/': 'Character Animation',
+						  '/docs/04-ritsulib/04-18-add-capability/': 'Adding Components','/docs/04-ritsulib/04-16-health-bar-overlay/': 'Health Bar Overlay','/docs/04-ritsulib/04-18-max-hand-size/': 'Max Hand Size',
+						  '/docs/04-ritsulib/04-19-hand-outline/': 'Card Hand Glow','/docs/04-ritsulib/04-20-custom-card-pile/': 'Custom Card Piles','/docs/04-ritsulib/04-21-top-bar-button/': 'Top Bar Buttons',
+						  '/docs/04-ritsulib/04-22-notification/': 'Toast Notifications','/docs/04-ritsulib/04-22-1-extra-badge/': 'Extra Badges','/docs/04-ritsulib/04-22-2-common-tools/': 'Common Utilities',
+						  '/docs/04-ritsulib/04-22-3-in-run-data/': 'In-Run Data','/docs/04-ritsulib/04-22-4-custom-reward/': 'Custom Rewards','/docs/04-ritsulib/04-22-5-custom-targeting/': 'Custom Targets',
+						  '/docs/04-ritsulib/04-22-6-right-click/': 'Right Click Interaction','/docs/04-ritsulib/04-22-7-secondary-resources/': 'Secondary Resources',
+						  '/docs/04-ritsulib/04-17-data-save/': 'Data Saving','/docs/04-ritsulib/04-23-lifecycle-events/': 'Lifecycle Events','/docs/04-ritsulib/04-24-patch-system/': 'Patch System',
+						  '/docs/04-ritsulib/04-25-update-checker/': 'Update Checker','/docs/04-ritsulib/04-26-runtime-hotkey/': 'Runtime Hotkeys','/docs/04-ritsulib/04-27-content-registry/': 'Content Registration',
+						  '/docs/04-ritsulib/04-28-node-attachment/': 'Node Attachments','/docs/04-ritsulib/04-29-telemetry/': 'Data Telemetry','/docs/04-ritsulib/04-30-mod-integration/': 'Mod Interop',
+						  '/docs/07-migration-99-100/': 'Release to Beta','/docs/08-migration-baselib-to-ritsulib/': 'BaseLib to RitsuLib',
+						  '/docs/05-card-art-and-skin-replacement/': 'Card Art & Spine','/docs/06-style-art-drawing/': 'Art Style & Illustration',
+						  '/docs/09-01-frame-animation/': 'Frame Animation','/docs/09-02-texture-atlas/': 'Texture Atlas','/docs/09-03-vfx-instantiation/': 'VFX Playback & Caching',
+						  '/docs/09-04-particle-vfx/': 'Particle Effects','/docs/09-05-world-environment/': 'Environment & Global Lighting','/docs/09-06-shader/': 'Shaders','/docs/09-07-game-builtin-vfx/': 'Vanilla Game VFX',
+						  '/tools/id-generator/': 'ID Generator','/tools/card-frame-preview/': 'Card Frame Preview',
+						  '/tools/text-preview/': 'Text Preview','/tools/dialogue-preview/': 'Dialogue Preview'
+						};
+						function nodeTitle(node, nodePath) {
+							if (!isEnglish) return node.title;
+							if (!nodePath) return EN_LABEL[node.title] || node.title;
+							var lookup = node.path === '/' ? '/' : '/' + nodePath.replace(/\/+$/, '') + '/';
+							var en = EN_TITLE[lookup];
+							if (en) {
+								var m = node.title.match(/^(\d+(-\d+)?)\s*/);
+								if (m) return m[1] + ' ' + en;
+								return en;
+							}
+							return node.title;
+						}
+						function renderExplorer(nodes, level) { (nodes ||
 							[]).forEach(function(node) { var hasChildren=!!(node.children && node.children.length); var
 							isOpen=node.open !==false; nodeCounter +=1; var nodeId='tree-node-' + level + '-' +
 							nodeCounter; var nodePath=node.path ? (node.path==='/' ? node.path :
 							node.path.replace(/^\/+/, '' )) : '' ; var isActive=node.path &&
-							String(is_current(node.path))==='true' ; %>
+							(isEnglish ? enPagePath === nodePath : String(is_current(node.path))==='true'); %>
 							<li class="kira-explorer-node <%= hasChildren ? 'is-folder' : 'is-file' %> <%= isOpen ? 'is-open' : '' %> <%= isActive ? 'is-active' : '' %>"
 								data-level="<%= level %>" data-node-id="<%= nodeId %>"
 								style="--node-order:<%= nodeCounter %>;">
@@ -58,23 +106,22 @@
 
 												<% if (node.path) { %>
 													<a class="kira-explorer-link mdui-ripple"
-														href="<%- url_for(nodePath, { relative: true }) -%>"
-														title="<%= node.title %>">
+														href="<%- url_for((isEnglish ? 'en/' : '') + nodePath, { relative: true }) -%>"
+														title="<%= nodeTitle(node, nodePath) %>">
 														<i
 															class="kirafont <%= node.icon || (hasChildren ? 'icon-folder' : 'icon-file') %>"></i>
 														<span class="kira-explorer-text">
-															<%= node.title %>
+															<%= nodeTitle(node, nodePath) %>
 														</span>
 													</a>
 													<% } else { %>
 														<span class="kira-explorer-link is-label"
-															title="<%= node.title %>">
+															title="<%= nodeTitle(node, '') %>">
 															<i
 																class="kirafont <%= node.icon || (level === 0 ? 'icon-book' : 'icon-folder') %>"></i>
 															<span class="kira-explorer-text">
-																<%= node.title %>
+																<%= nodeTitle(node, '') %>
 															</span>
-														</span>
 														<% } %>
 								</div>
 
@@ -113,7 +160,7 @@
 			</aside>
 			<div class="kira-copyright">
 				&copy; <%= date(new Date(), 'YYYY' ) %>
-					<a href="<%- url_for('/') %>">
+					<a href="<%- url_for(isEnglish ? '/en/' : '/') %>">
 						<%= config.author || config.title %>
 					</a>
 					<%= __('Powered by') %> <a href="http://hexo.io/" target="_blank">Hexo</a> &
@@ -478,22 +525,24 @@
 				resetSearchView();
 				return;
 			}
-
-			setResultHtml('<div class="kira-search-state">正在搜索...</div>');
+			setResultHtml('<div class="kira-search-state"><%= isEnglish ? 'Searching...' : '正在搜索...' %></div>');
 
 			try {
 				var posts = await loadIndex();
+				var onEnPage = window.location.pathname.indexOf('/en/') === 0 || window.location.pathname === '/en';
 				var matched = posts.filter(function (item) {
+					var isEnResult = item.url && (item.url.indexOf('/en/') >= 0);
+					if (onEnPage !== isEnResult) return false; // match page language → result language
 					return normalize(item.title).indexOf(query) !== -1 || normalize(item.content).indexOf(query) !== -1;
 				}).slice(0, 20);
 
 				if (!matched.length) {
-					setResultHtml('<div class="kira-search-state">没有找到匹配内容</div>');
+					setResultHtml('<div class="kira-search-state"><%= isEnglish ? 'No matching content found' : '没有找到匹配内容' %></div>');
 					return;
 				}
 
 				var html = matched.map(function (item) {
-					var title = escapeHtml(item.title || '未命名文章');
+					var title = escapeHtml(item.title || '<%= isEnglish ? 'Untitled post' : '未命名文章' %>');
 					var snippet = escapeHtml(getSnippet(item.content, query));
 					var href = escapeHtml(resolveUrl(item.url));
 					return '<a class="kira-search-item" href="' + href + '"><div class="kira-search-item-title">' + title + '</div><div class="kira-search-item-snippet">' + snippet + '</div></a>';
@@ -501,7 +550,7 @@
 
 				setResultHtml(html);
 			} catch (error) {
-				setResultHtml('<div class="kira-search-state">搜索索引加载失败，请稍后重试</div>');
+				setResultHtml('<div class="kira-search-state"><%= isEnglish ? 'Search index failed to load. Please retry.' : '搜索索引加载失败，请稍后重试' %></div>');
 			}
 		});
 	})();
