@@ -23,7 +23,8 @@ Download the official mod uploader: https://github.com/megacrit/sts2-mod-uploade
 ## Additional Notes
 
 - Mod preview images must be under 1 MB. Otherwise the upload fails.
-- It's fine to delete the description and changelog entries — you can edit those on the Workshop later.
+- It's recommended to delete the description, changelog, and everything except tags — you can edit those on the Workshop later. Or use the uploader mod (subscribe on Workshop).
+- For `dependencies`, use the target project's Workshop ID. No quotes needed. See the uploader README for instructions.
 - Tags can't be changed on the Workshop. Check what common tags exist first. (Common: `Characters`, `QoL`, `Cards`, `Relics`, `schinese` (Simplified Chinese), `English`, etc.)
 - Don't forget to change visibility.
 - All fields in the JSON overwrite Workshop content on upload, unless you leave them out or delete them.
