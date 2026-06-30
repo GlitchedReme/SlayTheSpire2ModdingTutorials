@@ -37,7 +37,7 @@ public class MyKeywords
     public override IEnumerable<CardKeyword> CanonicalKeywords => [MyKeywords.Unique];
 ```
 
-![alt text](../../../images/image23.png)
+![alt text](../../../images/image23.webp)
 
 判断是否有：`Keywords.Contains(MyKeywords.Unique)`
 
@@ -88,7 +88,7 @@ public class MyKeywords
     await CreatureCmd.Heal(cardPlay.Card.Owner.Creature, DynamicVars["Leech"].BaseValue);
 ```
 
-![alt text](../../../images/image26.png)
+![alt text](../../../images/image26.webp)
 
 ## 添加卡牌提示文本
 

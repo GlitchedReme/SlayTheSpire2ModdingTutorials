@@ -15,7 +15,7 @@ https://github.com/BAKAOLC/STS2-RitsuLib/blob/main/Docs/zh/FmodAndAudio.md
 
 前往官网 https://www.fmod.com/download#fmodstudio ，下载2.03.06版本的fmod studio。
 
-![alt text](../../../images/image35.png)
+![alt text](../../../images/image35.webp)
 
 安装完毕后打开。
 
@@ -29,7 +29,7 @@ https://github.com/BAKAOLC/STS2-RitsuLib/blob/main/Docs/zh/FmodAndAudio.md
 
 点击左侧的`Assets`栏，将你的音频拖入其中或者右键`Import Assets`。
 
-![alt text](../../../images/image36.png)
+![alt text](../../../images/image36.webp)
 
 ### 重命名bank
 
@@ -37,17 +37,17 @@ https://github.com/BAKAOLC/STS2-RitsuLib/blob/main/Docs/zh/FmodAndAudio.md
 
 * `XXX`最好删除重建一个，但是`Master`不能删除然后重建。
 
-![alt text](../../../images/image37.png)
+![alt text](../../../images/image37.webp)
 
 ### 新建event
 
 点击左侧的`Events`栏，可以右键新建文件夹，套一些文件夹改名防止你和别人的id撞上。然后右键新建event。
 
-![alt text](../../../images/image38.png)
+![alt text](../../../images/image38.webp)
 
 右键你的 event，点击 `Assign To Bank`，选择 `Test` 或者你重命名的那个。（*不是 Master 那个*）
 
-![alt text](../../../images/image39.png)
+![alt text](../../../images/image39.webp)
 
 接着点击`Window - Mixer Routing`，需要创建和原版一致的routing，这里是`master/sfx`，然后把你的音频放在此处。
 
@@ -55,7 +55,7 @@ https://github.com/BAKAOLC/STS2-RitsuLib/blob/main/Docs/zh/FmodAndAudio.md
 
 这一步会让你的音频受到游戏的音量与效果影响，例如`sfx`受到音响音量影响`music`受到音乐音量影响。
 
-![alt text](../../../images/image41.png)
+![alt text](../../../images/image41.webp)
 
 ### 新建sheet
 
@@ -63,11 +63,11 @@ https://github.com/BAKAOLC/STS2-RitsuLib/blob/main/Docs/zh/FmodAndAudio.md
 
 * 简单来说，timeline可以实现音频拼接或者延迟触发，action可以多个音频随机触发一个（右键add multi instrument）等，parameter可以调整音频的参数等。
 
-![alt text](../../../images/image42.png)
+![alt text](../../../images/image42.webp)
 
 例如我们新建一个timeline sheet，然后点击assets将音频素材拖到轨道里。
 
-![alt text](../../../images/image40.png)
+![alt text](../../../images/image40.webp)
 
 ### 构建
 
@@ -77,14 +77,14 @@ https://github.com/BAKAOLC/STS2-RitsuLib/blob/main/Docs/zh/FmodAndAudio.md
 
 * 你也可以设置自动构建的路径，点击`Edit - Preference - Build`选择构建路径。
 
-![alt text](../../../images/image43.png)
+![alt text](../../../images/image43.webp)
 
 ### 导出预设
 
 Godot 里通常不会直接导入`.bank`和`GUIDs.txt`，这可能会导致打包的 .pck 文件中缺失这些文件，导致游戏运行时无法加载这些音频。
 请确保你的导出设置里 “资源” 选项卡中 “筛选导出非资源文件或文件夹” 中包含了`.bank`和`GUIDs.txt`（或其他任何你需要的文件）。
 
-![alt text](../../../images/fmod_export_hint.png)
+![alt text](../../../images/fmod_export_hint.webp)
 
 ### 代码加载
 
@@ -147,7 +147,7 @@ await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 
 2. 禁用对你需要通过fmod加载的音频的导入，原样导出。如下操作。
 
-![alt text](../../../images/image46.png)
+![alt text](../../../images/image46.webp)
 
 3. 把音频复制到和你mod同级目录内加载。
 

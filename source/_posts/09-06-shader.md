@@ -461,19 +461,19 @@ void fragment() {
 
 我们为需要加上shader的节点(比如SpriteAnimation2D, Sprite2D等), 点击CanvasItem - Material 新建一个ShaderMaterial，然后快速加载刚才的Shader
 
-![fx_shader_3.png](../../images/fx_shader_3.png)
+![fx_shader_3.png](../../images/fx_shader_3.webp)
 
 随后点击shader，可以在下方调节各种参数。
 
 包括了发光、曝光、模糊、动态模糊、锐化、扭曲、色相、描边、漩涡、波纹、色差偏移（RGB分离）等常见后处理效果。
 
-![fx_shader_4.png](../../images/fx_shader_4.png)
+![fx_shader_4.png](../../images/fx_shader_4.webp)
 
 ### 2.区域效果
 
 可以参考游戏中的储君攻击_受击特效starry_impact 和 尖叫 scream:
-![fx_shader_1.png](../../images/fx_shader_1.png)
-![fx_shader_2.png](../../images/fx_shader_2.png)
+![fx_shader_1.png](../../images/fx_shader_1.webp)
+![fx_shader_2.png](../../images/fx_shader_2.webp)
 我们注意到这里的vfx_distortion相关 就是一个屏幕扭曲处理, 它表现为一块区域的扭曲。
 
 shader是纯代码，AI友好的，这意味着我们需要仿照类似效果时，只需要把他的gdshader源码偷出来喂给AI，让AI实现你需要的效果即可。

@@ -43,13 +43,13 @@ categories:
 
 * 你的战斗人物模型需要有`idle_loop`（待机循环），`attack`（攻击动作），`cast`（能力卡动作），`hurt`（受伤），`die`（死亡）这些动画名。
 
-![1](../../images/image14.png)
+![1](../../images/image14.webp)
 
-![2](../../images/image15.png)
+![2](../../images/image15.webp)
 
 * 如果遇到问题，打开`项目→项目设置`，把`将文本资源转换为二进制`禁用。
 
-![3](../../images/image16.png)
+![3](../../images/image16.webp)
 
 ~~然后可以参考这段替换角色：（此处仅替换战斗人物且不播放初始动画，仅供参考）~~ 以前的代码功能太少，为了不误导新人这里删了
 

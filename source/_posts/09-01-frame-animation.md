@@ -11,7 +11,7 @@ categories:
 
 帧动画是最基础的 VFX 形式：将多张 **带透明通道的** PNG 序列图导入 Godot，组成 `AnimatedSprite2D` 动画，在游戏中实例化播放。
 
-![fx_frame_6.png](../../images/fx_frame_6.png)
+![fx_frame_6.png](../../images/fx_frame_6.webp)
 
 帧动画的优点是常见，简单，很多网络下载的特效和导出的特效都是序列帧格式
 缺点是性能差，需要缩图和优化。具体详见优化章节。
@@ -31,16 +31,16 @@ YourMod/images/effect_1/fn0002.png
 
 我们尽量通过Godot(Megadot)编辑器手动创建，用ai生成可能会有各种引用错误。
 
-![fx_frame_1.png](../../images/fx_frame_1.png)
+![fx_frame_1.png](../../images/fx_frame_1.webp)
 
 随后我们点击AnimatedSprite2D节点，在右侧检查器新建一个SpriteFrames，
-![fx_frame_2.png](../../images/fx_frame_2.png)
+![fx_frame_2.png](../../images/fx_frame_2.webp)
 
 再点击这个SpriteFrames，会出现动画序列帧的编辑界面，我们点击从文件中添加帧，将刚才的序列帧按顺序导入进去。
-![fx_frame_3.png](../../images/fx_frame_3.png)
+![fx_frame_3.png](../../images/fx_frame_3.webp)
 
 导入成功后，可以在下面看到序列帧图表。这里列出了一些常用按钮，可以按需调整你的特效。
-![fx_frame_4.png](../../images/fx_frame_4.png)
+![fx_frame_4.png](../../images/fx_frame_4.webp)
 
 示例场景脚本参考(AI参考)：
 
@@ -94,5 +94,5 @@ public partial class Effect : AnimatedSprite2D {
 ### 4.其他技巧
 
 - 有的时候，你导入的帧图片的分辨率过大，在游戏中有明显的卡顿，我们可以通过修改导入设置来缩图。
-  ![fx_frame_5.png](../../images/fx_frame_5.png)
+  ![fx_frame_5.png](../../images/fx_frame_5.webp)
 批量勾选你的图片，在左上角导入设置这里，选择最小分辨率像素，比如原来的图是1080p，可以修改成720/540来缩图。

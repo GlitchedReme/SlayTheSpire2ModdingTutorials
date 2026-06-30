@@ -30,7 +30,8 @@ categories:
 ## 补充说明
 
 - mod预览图不能大于1MB。否则无法上传。
-- 建议描述、changelog直接删除，之后在工坊改就行。
+- 建议描述、changelog等除了tag的直接删除，之后在工坊改就行。或者使用上传器mod（工坊订阅）。
+- `dependencies` 写那个项目的工坊ID，不需要引号。上传器的README里有说明。
 - tags无法在工坊改，先看有哪些常用tag。（常用：`Characters`,`QoL`, `Cards`, `Relics`, `schinese`(简体中文), `English`等）
 - 不要忘了更改可见性。
 - json里所有的设置都会覆盖工坊的内容，除非你不写或者删除。

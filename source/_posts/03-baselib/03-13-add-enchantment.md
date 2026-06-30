@@ -88,4 +88,4 @@ public class TestEnchantment : CustomEnchantmentModel
 * 控制台里输入`enchant TEST-TEST_ENCHANTMENT [数量] [给予手牌的编号]`。
 * 在效果里，使用`CardCmd.Enchant<TestEnchantment>(card, 2m)`。第二个参数用于修改Amount。
 
-![alt text](../../../images/image32.png)
+![alt text](../../../images/image32.webp)

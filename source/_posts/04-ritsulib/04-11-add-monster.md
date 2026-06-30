@@ -23,6 +23,7 @@ using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Godot;
 
 namespace Test.Scripts;
 
@@ -50,9 +51,8 @@ public class TestMonster : ModMonsterTemplate
         VisualsScenePath: "res://Test/scenes/test_monster.tscn"
     );
 
-    // 如果你挂载了自己的自定义脚本，使用这个即可，不需要上面的
-    // public override string? CustomVisualsPath => "res://Test/scenes/test_monster.tscn";
-
+    // 自动转换怪物场景，让你不需要手动挂脚本。复制即可。
+    protected override NCreatureVisuals? TryCreateCreatureVisuals() => RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.VisualsScenePath!);
 
     // 战斗开始时，在这里给自己上buff之类
     public override async Task AfterAddedToRoom()
@@ -177,7 +177,7 @@ public class TestEncounter : ModEncounterTemplate
 }
 ```
 
-![alt text](../../../images/image29.png)
+![alt text](../../../images/image29.webp)
 
 ### 多怪物遭遇
 
@@ -248,7 +248,7 @@ TestMultiEncounter (Node2D)
 └── fourth2 (Marker2D)
 ```
 
-![alt text](../../../images/image30.png)
+![alt text](../../../images/image30.webp)
 
 ### 自定义场景遭遇
 

@@ -8,20 +8,13 @@ categories:
 ---
 可以使用 RitsuLib 提供的 `ModCustomReward` 基类来实现自定义奖励。
 
-`ModCustomReward` 在原版 `Reward` 基类的基础上进行了封装，它可以帮你：
-1. **自动处理图标 UI**：不用手写繁琐的 Godot 节点层级，只需提供一个 `res://` 图标资源路径。
-2. **自动读取本地化文本**：默认从 `gameplay_ui` 表读取，描述 Key 默认就是注册时分配的奖励 ID。
-3. **辅助存读档**：通过 `IModSerializableReward` 接口注入你的持久化 Payload（比如保存每次随机生成的金币数），并由 RitsuLib 在读档时帮你反序列化回来。
-
-实现一个完整的自定义奖励包含三步：注册 → 编写奖励类 → 把奖励发放给玩家。
-
 ---
 
 ## 1. 注册奖励类型
 
-每个自定义奖励都需要一个 `RewardType` 标识。`RewardType` 是原版的枚举，RitsuLib 通过动态注册机制为每个 mod 分配确定性的扩展值。
+每个自定义奖励都需要一个 `RewardType` 标识。`RewardType` 是可兼容原版的枚举。
 
-在 `Entry.Init()` 中注册：
+在 `Entry.Init()` 中注册：（或者在自己创建的管理类，不要忘了注册即可）
 
 ```csharp
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -45,20 +38,17 @@ public static class Entry
 
     public static void Init()
     {
-        // 注册一个无 Payload 的奖励：读档时直接 new 一个新实例
+        // 注册一个无需保存的奖励：读档时直接新建一个新实例
         TokenRewardType = ModRewardRegistry.For(ModId)
             .RegisterOwned(
-                // 本地 stem，与 ID 对应，最终生成 MYMOD_REWARD_TOKEN
+                // 奖励ID，最终生成 MYMOD_REWARD_TOKEN
                 "token",
-                // 工厂：读档时 RitsuLib 用它把保存的奖励重建为运行时对象
+                // 工厂函数，读档时保存的奖励重建为运行时对象
                 (save, player, json) => new MyTokenReward(player))
             .RewardType;
     }
 }
 ```
-
-* `RegisterOwned` 返回 `ModRewardDefinition`，其 `RewardType` 字段就是这次奖励对应的标识。
-* 工厂签名是 `(SerializableReward save, Player player, string? json) => Reward`。`json` 是 `ToModRewardJson()` 返回的字符串，没有 Payload 时为 `null`。
 
 ---
 
@@ -80,17 +70,22 @@ public class MyTokenReward : ModCustomReward
     // 必须保留的构造函数；把所属玩家传给底层的 Reward 基类
     public MyTokenReward(Player player) : base(player) { }
 
-    // 【必须】返回你在 Init 中注册得到的 RewardType
+    // 【必须】使用你注册得到的 RewardType
     public override RewardType ModRewardType => Entry.TokenRewardType;
 
-    // 【可选】图标资源路径；不写就只显示空白容器
+    // 【可选】图标资源路径。如果返回null就只显示空白容器
     protected override string? RewardIconPath => "res://MyMod/images/rewards/token.png";
 
     // 【可选】描述文本所在的 LocTable 文件名（默认 gameplay_ui）
-    protected override string DescriptionLocTable => "gameplay_ui";
+    // protected override string DescriptionLocTable => "gameplay_ui";
 
     // 【可选】描述 Key；不写默认会用注册时分配的 ID（这里是 MYMOD_REWARD_TOKEN）
     // protected override string DescriptionLocKey => "MYMOD_REWARD_TOKEN";
+
+    // 【必须实现】标记奖励内容已被玩家查看过（例如卡牌或药水）。
+    public override void MarkContentAsSeen()
+    {
+    }
 
     // 【必须实现】玩家点击这个奖励时执行的实际效果
     protected override async Task<bool> OnSelect()
@@ -107,7 +102,7 @@ public class MyTokenReward : ModCustomReward
 
 ### 本地化文本
 
-`ModCustomReward.Description` 使用 `LocString(DescriptionLocTable, DescriptionLocKey)` 解析。在 `{modId}/localization/{lang}/gameplay_ui.json` 添加：
+在 `{modId}/localization/{lang}/gameplay_ui.json` 添加：
 
 ```json
 {
@@ -115,18 +110,16 @@ public class MyTokenReward : ModCustomReward
 }
 ```
 
-> 默认 Key 为注册 ID（`MYMOD_REWARD_TOKEN`），由 RitsuLib 通过 `ModRewardRegistry.TryGetId` 反查得到。如果你重写了 `DescriptionLocKey`，自己保证 Key 与本地化文件对得上。
-
 ---
 
 ## 3. 把奖励发放给玩家
 
-最常见的场景：在战斗结束的额外奖励列表上追加一个：
+例如在卡牌效果里这么写：（如果你在遗物或者其他，只要找到 `CombatState` 即可，例如 `Owner.CombatState` ）
 
 ```csharp
 using MegaCrit.Sts2.Core.Rooms;
 
-if (CombatState.Room is CombatRoom combatRoom)
+if (CombatState.RunState.CurrentRoom is CombatRoom combatRoom)
 {
     combatRoom.AddExtraReward(player, new MyTokenReward(player));
 }
@@ -138,15 +131,13 @@ if (CombatState.Room is CombatRoom combatRoom)
 rewards.Add(new MyTokenReward(Owner));
 ```
 
-`AddExtraReward` 加进去的奖励会自动经过 `ToSerializable` → 存档 → 读档 → 工厂重建的完整流程。
-
 ---
 
 ## 数据存档（带 Payload 的奖励）
 
 如果你的奖励包含**动态生成的状态**（例如随机金币数、随机选中的卡牌 ID），为了保证玩家在结算界面按 ESC 退出再读档进来时奖励不会被刷新或丢失，必须把这些状态写入存档。
 
-`ModCustomReward` 提供了基于 source-generated JSON 的便捷重载：
+`ModCustomReward` 提供了便捷重载：
 
 ### 1. 定义 Payload 与 JSON 上下文
 
@@ -203,7 +194,7 @@ public class MyTokenReward : ModCustomReward
 }
 ```
 
-> Payload 中只能放 JSON 可序列化的数据（`int`、`string`、`record struct` 组合等）。不要塞 Godot 节点、`Player` 引用或运行时对象。
+> Payload 中只能放 JSON 可序列化的数据（`int`、`string`、`record struct` 组合等）。不要塞 Godot 节点或图片等对象。
 
 如果你已经在用 `ToSerializable<TPayload>(payload, jsonTypeInfo)` 重载，可以省掉手写 `ToModRewardJson`，但要在 `ToSerializable` 重写里返回 `base.ToSerializable<TPayload>(...)`。两种写法二选一即可。
 
@@ -211,14 +202,9 @@ public class MyTokenReward : ModCustomReward
 
 ## 联机同步的规则
 
-`ModCustomReward` 的源码注释中有这么一句：
-
-> *Reward-set selection is synchronized by vanilla, but reward-specific side effects must either be deterministic on every client or explicitly synchronized by the derived reward.*
->
 > *（奖励集合中“选了哪个奖励”由原版引擎自动网络同步；但奖励自身造成的副作用必须在所有客户端确定性执行，否则你需要自己显式同步。）*
 
-**它的意思是：**
-- 当队伍领取奖励时，A 玩家点击了 `MyTokenReward`，原版会把“点击收取”的事件广播给所有人，每个客户端都会执行一次你的 `OnSelect()`。
+- 例如当队伍领取奖励时，A 玩家点击了 `MyTokenReward`，原版会把“点击收取”的事件广播给所有人，每个客户端都会执行一次你的 `OnSelect()`。
 - 但是！如果你在 `OnSelect()` 里包含**随机数检定**或**只在本地存在的资源**，不同客户端的结果可能不一致，导致断连或状态分裂。
 
 所以确保你的 `OnSelect()` 中执行的逻辑：

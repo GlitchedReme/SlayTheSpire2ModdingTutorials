@@ -58,7 +58,7 @@ public override IEnumerable<CardKeyword> CanonicalKeywords => [
 
 可配合单例（`SingletonModel`）实现逻辑。参考对应文章。
 
-![alt text](../../../images/image23.png)
+![alt text](../../../images/image23.webp)
 
 ## 添加新动态变量
 
@@ -105,7 +105,7 @@ public override IEnumerable<CardKeyword> CanonicalKeywords => [
     await CreatureCmd.Heal(cardPlay.Card.Owner.Creature, DynamicVars["Leech"].BaseValue);
 ```
 
-![alt text](../../../images/image26.png)
+![alt text](../../../images/image26.webp)
 
 
 ## 添加卡牌提示文本
