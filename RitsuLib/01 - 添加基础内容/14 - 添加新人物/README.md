@@ -383,7 +383,7 @@ Scenes: new(
 ```
 TestCharacterRestSite (Node2D)
 ├── Node (任意)
-└── ControlRoot (Control) %
+└── ControlRoot (Control)
     ├── SelectionReticle (Control) %
     ├── Hitbox (Control) %
     ├── ThoughtBubbleRight (Control) %
@@ -391,6 +391,8 @@ TestCharacterRestSite (Node2D)
 ```
 
 * 自行更换`Node`的类型制作动画，也可以添加更多节点。人物朝向右边。
+
+*  *如果你使用的Node不是Spine动画，你需要把角色动画节点（Node）放在 `ControlRoot` 里，不然不会自动翻转X轴（联机模式下）。*
 
 * 如果你使用spine模型，代码会找到所有是SpineSprite类型的节点，根据当前幕数播放`overgrowth_loop`、`hive_loop`或者`glory_loop`动画。这些动画的区别只是光照颜色不同。
 

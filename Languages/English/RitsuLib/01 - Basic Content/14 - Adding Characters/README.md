@@ -382,7 +382,7 @@ Create a new scene of type `Node2D` with the following structure:
 ```
 TestCharacterRestSite (Node2D)
 ├── Node (any)
-└── ControlRoot (Control) %
+└── ControlRoot (Control)
     ├── SelectionReticle (Control) %
     ├── Hitbox (Control) %
     ├── ThoughtBubbleRight (Control) %
@@ -392,6 +392,8 @@ TestCharacterRestSite (Node2D)
 * Change the type of `Node` to create animations; you can also add more nodes. The character faces right.
 
 * If using a Spine model, the code will find all nodes of type `SpineSprite` and play `overgrowth_loop`, `hive_loop`, or `glory_loop` animations depending on the current act. The only difference between these animations is the lighting color.
+
+* *If the Node you're using is not a Spine animation, you need to place the character animation node (Node) inside `ControlRoot`, otherwise it won't auto-flip the X axis (in multiplayer mode).*
 
 * If using other animations, simply change `Node` to your type. You can create a custom script (inheriting `NRestSiteCharacter`) and play animations yourself.
 
