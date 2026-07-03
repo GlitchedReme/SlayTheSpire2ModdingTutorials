@@ -2,7 +2,153 @@ This records some changes that may require you to update your code. Not an exhau
 
 ---
 
-## 0.106 Beta to 0.107 Beta
+
+## 0.107 to 0.108
+
+### AbstractModel
+
+| Type/Member | 0.107 | 0.108 |
+|---|---|---|
+| Added param `AbstractModel.ModifyDamageAdditive` | `(..., CardModel? cardSource)` | `(..., CardModel? cardSource, CardPlay? cardPlay)` |
+| Added param `AbstractModel.ModifyDamageMultiplicative` | same | same |
+| Added param `AbstractModel.ModifyDamageCap` | `(..., CardModel? cardSource)` | `(..., CardModel? cardSource, CardPlay? cardPlay)` |
+
+New:
+
+```csharp
+// on AbstractModel
+public virtual Task BeforeCombatRewardOffered(RewardsSet, CombatRoom);
+public virtual bool IsMock => false;
+```
+
+### CardModel
+
+| Type/Member | 0.107 | 0.108 |
+|---|---|---|
+| Renamed + return type changed `CardModel.GetResultPileTypeForCardPlay` | `PileType GetResultPileTypeForCardPlay()` | `(PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()` |
+| Visibility changed `CardModel.PortraitPngPath` | `private` | `protected virtual` |
+| Added param `AttackCommand.FromCard` | `FromCard(CardModel)` | `FromCard(CardModel, CardPlay?)` |
+| Added param `AttackCommand.FromOsty` | `FromOsty(Creature, CardModel)` | `FromOsty(Creature, CardModel, CardPlay?)` |
+| Param type changed `AttackCommand.CreateContextAsync` | `(..., PlayerChoiceContext, CardModel)` | `(..., PlayerChoiceContext, CardPlay)` |
+| Param type changed `AttackContext.CreateAsync` | `(..., PlayerChoiceContext, CardModel)` | `(..., PlayerChoiceContext, CardPlay)` |
+
+New:
+
+```csharp
+public CardModel CreateCloneForPlayer(Player);
+public void GiveToAnotherPlayer(Player);
+// AttackCommand
+public CardPlay? CardPlay { get; }
+```
+
+### OrbModel
+
+| Type/Member | 0.107 | 0.108 |
+|---|---|---|
+| Renamed `OrbModel.Triggered` event | `event Action? Triggered` | `event Action? PassiveActivated` |
+| Renamed + split `OrbModel.Trigger()` | `void Trigger()` | `void ActivateEvoke(Creature[])` + `Task TriggerPassive(PlayerChoiceContext, Creature?)` |
+
+New event `event Action<Creature[]>? EvokeActivated`.
+
+### EventModel / EventCombatSynchronizer
+
+| Type/Member | 0.107 | 0.108 |
+|---|---|---|
+| Added param `EventModel.BeginEvent` | `BeginEvent(Player, bool)` | `BeginEvent(Player, EventCombatSynchronizer?, bool)` |
+| Removed `EventModel.GenerateInternalCombatState` | `void GenerateInternalCombatState(IRunState)` | removed |
+| Removed `EventModel.ResetInternalCombatState` | `void ResetInternalCombatState()` | removed |
+| Removed `EncounterModel.IsDebugEncounter` | `virtual bool IsDebugEncounter => false` | removed |
+
+New class `EventCombatSynchronizer` (`InitializeForEvent`/`ReadyToEnterCombat`/`ResetState`/`MutableEncounterForLayout`/`CombatStateForLayout`), replacing the two removed methods.
+
+### EpochModel
+
+| Type/Member | 0.107 | 0.108 |
+|---|---|---|
+| Removed `EpochModel.Year` | `string Year` | removed/private |
+| Removed `EpochModel.EraName` | `string EraName` | removed/private |
+| Removed `EpochModel.ModelId` | `ModelId ModelId` | removed/private |
+| Removed `EpochModel.IsArtPlaceholder` | `bool IsArtPlaceholder` | removed |
+| Removed `EpochModel.PackedPortraitPath` | `string PackedPortraitPath` | removed/private |
+
+New:
+
+```csharp
+public bool HasRealPortrait;
+public static IReadOnlyList<Type> AllEpochs;
+```
+
+### CardCreationOptions / Save / UserData
+
+`CardCreationOptions` card pool and filter split.
+
+| Type/Member | 0.107 | 0.108 |
+|---|---|---|
+| Removed `CardCreationOptions.CustomCardPool` | `IEnumerable<CardModel>? CustomCardPool` | removed |
+| Removed `CardCreationOptions.ForNonCombatWithDefaultOdds` | static method | removed |
+| Removed `CardCreationOptions.WithRngOverride` | `WithRngOverride(Rng)` | removed |
+| Signature changed `CardCreationOptions.WithCardPools` | `WithCardPools(IEnumerable<CardPoolModel>, Func<CardModel,bool>?)` | `WithCardPools(IEnumerable<CardPoolModel>)` |
+
+New `CardCreationOptions WithFilter(Func<CardModel,bool>)` replaces the previously inlined filter predicate.
+
+| Type/Member | 0.107 | 0.108 |
+|---|---|---|
+| Param type changed `SaveManager.IncrementNumReloads` | `(SerializableRun, bool isMultiplayer)` | `(SerializableRun, NetGameType, bool forceInTest=false)` |
+| Added overload `UserDataPathProvider.GetProfileDir` | `GetProfileDir(int)` | `GetProfileDir(int, bool? forceModState)` (old overload kept) |
+
+New `UserDataPathProvider.GetAccountDir(bool? forceModState=null)`, `PrefsSave.IsBestiaryActionsPreferred`.
+
+### GameActions / RunManager / ControllerInput
+
+`VoteToMoveToNextActAction` ctor gains a param; controller D-pad keys unified to `Up/Down/Left/Right`.
+
+| Type/Member | 0.107 | 0.108 |
+|---|---|---|
+| Added param `VoteToMoveToNextActAction` ctor | `VoteToMoveToNextActAction(Player)` | `VoteToMoveToNextActAction(Player, int currentActIndex)` |
+| Renamed `Controller.dPadNorth` | `dPadNorth` | `dPadUp` |
+| Renamed `Controller.dPadSouth` | `dPadSouth` | `dPadDown` |
+| Renamed `Controller.dPadEast` | `dPadEast` | `dPadRight` |
+| Renamed `Controller.dPadWest` | `dPadWest` | `dPadLeft` |
+| Renamed `Controller.joystickPress` | `joystickPress` | `lStickPress` |
+
+New (partial):
+
+```csharp
+// VoteToMoveToNextActAction
+public int CurrentActIndex { get; }
+// NGame
+public Task GameStartupComplete { get; }
+public static string GetGameVersion();
+// RunManager
+public bool IsPaused;
+public event Func<Task>? TestFadeOut;
+public event Func<Task>? TestFadeIn;
+// Creature
+public void SetNodeVisible(bool);
+// NullCombatState singleton
+public static NullCombatState Instance { get; }
+// GodotControllerInputStrategy / SteamControllerInputStrategy
+public Vector2 GetLeftAnalogStickDirection();
+// EventOption copy ctor
+public EventOption(EventOption);
+// DailyRunUtility
+public static DateTimeOffset? AddLeaderboardDays(DateTimeOffset, int);
+// RestSiteOption test entry
+public static Func<Player, List<RestSiteOption>>? generateForTests;
+// CharacterModel
+public LocString BestiarySeenQuote;
+public LocString? BestiaryKillQuote;
+// ModifierModel
+public static IReadOnlyCollection<ModifierModel> Pick2Good1Bad(Rng, IEnumerable<CharacterModel>);
+// CardPoolModel
+protected void InvalidateCardCache();
+// MonsterModel
+public virtual float HurtAnimationTrackOffsetForDoom => 0.1f;
+// PlayerMapPointHistoryEntry
+public bool IsAffectedByFurCoat { get; set; }
+```
+
+## 0.106 to 0.107
 
 ### `ActModel` New Abstract Members
 
@@ -53,7 +199,7 @@ New:
 public virtual float CalculateGoldProportion(CombatState combatState)
 ```
 
-## 0.105 Beta to 0.106 Beta
+## 0.105 to 0.106
 
 ## Variable Changes
 

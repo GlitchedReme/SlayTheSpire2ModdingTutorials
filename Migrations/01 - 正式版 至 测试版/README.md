@@ -2,7 +2,152 @@
 
 ---
 
-## 0.106测试版 至 0.107测试版
+## 0.107 至 0.108
+
+### AbstractModel
+
+| 类型/成员 | 0.107 | 0.108 |
+|---|---|---|
+| 加参 `AbstractModel.ModifyDamageAdditive` | `(..., CardModel? cardSource)` | `(..., CardModel? cardSource, CardPlay? cardPlay)` |
+| 加参 `AbstractModel.ModifyDamageMultiplicative` | 同上 | 同上 |
+| 加参 `AbstractModel.ModifyDamageCap` | `(..., CardModel? cardSource)` | `(..., CardModel? cardSource, CardPlay? cardPlay)` |
+
+新增：
+
+```csharp
+// AbstractModel 上
+public virtual Task BeforeCombatRewardOffered(RewardsSet, CombatRoom);
+public virtual bool IsMock => false;
+```
+
+### CardModel
+
+| 类型/成员 | 0.107 | 0.108 |
+|---|---|---|
+| 改名和改返回类型 `CardModel.GetResultPileTypeForCardPlay` | `PileType GetResultPileTypeForCardPlay()` | `(PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()` |
+| 改可见性 `CardModel.PortraitPngPath` | `private` | `protected virtual` |
+| 加参 `AttackCommand.FromCard` | `FromCard(CardModel)` | `FromCard(CardModel, CardPlay?)` |
+| 加参 `AttackCommand.FromOsty` | `FromOsty(Creature, CardModel)` | `FromOsty(Creature, CardModel, CardPlay?)` |
+| 改参数类型 `AttackCommand.CreateContextAsync` | `(..., PlayerChoiceContext, CardModel)` | `(..., PlayerChoiceContext, CardPlay)` |
+| 改参数类型 `AttackContext.CreateAsync` | `(..., PlayerChoiceContext, CardModel)` | `(..., PlayerChoiceContext, CardPlay)` |
+
+新增：
+
+```csharp
+public CardModel CreateCloneForPlayer(Player);
+public void GiveToAnotherPlayer(Player);
+// AttackCommand
+public CardPlay? CardPlay { get; }
+```
+
+### OrbModel
+
+| 类型/成员 | 0.107 | 0.108 |
+|---|---|---|
+| 改名 `OrbModel.Triggered` 事件 | `event Action? Triggered` | `event Action? PassiveActivated` |
+| 改名+拆分 `OrbModel.Trigger()` | `void Trigger()` | `void ActivateEvoke(Creature[])` + `Task TriggerPassive(PlayerChoiceContext, Creature?)` |
+
+新增事件 `event Action<Creature[]>? EvokeActivated`。
+
+### EventModel / EventCombatSynchronizer
+
+| 类型/成员 | 0.107 | 0.108 |
+|---|---|---|
+| 加参 `EventModel.BeginEvent` | `BeginEvent(Player, bool)` | `BeginEvent(Player, EventCombatSynchronizer?, bool)` |
+| 删除 `EventModel.GenerateInternalCombatState` | `void GenerateInternalCombatState(IRunState)` | 删除 |
+| 删除 `EventModel.ResetInternalCombatState` | `void ResetInternalCombatState()` | 删除 |
+| 删除 `EncounterModel.IsDebugEncounter` | `virtual bool IsDebugEncounter => false` | 删除 |
+
+新增类 `EventCombatSynchronizer`（`InitializeForEvent`/`ReadyToEnterCombat`/`ResetState`/`MutableEncounterForLayout`/`CombatStateForLayout`），替代被删除的两个方法。
+
+### EpochModel
+
+| 类型/成员 | 0.107 | 0.108 |
+|---|---|---|
+| 删除 `EpochModel.Year` | `string Year` | 删除/私有化 |
+| 删除 `EpochModel.EraName` | `string EraName` | 删除/私有化 |
+| 删除 `EpochModel.ModelId` | `ModelId ModelId` | 删除/私有化 |
+| 删除 `EpochModel.IsArtPlaceholder` | `bool IsArtPlaceholder` | 删除 |
+| 删除 `EpochModel.PackedPortraitPath` | `string PackedPortraitPath` | 删除/私有化 |
+
+新增：
+
+```csharp
+public bool HasRealPortrait;
+public static IReadOnlyList<Type> AllEpochs;
+```
+
+### CardCreationOptions / Save / UserData
+
+`CardCreationOptions` 卡池与过滤器拆分。
+
+| 类型/成员 | 0.107 | 0.108 |
+|---|---|---|
+| 删除 `CardCreationOptions.CustomCardPool` | `IEnumerable<CardModel>? CustomCardPool` | 删除 |
+| 删除 `CardCreationOptions.ForNonCombatWithDefaultOdds` | 静态方法 | 删除 |
+| 删除 `CardCreationOptions.WithRngOverride` | `WithRngOverride(Rng)` | 删除 |
+| 改签名 `CardCreationOptions.WithCardPools` | `WithCardPools(IEnumerable<CardPoolModel>, Func<CardModel,bool>?)` | `WithCardPools(IEnumerable<CardPoolModel>)` |
+
+新增 `CardCreationOptions WithFilter(Func<CardModel,bool>)` 替代原先内联的过滤 predicate。
+
+| 类型/成员 | 0.107 | 0.108 |
+|---|---|---|
+| 改参数类型 `SaveManager.IncrementNumReloads` | `(SerializableRun, bool isMultiplayer)` | `(SerializableRun, NetGameType, bool forceInTest=false)` |
+| 加重载 `UserDataPathProvider.GetProfileDir` | `GetProfileDir(int)` | `GetProfileDir(int, bool? forceModState)`（旧重载保留） |
+
+新增 `UserDataPathProvider.GetAccountDir(bool? forceModState=null)`、`PrefsSave.IsBestiaryActionsPreferred`。
+
+### GameActions / RunManager / ControllerInput
+
+`VoteToMoveToNextActAction` 构造加参，控制器方向键统一为 `Up/Down/Left/Right`。
+
+| 类型/成员 | 0.107 | 0.108 |
+|---|---|---|
+| 加参 `VoteToMoveToNextActAction` ctor | `VoteToMoveToNextActAction(Player)` | `VoteToMoveToNextActAction(Player, int currentActIndex)` |
+| 改名 `Controller.dPadNorth` | `dPadNorth` | `dPadUp` |
+| 改名 `Controller.dPadSouth` | `dPadSouth` | `dPadDown` |
+| 改名 `Controller.dPadEast` | `dPadEast` | `dPadRight` |
+| 改名 `Controller.dPadWest` | `dPadWest` | `dPadLeft` |
+| 改名 `Controller.joystickPress` | `joystickPress` | `lStickPress` |
+
+新增（部分）：
+
+```csharp
+// VoteToMoveToNextActAction
+public int CurrentActIndex { get; }
+// NGame
+public Task GameStartupComplete { get; }
+public static string GetGameVersion();
+// RunManager
+public bool IsPaused;
+public event Func<Task>? TestFadeOut;
+public event Func<Task>? TestFadeIn;
+// Creature
+public void SetNodeVisible(bool);
+// NullCombatState 单例
+public static NullCombatState Instance { get; }
+// GodotControllerInputStrategy / SteamControllerInputStrategy
+public Vector2 GetLeftAnalogStickDirection();
+// EventOption 拷贝构造
+public EventOption(EventOption);
+// DailyRunUtility
+public static DateTimeOffset? AddLeaderboardDays(DateTimeOffset, int);
+// RestSiteOption 测试入口
+public static Func<Player, List<RestSiteOption>>? generateForTests;
+// CharacterModel
+public LocString BestiarySeenQuote;
+public LocString? BestiaryKillQuote;
+// ModifierModel
+public static IReadOnlyCollection<ModifierModel> Pick2Good1Bad(Rng, IEnumerable<CharacterModel>);
+// CardPoolModel
+protected void InvalidateCardCache();
+// MonsterModel
+public virtual float HurtAnimationTrackOffsetForDoom => 0.1f;
+// PlayerMapPointHistoryEntry
+public bool IsAffectedByFurCoat { get; set; }
+```
+
+## 0.106 至 0.107
 
 ### `ActModel` 新增 abstract 成员
 
@@ -53,7 +198,7 @@ public virtual string Title
 public virtual float CalculateGoldProportion(CombatState combatState)
 ```
 
-## 0.105测试版 至 0.106测试版
+## 0.105 至 0.106
 
 ## 变量变动
 
