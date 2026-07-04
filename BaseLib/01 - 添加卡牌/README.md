@@ -40,7 +40,8 @@ public class TestCard : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue) // 造成伤害，数值来源于卡牌的基础伤害属性
-            .FromCard(this) // 伤害来源于这张卡牌
+            .FromCard(this, cardPlay) // 伤害来源于这张卡牌
+            // .FromCard(this) // 正式版的写法
             .Targeting(cardPlay.Target) // 伤害目标是玩家选择的目标
             .Execute(choiceContext);
     }
@@ -156,3 +157,9 @@ Test (你的项目文件夹)
         └── zhs
             └── cards.json
 ```
+
+## 小提示
+
+- 你的基础攻击好防御需要添加对应的tag，例如 `public override IEnumerable<CardTag> Tags => [CardTag.Defend];`。
+
+- 如果你是一张防御牌，需要设置 `public override bool GainsBlock => true;`，否则无法被相关抚摸作为可识别对象。
