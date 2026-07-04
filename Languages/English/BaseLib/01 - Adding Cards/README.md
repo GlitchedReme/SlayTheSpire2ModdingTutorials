@@ -40,7 +40,8 @@ public class TestCard : CustomCardModel
     protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue) // Deal damage from the card's base damage value
-            .FromCard(this) // Damage comes from this card
+            .FromCard(this, cardPlay) // Damage comes from this card
+            // .FromCard(this) // stable version syntax
             .Targeting(cardPlay.Target) // Target is the player's selection
             .Execute(choiceContext);
     }
@@ -154,3 +155,9 @@ Test (your project folder)
         └── zhs
             └── cards.json
 ```
+
+## Tips
+
+- Your basic attacks and defends need the corresponding tag, e.g. `public override IEnumerable<CardTag> Tags => [CardTag.Defend];`.
+
+- If a card is a Defend, set `public override bool GainsBlock => true;` so the game recognizes it as a block card.
