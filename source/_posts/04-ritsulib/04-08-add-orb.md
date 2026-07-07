@@ -27,6 +27,13 @@ public class TestOrb : ModOrbTemplate
     // 激发效果数值
     public override decimal EvokeVal => ModifyOrbValue(2);
 
+    // 战斗中充能球的文本显示样式。
+    // Contextual 表示匹配普通原版充能球行为：平时显示被动值；当充能球被预览为激发时显示激发值。一般用于大多数充能球。
+    // SinglePassive 表示只显示被动值。
+    // SingleEvoke 表示只显示激发值。
+    // Both 表示同时显示被动值和激发值。原版用于黑暗充能球。
+    public override ModOrbValueDisplayMode ValueDisplayMode => ModOrbValueDisplayMode.Contextual;
+
     // 暗色，使用球的主体色的暗色调
     public override Color DarkenedColor => new(0.1f, 0.2f, 0.5f);
 

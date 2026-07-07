@@ -30,6 +30,14 @@ public class TestOrb : ModOrbTemplate
     // Darkened color — use a darker shade of the orb's main color
     public override Color DarkenedColor => new(0.1f, 0.2f, 0.5f);
 
+    // Combat orb value display mode.
+    // Contextual — matches vanilla orb behavior: shows passive value normally; shows evoke value when
+    //              the orb is previewed for evoke. Used for most orbs.
+    // SinglePassive — shows only passive value.
+    // SingleEvoke — shows only evoke value.
+    // Both — shows both passive and evoke values. Vanilla uses this for Dark orb.
+    public override ModOrbValueDisplayMode ValueDisplayMode => ModOrbValueDisplayMode.Contextual;
+
     // For images, any format supported by Godot works — e.g. png, jpg, svg, etc.
     public override OrbAssetProfile AssetProfile => new(
         // Tooltip small icon path
