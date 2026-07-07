@@ -1,6 +1,6 @@
 ## 添加新卡牌关键词
 
-这里的关键词指的是`消耗`，`虚无`一类的卡牌属性。`RitsuLib`没有`customenum`，但是统一管理。
+这里的关键词指的是`消耗`，`虚无`一类的卡牌属性。
 
 * 新建一个类：
 
@@ -68,6 +68,8 @@ public override IEnumerable<CardKeyword> CanonicalKeywords => [
         //.WithSharedTooltip("TEST_LEECH") // 如果要加本地化
     ];
 ```
+
+### 关键词附加文本
 
 （可选）然后添加一个新的本地化文件`{modId}/localization/{Language}/static_hover_tips.json`。
 

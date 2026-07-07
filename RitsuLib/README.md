@@ -124,3 +124,47 @@ RitsuLibFramework.CreateContentPack(ModId)
     .ActEncounter<Glory, TestEncounter>()
     .Apply();
 ```
+
+## 未讲解内容
+
+以下公开 API 在 RitsuLib 源码中存在，但本教程暂无对应文章。
+
+### RitsuLibFramework 中的公开方法
+
+1. `GetModelCloneRegistry()` — 模型复制监听
+2. `GetCardTransformRegistry()` / `ModCardTransformRegistry` — 卡牌转换监听
+3. `RegisterHealHookListener()` / `IHealHookListener` / `HealHook` — 全局治疗事件钩子
+4. `RegisterCardOnPlayHookListener()` / `ICardOnPlayHookListener` — 全局卡牌打出钩子
+5. `RegisterFreePlayBinding()` — 免费打出检测器
+6. `RegisterAncientOption<T>()` — 给已有的先古之民注入选项
+7. `RegisterModSettingsSidebarOrder()` / `RegisterModSettingsPageOrder()` — 设置页排序
+8. `GetModRunRng()` / `GetModPlayerRng()` — 额外的独立随机数生成器
+9. `RegisterRelicVisibilityRule()` — 遗物可见性控制
+10. `RegisterDustyTomeCard()` — 尘封魔典卡牌注册
+11. `I18N` 实例创建：`CreateLocalization()` / `CreateModLocalizationWithFallback()` — 和游戏独立的本地化系统
+
+### 接口
+
+12. `IAttackHitHookListener` / `AttackHitHook` — 攻击命中全局监听
+13. `IPlayerResourceHookListener` / `PlayerResourceHook` — 能量/辉星变化全局监听
+14. `IRitsuGodotNodeFactory<TNode>` — 类型化节点工厂
+15. `IModCharacterCardLibraryCompendiumPlacement` — 图鉴卡池放置规则
+
+### 公开静态工具类
+
+16. `DynamicVarTooltipRegistry` — 动态变量提示文本注册
+17. `RitsuGodotNodeFactories` — 节点工厂帮助类
+18. `CombatBackgroundAssetsFactory` — 战斗背景资源工厂
+19. `ModAncientStageVisuals` — 先古之民场景构造器
+20. `CharacterAssetPathHelper` — 角色资源路径辅助
+21. `CharacterOwnedVanillaRelicModelId` — 原版遗物 ID 常量
+
+### 注册注解
+
+22. `[RegisterSmartFormatter]` — SmartFormat 格式化器注册
+23. `[RegisterSmartFormatSource]` — SmartFormat 数据源注册
+24. `[RegisterDefaultModelCapability]` — 默认组件配置
+25. `[RegisterMutuallyExclusiveModifierGroup]` — 互斥每日特效组
+26. `[AutoTimelineSlotBeforeEpochColumn]` / `[AutoTimelineSlotAfterEpochColumn]` / `[AutoTimelineSlotInEpochColumn]` — 时间线定位
+27. `[RegisterEpochRelicsFromPool]` — 将指定遗物池里的所有遗物注册为该时期的解锁内容
+28. `[RequireAllCardsInPool]` — 要求整个池的卡都被发现才能解锁该时期

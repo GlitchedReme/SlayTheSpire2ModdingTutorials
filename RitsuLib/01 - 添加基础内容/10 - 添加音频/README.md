@@ -26,9 +26,9 @@ https://github.com/BAKAOLC/STS2-RitsuLib/blob/main/Docs/zh/FmodAndAudio.md
 
 ### 重命名bank
 
-点击中间的`Banks`栏，将两个bank重命名为你的项目的名字，最好也是`XXX`和`Master`。
+点击中间的`Banks`栏，新建一个bank，命名为`Test`或者你喜欢的名字。
 
-* `XXX`最好删除重建一个，但是`Master`不能删除然后重建。
+* 不要对原来有的`Master`做任何操作。
 
 ![alt text](../../../images/image37.webp)
 

@@ -14,7 +14,7 @@ After installation, open it.
 
 ### Download the vanilla project
 
-First download a project that has the vanilla audio GUID mappings. You can download the minimal audio example project made by the RitsuLib author (download the whole thing): https://github.com/BAKAOLC/STS2_FModProject_Minimal .
+First download a project that has the vanilla audio GUID mappings. You can download the minimal audio example project made by the RitsuLib author (download the whole thing): https://github.com/BAKAOLC/STS2_FModProject_Minimal , or BaiduPan: https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar .
 
 After downloading, open it.
 
@@ -24,11 +24,11 @@ Click the `Assets` tab on the left, drag your audio into it or right-click `Impo
 
 ![alt text](../../../images/image36.webp)
 
-### Rename banks
+### Create a new bank
 
-Click the `Banks` tab in the middle, rename both banks to your project name, preferably `XXX` and `Master`.
+Click the `Banks` tab in the middle, create a new bank and name it `Test` or whatever you like.
 
-* It is best to delete and recreate `XXX`, but `Master` cannot be deleted and recreated.
+* Do not modify the existing `Master` bank.
 
 ![alt text](../../../images/image37.webp)
 
@@ -136,7 +136,7 @@ If you want to freely play audio files, use this approach.
 
 * Since FMOD can only load audio *not processed by Godot*, there are three methods (pick one), recommended methods 1 and 2:
 
-1. Install the [FMOD plugin 6.1.0-4.5.0](https://github.com/utopia-rise/fmod-gdextension/releases/tag/6.1.0-4.5.0), click `addons.zip` to download, extract the `addons` folder and copy it to your project, then in the editor menu click `Project - Project Settings - Plugins` and enable it.
+1. Install the [FMOD plugin 6.1.0-4.5.0](https://github.com/utopia-rise/fmod-gdextension/releases/tag/6.1.0-4.5.0), click `addons.zip` to download (or BaiduPan: https://pan.baidu.com/s/1yuxPkDpCV8EVLkDubqiirg?pwd=apar ), extract the `addons` folder and copy it to your project, then in the editor menu click `Project - Project Settings - Plugins` and enable it.
 
 2. Disable the import for audio you want to load via FMOD, export them as-is. Do the following:
 

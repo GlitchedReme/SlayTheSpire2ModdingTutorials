@@ -1,6 +1,6 @@
 ## Adding New Card Keywords
 
-Here "keywords" refer to card properties like `Exhaust`, `Ethereal`, etc. `RitsuLib` does not have `customenum` but manages them in a unified way.
+Here "keywords" refer to card properties like `Exhaust`, `Ethereal`, etc.
 
 * Create a new class:
 
