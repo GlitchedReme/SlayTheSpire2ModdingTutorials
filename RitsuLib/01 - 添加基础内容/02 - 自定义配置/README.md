@@ -141,11 +141,11 @@ namespace Test.Scripts;
 public static class TestReflectedSettings
 {
     [ModSettingsToggle("enabled", "general")]
-    [ModSettingsBinding(BindingSource = ModSettingsReflectionBindingSource.Global)]
+    [ModSettingsBinding(Source = ModSettingsReflectionBindingSource.Global)]
     public static bool Enabled { get; set; } = true;
 
     [ModSettingsIntSlider("volume", "general", 0, 100, 5)]
-    [ModSettingsBinding(BindingSource = ModSettingsReflectionBindingSource.Global)]
+    [ModSettingsBinding(Source = ModSettingsReflectionBindingSource.Global)]
     public static int Volume { get; set; } = 80;
 
     [ModSettingsButton("reset", "general", ButtonText = "重置音量")]
