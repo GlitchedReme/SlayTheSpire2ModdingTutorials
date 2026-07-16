@@ -52,7 +52,7 @@
   "THE_ARCHITECT.talk.TEST_CHARACTER.0-attack": "Both"
 ```
 
-特别的，baselib可以指定`-startattack`和`-endattack`在对话开始前或者之后攻击（静默猎手如此），值可以填`Both`、`Architect`、`Player`或`None`指定谁来攻击。
+此外可以指定`-startattack`和`-endattack`在对话开始前或者之后攻击（静默猎手如此），值可以填`Both`、`Architect`、`Player`或`None`指定谁来攻击。
 
 ## 基础库扩展
 

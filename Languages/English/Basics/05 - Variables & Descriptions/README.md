@@ -127,6 +127,20 @@ Runtime variables available in `smartDescription` / `remoteDescription`:
 | `ApplierName` | Applier's name | `Applied by {ApplierName}.` |
 | `TargetName` | Target's name | `Affects {TargetName}.` |
 
+## LocString
+
+`LocString` is the game's localized string class, commonly used for localizing description text. All localized text follows this pattern:
+
+```csharp
+LocString description = new LocString("powers", base.Id.Entry + ".description"); // Fetch localized text from powers.json
+// Inject variables. For example, this replaces {Amount} and other placeholders with actual values
+description.Add("Amount", amountOverride ?? Amount); 
+description.Add("singleStarIcon", "[img]res://images/packed/sprite_fonts/star_icon.png[/img]");
+description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
+// Use .GetFormattedText() to get the final formatted text
+stringBuilder.Append(description.GetFormattedText());
+```
+
 ## DynamicVar
 
 `DynamicVar` records a named value on a model. Use `CanonicalVars` to specify a model's initial values:
@@ -158,20 +172,65 @@ A special var type, `CalculatedVar`, uses the formula `base + extra * calculated
 
 This means: base 0, plus 1x the owner's Block as extra damage. If you use a `CalculatedVar`, you must also provide the corresponding `base` and `extra` vars.
 
-Given how cumbersome and bug-prone this design is, it's generally not recommended. If your base library is `ritsulib`, use `ComputedDynamicVar`. Or write your own custom var that accepts two callback functions, for example (conceptual only, not fully functional):
+Given how cumbersome and bug-prone this design is, it's generally not recommended. If your base library is `ritsulib`, use `ComputedDynamicVar`.
+
+### ComputedDynamicVar (RitsuLib only)
+
+`ComputedDynamicVar` is a `DynamicVar` subclass provided by RitsuLib, suited for scenarios where the display value needs to be dynamically computed based on target, upgrade state, preview mode, etc.
+
+#### Basic Usage
+
+Use `ModCardVars.Computed()` to create a computed variable, passing in the variable name, fallback base value, and computation delegate:
 
 ```csharp
-// Conceptual only, not fully functional
-public class VariableVar(string name, Func<CardModel, CardPreviewMode, Creature?, bool, decimal> baseValueFunc, Func<CardModel, CardPreviewMode, Creature?, bool, decimal>? previewValueFunc = null) : DynamicVar(name, 0)
-{
-    private readonly Func<CardModel, CardPreviewMode, Creature?, bool, decimal> _valueFunc = baseValueFunc;
-    private readonly Func<CardModel, CardPreviewMode, Creature?, bool, decimal>? _previewValueFunc = previewValueFunc;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using STS2RitsuLib.Cards.DynamicVars;
 
-    public override void UpdateCardPreview(CardModel card, CardPreviewMode previewMode, Creature? target, bool runGlobalHooks)
-    {
-        _baseValue = _valueFunc(card, previewMode, target, runGlobalHooks);
-        if (_previewValueFunc != null)
-            _previewValue = _previewValueFunc(card, previewMode, target, runGlobalHooks);
-    }
+public class MyStrike : ModCardTemplate(1, CardType.Attack, CardRarity.Common, TargetType.SingleEnemy)
+{
+    public override DynamicVarSet DynamicVars => [
+        // Computed variable: show 5 when upgraded, 3 otherwise
+        ModCardVars.Computed("TestValue", 3, card => card?.Upgraded == true ? 5 : 3),
+    ];
 }
+```
+
+#### Wrappers
+
+If you're computing damage or block values and want the preview to still go through vanilla modification pipelines, use `ComputedDamage` and `ComputedBlock` instead of plain `Computed`:
+
+```csharp
+public override DynamicVarSet DynamicVars => new()
+{
+    // BonusDamage is implemented by you.
+    // Preview goes through Hook.ModifyDamage (Strength, Vulnerable, etc.)
+    ModCardVars.ComputedDamage("ExtraDamage", 6, (card, target) => DynamicVars["ExtraDamage"].BaseValue + BonusDamage(card, target)),
+    // Preview goes through Hook.ModifyBlock (Dexterity, Frail, etc.)
+    ModCardVars.ComputedBlock("ExtraBlock", 5, card => DynamicVars["ExtraBlock"].BaseValue + BonusBlock(card)),
+};
+```
+
+There are also `ComputedEnergy`, `ComputedStars`, `ComputedPower`, etc.
+
+`ComputedPower<T>` does **not** go through power amount modification hooks by default. If your computed value represents power being applied by the card and should use the same preview hook path as vanilla `PowerVar<T>` (e.g. `Hook.ModifyPowerAmountGiven`), use `ComputedPowerAmountGiven<T>`:
+
+```csharp
+// Preview goes through Hook.ModifyPowerAmountGiven
+ModCardVars.ComputedPowerAmountGiven<WeakPower>(
+    baseValue: 2,
+    currentValueFactory: (card, target) => ResolveWeakAmount(card, target));
+```
+
+#### Reading Computed Values
+
+When you need to read a `ComputedDynamicVar`'s current value from another card, use the extension method `ComputeDynamicValue`:
+
+```csharp
+// Read ComputedDynamicVar's computed value; returns default when missing
+decimal damage = card.DynamicVars.ComputeDynamicValue("CalcDamage", defaultValue: 0m, target: enemy);
+
+// Similarly for other computed variable types
+decimal energy = card.DynamicVars.ComputeEnergyValue("EnergyGain");
+decimal stars = card.DynamicVars.ComputeStarsValue("StarGain");
+decimal power = card.DynamicVars.ComputePowerValue<StrengthPower>("StrengthPower");
 ```
