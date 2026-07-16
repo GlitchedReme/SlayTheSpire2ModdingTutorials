@@ -21,6 +21,8 @@ public class TestPower : ModPowerTemplate
     public override PowerType Type => PowerType.Buff;
     // Stack type — Counter means stackable, Single means not stackable
     public override PowerStackType StackType => PowerStackType.Counter;
+    // Instance type. Defaults to stacking on existing power. If Instanced, a new instance is created each time (like bombs).
+    // public override PowerInstanceType InstanceType => PowerInstanceType.Instanced;
 
     // Custom icon path. 1:1 is fine. Vanilla game uses 256×256 for large icons and 64×64 for small icons.
     public override PowerAssetProfile AssetProfile => new(
@@ -85,6 +87,36 @@ This temporary power automatically expires at the end of the turn.
 
 For icon resources and additional effects, refer to the section above.
 
+### Simple Temporary Powers
+
+```csharp
+using MegaCrit.Sts2.Core.Models.Powers;
+using STS2RitsuLib.Combat.Powers;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+
+namespace Test.Scripts;
+
+[RegisterPower]
+public class TempPower : ModTemporaryAppliedPowerTemplate<TestCard, StrengthPower> { // The two generic params represent who grants it and which power's temporary effect
+    // Custom icon path.
+    public override PowerAssetProfile AssetProfile => new(
+        IconPath: $"res://Test/images/powers/{GetType().Name}.png",
+        BigIconPath: $"res://Test/images/powers/{GetType().Name}.png"
+    );
+
+    // protected override bool IsPositive => false; // Positive or negative effect
+
+    // protected override bool UntilEndOfOtherSideTurn => false; // If true, expires at the end of the other side's turn; otherwise expires at the owner's turn end.
+
+    // protected override int LastForXExtraTurns => 0; // Extra turns to last
+}
+```
+
+### Multiple Source Wrapper
+
+If many different sources grant this temporary power, you can create a simple wrapper.
+
 ```csharp
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
@@ -116,7 +148,6 @@ public abstract class TempPower<T> : ModTemporaryAppliedPowerTemplate<T, Strengt
 }
 
 // Create multiple classes to mark different sources and use different icons.
-// Of course, if all temporary powers of this type share one icon, remove the abstract on the parent and grant TempPower directly.
 public class TempFromTestCardPower : TempPower<TestCard>
 {
 }

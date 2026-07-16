@@ -1,12 +1,14 @@
 > 如果你要制作一个人物mod，选择一个基础库可以减少你的patch数量并减轻你的工作。同时也可以提高和其他mod的兼容性。
 
-目前（工坊未开放之前）常用的基础库有[BaseLib](https://github.com/Alchyr/BaseLib-StS2)和[RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib)两个。
+目前常用的基础库有[BaseLib](https://github.com/Alchyr/BaseLib-StS2)和[RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib)两个。
+
+此外还有一个专门的随从库[MinionLib](https://github.com/FuYnAloft/MinionLib)。
 
 可前往对应分类查看。
 
 ## 对比
 
-以下表格为这些基础库目前为止（2026.06.06）支持的功能表格。
+以下表格为这些基础库目前为止（2026.07.16）支持的功能表格。
 
 | 功能 | BaseLib | RitsuLib | 说明 |
 |-----------|------|------|------|
@@ -23,7 +25,6 @@
 | 人物非spine动画兼容 | ✅ | ✅ | - |
 | 新牌堆 | ✅ | ✅ | - |
 | 缺少资源时占位警告 | ✅ | ✅ | - |
-| 卡牌支持AnyPlayer | ✅ | ✅ | - |
 | 额外角标 | ✅ | ✅ | baselib只有两数字能力展示 |
 | 自定义奖励 | ✅ | ✅ | - |
 | 节点附加 | ✅ | ✅ | - |
@@ -43,11 +44,13 @@
 | 手牌发光管理 | ❌ | ✅ | - |
 | 快捷键绑定 | ❌ | ✅ | - |
 | 动画状态机 | ❌ | ✅ | baselib可接受原版动画名，<br>但不能自定义 |
+| 次级资源 | ❌ | ✅ | 类似储君的星辉资源系统 |
 | 网络 | custommessage | 侧载网络管理 | - |
 | 内容物ID | 命名空间第一段大写，<br>例如`TEST-TEST_CARD` | modid与分类，<br>例如`TEST_CARD_TEST_CARD` | - |
 | patch | 原始`harmony` | 原始`harmony`以及封装patch系统 | - |
-| 非原生玩法内容 | 有 | 无 | - |
 
 ## 重要说明
+
+* 客观来说，两者都有的功能一般RitsuLib实现更加完善。此外有些是RitsuLib作者给BaseLib提供的功能。
 
 * 如果你不添加任何游戏内容，不需要基础库也可以。但是如果你制作人物mod等，最好使用一个基础库减少工作量并提高兼容性。
