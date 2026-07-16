@@ -7,13 +7,15 @@ categories:
 ---
 > If you're making a character mod, using a base library cuts down on patches and workload. It also improves compatibility with other mods.
 
-Two common base libraries right now (before Workshop is open): [BaseLib](https://github.com/Alchyr/BaseLib-StS2) and [RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib).
+Two common base libraries right now: [BaseLib](https://github.com/Alchyr/BaseLib-StS2) and [RitsuLib](https://github.com/BAKAOLC/STS2-RitsuLib).
+
+There is also a specialized minion library: [MinionLib](https://github.com/FuYnAloft/MinionLib).
 
 See the respective sections for each.
 
 ## Comparison
 
-Feature support as of 2026.06.06:
+Feature support as of 2026.07.16:
 
 | Feature | BaseLib | RitsuLib | Notes |
 |-----------|------|------|------|
@@ -30,7 +32,6 @@ Feature support as of 2026.06.06:
 | Non-spine character animation compatibility | ✅ | ✅ | - |
 | New card piles | ✅ | ✅ | - |
 | Missing asset placeholder warning | ✅ | ✅ | - |
-| Card AnyPlayer support | ✅ | ✅ | - |
 | Extra badges | ✅ | ✅ | BaseLib only shows dual-number power display |
 | Custom rewards | ✅ | ✅ | - |
 | Node attachment | ✅ | ✅ | - |
@@ -50,11 +51,13 @@ Feature support as of 2026.06.06:
 | Card glow management | ❌ | ✅ | - |
 | Hotkey binding | ❌ | ✅ | - |
 | Animation state machine | ❌ | ✅ | BaseLib accepts vanilla animation names but can't customize |
+| Secondary resources | ❌ | ✅ | Similar to the Sovereign's starlight resource system |
 | Networking | CustomMessage | Sideload network management | - |
 | Content IDs | Namespace first segment uppercase, e.g. `TEST-TEST_CARD` | modid + category, e.g. `TEST_CARD_TEST_CARD` | - |
 | Patching | Raw Harmony | Raw Harmony + wrapped patch system | - |
-| Non-vanilla gameplay content | Yes | No | - |
 
 ## Important Notes
+
+* Objectively speaking, for features that both libraries support, RitsuLib's implementation is generally more polished. Additionally, some features were contributed to BaseLib by the RitsuLib author.
 
 * If you're not adding gameplay content, you don't need a base library. But for character mods and similar, using one saves work and improves compatibility.

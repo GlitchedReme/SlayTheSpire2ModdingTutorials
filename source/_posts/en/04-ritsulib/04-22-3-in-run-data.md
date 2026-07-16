@@ -101,7 +101,7 @@ Once in the game, we can read and write data at any time using the static handle
 ### Accessing Globally Shared Data
 ```csharp
 using MegaCrit.Sts2.Core.Runs;
-// Suppose we are in a card effect, where we can get runState
+// Suppose we're inside a card effect and have access to runState
 RunState runState = ...;
 
 // Read
@@ -117,7 +117,6 @@ TestRunData.Challenge.Modify(runState, data =>
     data.ElitesKilled += 1; // Increment elite kills
 });
 ```
-`Modify` is the highly recommended approach. Not only does it let you modify data directly via a closure, it also **automatically marks it as "modified"**, telling the engine that this data needs to be saved to disk.
 
 ### Accessing Per-Player Data
 Accessing per-player data is just as simple; the only difference is you need to additionally tell it "which player" to look up (via the player instance itself, or the network ID `netId`).

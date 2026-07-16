@@ -62,7 +62,7 @@ Values: `Both`, `Architect`, `Player`, or `None` — indicates who attacks.
   "THE_ARCHITECT.talk.TEST_CHARACTER.0-attack": "Both"
 ```
 
-BaseLib also supports `-startattack` and `-endattack` to trigger the attack before or after the dialogue (as the Silent does). Same value options: `Both`, `Architect`, `Player`, or `None`.
+Additionally, `-startattack` and `-endattack` can be specified to trigger the attack before or after the dialogue (as the Silent does). Same value options: `Both`, `Architect`, `Player`, or `None`.
 
 ## Base Library Extensions
 

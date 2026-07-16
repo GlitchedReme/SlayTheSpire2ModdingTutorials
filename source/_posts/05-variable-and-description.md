@@ -134,6 +134,20 @@ https://github.com/axuno/SmartFormat/wiki
 | `ApplierName` | 施加者名称 | `由{ApplierName}施加。` |
 | `TargetName` | 目标名称 | `对{TargetName}生效。` |
 
+## LocString
+
+`LocString` 是游戏的本地化字符串类，通常用于描述文本的本地化。所有的本地化文本都是这样的逻辑：
+
+```csharp
+LocString description = new LocString("powers", base.Id.Entry + ".description"); // 从powers.json中获取本地化文本
+// 注入各种变量。例如这里使得本地化中的{Amount}等占位符被替换为实际的数值
+description.Add("Amount", amountOverride ?? Amount); 
+description.Add("singleStarIcon", "[img]res://images/packed/sprite_fonts/star_icon.png[/img]");
+description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
+// 使用.GetFormattedText()获得最终的格式化文本
+stringBuilder.Append(description.GetFormattedText());
+```
+
 ## DynamicVar
 
 `DynamicVar`是记录在一个model上的指定值。使用`CanonicalVars`指定这个model的各种初始值，例如：
@@ -165,20 +179,65 @@ protected override IEnumerable<DynamicVar> CanonicalVars => [
 
 就是基础值为0，额外增加1倍自己格挡值的伤害。如果你要使用一个`CalculatedVar`，那么另外两个`base`和`extra`的var必须也要写。
 
-由于其设计过于繁琐而且问题不少，一般不推荐使用。如果你前置库为`ritsulib`可以使用`ComputedDynamicVar`，或者自行写一个传入双回调函数的自定义var也可，例如：（仅供思路展示，不可完全正常运作）
+由于其设计过于繁琐而且问题不少，一般不推荐使用。如果你前置库为`ritsulib`可以使用`ComputedDynamicVar`。
+
+### ComputedDynamicVar (RitsuLib专属)
+
+`ComputedDynamicVar` 是 RitsuLib 提供的 `DynamicVar` 子类，适合需要根据目标、升级状态、预览模式等动态计算数值的场景。
+
+#### 基本用法
+
+使用 `ModCardVars.Computed()` 创建计算变量，传入变量名、后备基础值和计算委托：
 
 ```csharp
-// 仅供思路展示，不可完全正常运作
-public class VariableVar(string name, Func<CardModel, CardPreviewMode, Creature?, bool, decimal> baseValueFunc, Func<CardModel, CardPreviewMode, Creature?, bool, decimal>? previewValueFunc = null) : DynamicVar(name, 0)
-{
-    private readonly Func<CardModel, CardPreviewMode, Creature?, bool, decimal> _valueFunc = baseValueFunc;
-    private readonly Func<CardModel, CardPreviewMode, Creature?, bool, decimal>? _previewValueFunc = previewValueFunc;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using STS2RitsuLib.Cards.DynamicVars;
 
-    public override void UpdateCardPreview(CardModel card, CardPreviewMode previewMode, Creature? target, bool runGlobalHooks)
-    {
-        _baseValue = _valueFunc(card, previewMode, target, runGlobalHooks);
-        if (_previewValueFunc != null)
-            _previewValue = _previewValueFunc(card, previewMode, target, runGlobalHooks);
-    }
+public class MyStrike : ModCardTemplate(1, CardType.Attack, CardRarity.Common, TargetType.SingleEnemy)
+{
+    public override DynamicVarSet DynamicVars => [
+        // 计算变量：升级时显示5，否则显示3
+        ModCardVars.Computed("TestValue", 3, card => card?.Upgraded == true ? 5 : 3),
+    ];
 }
+```
+
+#### 包装
+
+如果你计算的是伤害或格挡值，并且希望预览时仍经过原版的修正流程，使用 `ComputedDamage` 和 `ComputedBlock` 而非普通 `Computed`：
+
+```csharp
+public override DynamicVarSet DynamicVars => new()
+{
+    // BonusDamage由你自己实现。
+    // 预览时会经过 Hook.ModifyDamage（力量、易伤等）
+    ModCardVars.ComputedDamage("ExtraDamage", 6, (card, target) => DynamicVars["ExtraDamage"].BaseValue + BonusDamage(card, target)),
+    // 预览时会经过 Hook.ModifyBlock（敏捷、脆弱等）
+    ModCardVars.ComputedBlock("ExtraBlock", 5, card => DynamicVars["ExtraBlock"].BaseValue + BonusBlock(card)),
+};
+```
+
+此外还有 `ComputedEnergy`、`ComputedStars`、`ComputedPower` 等。
+
+`ComputedPower<T>` 默认**不经过**能力层数修正 hook。如果你的计算值表示卡牌将要施加的能力层数，并且希望预览时走和原版 `PowerVar<T>` 相同的修正路径（如 `Hook.ModifyPowerAmountGiven`），使用 `ComputedPowerAmountGiven<T>`：
+
+```csharp
+// 预览时会经过 Hook.ModifyPowerAmountGiven
+ModCardVars.ComputedPowerAmountGiven<WeakPower>(
+    baseValue: 2,
+    currentValueFactory: (card, target) => ResolveWeakAmount(card, target));
+```
+
+#### 读取计算值
+
+当需要从其他卡牌读取 `ComputedDynamicVar` 的当前值时，使用扩展方法 `ComputeDynamicValue`：
+
+```csharp
+// 读取 ComputedDynamicVar 的计算值，不存在时返回默认值
+decimal damage = card.DynamicVars.ComputeDynamicValue("CalcDamage", defaultValue: 0m, target: enemy);
+
+// 同理可用于其他计算型变量
+decimal energy = card.DynamicVars.ComputeEnergyValue("EnergyGain");
+decimal stars = card.DynamicVars.ComputeStarsValue("StarGain");
+decimal power = card.DynamicVars.ComputePowerValue<StrengthPower>("StrengthPower");
 ```
