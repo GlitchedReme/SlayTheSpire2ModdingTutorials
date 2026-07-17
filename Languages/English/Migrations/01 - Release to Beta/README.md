@@ -2,6 +2,244 @@ This records some changes that may require you to update your code. Not an exhau
 
 ---
 
+## 0.108 to 0.109
+
+### AbstractModel
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Signature changed `AbstractModel.AfterBlockBroken` | `virtual Task AfterBlockBroken(Creature creature)` | `virtual Task AfterBlockBroken(PlayerChoiceContext choiceContext, Creature target, Creature? breaker)` |
+| Renamed + return type changed `ModifyCardPlayResultPileTypeAndPosition` | `virtual (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(CardModel, bool, ResourceInfo, PileType, CardPilePosition)` | `virtual CardLocation ModifyCardPlayResultLocation(CardModel, bool, ResourceInfo, CardLocation)` |
+| Renamed `AfterModifyingCardPlayResultPileOrPosition` | `virtual Task AfterModifyingCardPlayResultPileOrPosition(CardModel, PileType, CardPilePosition)` | `virtual Task AfterModifyingCardPlayResultLocation(CardModel, CardLocation)` |
+
+### Hook
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Signature changed `Hook.AfterBlockBroken` | `static Task AfterBlockBroken(ICombatState, Creature)` | `static Task AfterBlockBroken(ICombatState, PlayerChoiceContext, Creature target, Creature? breaker)` |
+| Renamed + return type changed `Hook.ModifyCardPlayResultPileTypeAndPosition` | `static (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(...)` | `static CardLocation ModifyCardPlayResultLocation(...)` |
+
+### CardLocation (new type)
+
+Replaces the old `(PileType, CardPilePosition)` tuple.
+
+```csharp
+public record struct CardLocation(Player player, PileType pileType, CardPilePosition position);
+```
+
+### CardModel
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Renamed + return type changed `GetResultPileTypeAndPositionForCardPlay` | `protected (PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()` | `protected CardLocation GetResultLocationForCardPlay()` |
+| Added param `CardModel.CreateDupe` | `CardModel CreateDupe()` | `CardModel CreateDupe(Player newOwner)` |
+
+### CreatureCmd
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Signature changed `CreatureCmd.LoseBlock` | `static Task LoseBlock(Creature creature, decimal amount)` | `static Task LoseBlock(PlayerChoiceContext choiceContext, Creature target, decimal amount, Creature? remover)` |
+
+### CardPileCmd
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Removed async `CardPileCmd.Draw` | `static async Task<IEnumerable<CardModel>> Draw(...)` | `static Task<IEnumerable<CardModel>> Draw(...)` |
+
+New:
+
+```csharp
+public static Task DrawWithoutBlockingOnOtherPlayers(PlayerChoiceContext choiceContext, decimal count, Player player, bool fromHandDraw = false);
+```
+
+### CardCmd
+
+New:
+
+```csharp
+public static void ApplySingleTurnRetain(CardModel card);
+```
+
+### CardSelectCmd
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Param made nullable `CardSelectCmd.FromCombatPile` | `(..., Func<CardModel, bool> filter)` | `(..., Func<CardModel, bool>? filter)` |
+
+### CombatManager
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Return type changed `EndCardOrPotionEffect` | `void EndCardOrPotionEffect(Player)` | `Task EndCardOrPotionEffect(Player)` |
+| Added optional param `EndPlayerTurnPhaseTwoInternal` | `Task EndPlayerTurnPhaseTwoInternal()` | `Task EndPlayerTurnPhaseTwoInternal(CancellationToken? combatCt = null)` |
+
+New:
+
+```csharp
+public event Action<CombatState>? CombatBegan;
+public async Task RemoveDeadPlayerCardsFromCombat(Player player);
+```
+
+### AssemblyInfo
+
+New:
+
+```csharp
+public static Dictionary<Type, (Mod?, bool)>? MockTypes { get; set; }
+public static Mod? ModForType(Type type, out bool isBaseGame);
+```
+
+### RunManager
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Added param `SetUpReplay` | `SetUpReplay(RunState, CombatReplay)` | `SetUpReplay(RunState, CombatReplay, ulong playerIdToLoad)` |
+| Visibility changed `FadeIn` | `private Task FadeIn(bool)` | `public Task FadeIn(bool)` |
+| Visibility changed `FadeOut` | `private Task FadeOut()` | `public Task FadeOut()` |
+
+### PotionModel
+
+New:
+
+```csharp
+public string LargeImagePath;
+public Texture2D LargeImage;
+```
+
+### RNG System Refactor (`uint` -> `ulong`)
+
+Default RNG seed length expanded from 10 to 12 digits.
+
+#### StringHelper
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Return type changed `GetDeterministicHashCode` | `int GetDeterministicHashCode(string)` | `ulong GetDeterministicHashCode(string)` |
+
+New (old algorithm kept for compatibility):
+
+```csharp
+public static int GetDeterministicHashCodeOld(string str);
+```
+
+#### Rng
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Type changed `Rng.Seed` | `uint Seed` | `ulong Seed` |
+| Signature changed `Rng` ctor | `Rng(uint seed = 0u, int counter = 0)` | `Rng(ulong seed = 0uL)` |
+| Signature changed `Rng` ctor | `Rng(Player, ModelId, uint mixin = 0u, int counter = 0)` | `Rng(Player, ModelId, ulong mixin = 0uL)` |
+| Signature changed `Rng` ctor | `Rng(uint seed, string name)` | `Rng(ulong seed, string name)` |
+| Removed `Rng.Counter` | `int Counter { get; private set; }` | removed |
+| Removed `Rng.FastForwardCounter` | `void FastForwardCounter(int)` | removed |
+
+New:
+
+```csharp
+public Rng(SerializableRng serializable);
+public void LoadFromSerializable(SerializableRng serializable);
+public SerializableRng ToSerializable();
+public ulong NextUnsignedLong();
+public ulong NextUnsignedLong(ulong maxExclusive = ulong.MaxValue);
+public ulong NextUnsignedLong(ulong minInclusive, ulong maxExclusive);
+```
+
+#### EventSynchronizer
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Param type changed ctor | `EventSynchronizer(..., uint seed)` | `EventSynchronizer(..., ulong seed)` |
+
+#### MegaRandom
+
+New:
+
+```csharp
+public MegaRandom(SerializableRng serializable);
+public void Reinitialise(SerializableRng serializable);
+public void FillSerializableState(SerializableRng rng);
+```
+
+#### PlayerRngSet
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Type changed `PlayerRngSet.Seed` | `uint Seed` | `ulong Seed` |
+| Signature changed `PlayerRngSet` ctor | `PlayerRngSet(uint seed)` | `PlayerRngSet(ulong seed)` |
+| Visibility changed `PlayerRngSet.GetRng` | `private Rng GetRng(PlayerRngType)` | `public Rng GetRng(PlayerRngType)` |
+
+#### RunRngSet
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Type changed `RunRngSet.Seed` | `uint Seed` | `ulong Seed` |
+| Signature changed `RunRngSet.MockRng` | `MockRng(RunRngType, uint seed)` | `MockRng(RunRngType, ulong seed)` |
+| Visibility changed `RunRngSet.GetRng` | `private Rng GetRng(RunRngType)` | `public Rng GetRng(RunRngType)` |
+
+### ModelIdSerializationCache
+
+`SavedPropertiesTypeCache` functionality merged into this class. New:
+
+```csharp
+public static int PropertyIdBitSize { get; }
+public static int MaxPropertyId { get; }
+public static void ResetForTest();
+public static int GetNetIdForPropertyName(string propertyName);
+public static string GetPropertyNameForNetId(int netId);
+public static List<PropertyInfo>? GetJsonPropertiesForType(Type t);
+public static void CacheSavedPropertiesForTypeDebug(Type type);
+```
+
+#### MegaCritSerializerContext
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Removed `UInt32` | `JsonTypeInfo<uint> UInt32` | removed |
+| New `SerializableRng` | - | `JsonTypeInfo<SerializableRng> SerializableRng` |
+| Type parameter changed | `Dictionary<PlayerRngType, int>` | `Dictionary<PlayerRngType, SerializableRng>` |
+| Type parameter changed | `Dictionary<RunRngType, int>` | `Dictionary<RunRngType, SerializableRng>` |
+
+### PlayerChoiceContext
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Added param `PlayerChoiceContext.SignalPlayerChoiceBegun` | `abstract Task SignalPlayerChoiceBegun(PlayerChoiceOptions)` | `abstract Task SignalPlayerChoiceBegun(Player chooser, PlayerChoiceOptions)` |
+
+New:
+
+```csharp
+public IEnumerable<AbstractModel>? ModelStack { get; }
+public abstract ulong? OwnerId { get; }
+```
+
+> The signature change to `SignalPlayerChoiceBegun` affects all subclass overrides: `BlockingPlayerChoiceContext`, `GameActionPlayerChoiceContext`, `HookPlayerChoiceContext`, `ThrowingPlayerChoiceContext`.
+
+### HookPlayerChoiceContext
+
+| Type/Member | 0.108 | 0.109 |
+|---|---|---|
+| Param made nullable ctor | `HookPlayerChoiceContext(AbstractModel, ulong, ICombatState, GameActionType)` | `HookPlayerChoiceContext(AbstractModel, ulong, ICombatState?, GameActionType)` |
+
+New:
+
+```csharp
+public static Player? GetOwner(AbstractModel source, ICombatState? combatState);
+```
+
+### BranchingPlayerChoiceContext (new type)
+
+Multiplayer branching choice context, inherits `PlayerChoiceContext`.
+
+```csharp
+public class BranchingPlayerChoiceContext : PlayerChoiceContext
+{
+    public BranchingPlayerChoiceContext(ulong localPlayerId, GameActionType gameActionType, PlayerChoiceContext existing);
+    public event Action<HookPlayerChoiceContext>? AfterBranched;
+    public Task AssignTaskAndWaitForPauseOrCompletion(Task task);
+}
+```
+
+---
 
 ## 0.107 to 0.108
 
