@@ -796,15 +796,16 @@
 }
 
 .kira-content .kira-main-content article>table {
-    overflow-x: auto !important;
+    table-layout: fixed;
+    width: 100% !important;
+    overflow-x: hidden !important;
     overflow-y: hidden !important;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-gutter: stable;
 }
 
 .kira-content .kira-main-content article>table th,
 .kira-content .kira-main-content article>table td {
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
 .kira-content .kira-main-content article>table,
