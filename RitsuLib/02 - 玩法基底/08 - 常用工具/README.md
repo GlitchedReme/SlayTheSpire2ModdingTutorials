@@ -71,37 +71,11 @@ using STS2RitsuLib.Utils;
 
 namespace Test.Scripts.Utils;
 
-public sealed class CreatureHeatState
-{
-    public int Heat { get; set; }
-}
+private static readonly AttachedState<Creature, int> Heat = new(() => 0);
 
-public static class TestCreatureHeat
-{
-    private static readonly AttachedState<Creature, CreatureHeatState> Heat =
-        new(() => new CreatureHeatState());
+var heat = Heat[creature]; // 获得值
 
-    public static void AddHeat(Creature creature, int amount)
-    {
-        Heat.Update(creature, state =>
-        {
-            state.Heat += amount;
-            return state;
-        });
-    }
-
-    public static bool TryGetHeat(Creature creature, out int heat)
-    {
-        if (Heat.TryGetValue(creature, out var state))
-        {
-            heat = state.Heat;
-            return true;
-        }
-
-        heat = 0;
-        return false;
-    }
-}
+Heat[creature] = 5; // 设置值
 ```
 
 用 `TryGetValue` 做只读判断，不会创建默认值。用索引器或 `GetOrCreate` 时会创建默认状态。
@@ -116,24 +90,19 @@ using STS2RitsuLib.Utils;
 
 namespace Test.Scripts.Utils;
 
-public static class TestSavedCardFlags
+
+private static readonly SavedAttachedState<AbstractModel, bool> IsEchoCopy = new("test_echo_copy", defaultValueFactory: () => false);
+
+public static void MarkEchoCopy(AbstractModel model)
 {
-    private static readonly SavedAttachedState<AbstractModel, bool> IsEchoCopy =
-        new("test_echo_copy", defaultValueFactory: () => false);
+    IsEchoCopy[model] = true;
+}
 
-    public static void MarkEchoCopy(AbstractModel model)
-    {
-        IsEchoCopy[model] = true;
-    }
-
-    public static bool IsMarked(AbstractModel model)
-    {
-        return IsEchoCopy.GetValueOrDefault(model, false);
-    }
+public static bool IsMarked(AbstractModel model)
+{
+    return IsEchoCopy.GetValueOrDefault(model, false);
 }
 ```
-
-`name` 会注入原版 `SavedPropertiesTypeCache`，必须全局唯一。推荐带上 Mod id 前缀，发布后不要改名。复杂对象请改用 `RunSavedData` 或 `ModDataStore`，不要硬塞进 `SavedAttachedState`。
 
 ## 动态枚举值
 
