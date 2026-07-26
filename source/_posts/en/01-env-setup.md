@@ -322,3 +322,7 @@ Other approaches work too — you can use `tasks.json` and `publish` (as the mod
 ## macOS Support (Optional)
 
 Open `export_presets.cfg` in a text editor and change `binary_format/architecture="x86_64"` to `binary_format/architecture="msil"`.
+
+## Mod Image (Optional)
+
+Create a folder in your mod root directory with the same name as your modid, and put a `mod_image.png` inside it.

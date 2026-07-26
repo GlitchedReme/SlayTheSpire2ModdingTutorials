@@ -74,6 +74,7 @@ public class TestCard : ModCardTemplate
     {
         await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
             .FromCard(this)
+            // .FromCard(this, cardPlay) // beta
             .Targeting(cardPlay.Target!)
             .Execute(choiceContext);
     }
@@ -135,7 +136,7 @@ public abstract class TestCardModel : ModCardTemplate
     public override CardAssetProfile AssetProfile => new(
         PortraitPath: $"res://RitsuTest/images/cards/{GetType().Name}.png",
         // Set different frames based on type
-        FramePath: type switch
+        FramePath: Type switch
         {
             CardType.Attack => "res://RitsuTest/images/card_frame_attack.png",
             CardType.Skill => "res://RitsuTest/images/card_frame_skill.png",

@@ -30,6 +30,7 @@ public static class ModResources
     {
         var registry = RitsuLibFramework.GetSecondaryResourceRegistry(Entry.ModId);
 
+        // This is a "mana" resource: max 3, persists across combats, refills each turn.
         ManaDefinition = registry.Register("mana", new SecondaryResourceDefinition(
             defaultAmount: 0,
             baseMaxAmount: 3,
@@ -40,6 +41,7 @@ public static class ModResources
         ));
         ManaId = ManaDefinition.Id;
 
+        // This is a "rage" resource: uncapped, cleared at the start of each turn, stored within combat.
         RageDefinition = registry.Register("rage", new SecondaryResourceDefinition(
             defaultAmount: 0,
             baseMaxAmount: null,

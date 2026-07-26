@@ -30,6 +30,7 @@ public static class ModResources
     {
         var registry = RitsuLibFramework.GetSecondaryResourceRegistry(Entry.ModId);
 
+        // 这是一个“魔力值”资源，最高3点，跨局存储，每次回满。
         ManaDefinition = registry.Register("mana", new SecondaryResourceDefinition(
             defaultAmount: 0,
             baseMaxAmount: 3,
@@ -40,6 +41,7 @@ public static class ModResources
         ));
         ManaId = ManaDefinition.Id;
 
+        // 这是一个“怒气”资源，无上限，每回合开始清零，战斗内存储。
         RageDefinition = registry.Register("rage", new SecondaryResourceDefinition(
             defaultAmount: 0,
             baseMaxAmount: null,
