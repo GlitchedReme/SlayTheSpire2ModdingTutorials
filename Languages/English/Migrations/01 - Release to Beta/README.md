@@ -2,12 +2,125 @@ This records some changes that may require you to update your code. Not an exhau
 
 ---
 
+## 0.109 to 0.110
+
+### CombatId (new type)
+
+An opaque identifier for a single combat. Prevents delayed operations (card effects, death handling) from a finished combat leaking into the next one.
+
+```csharp
+public readonly record struct CombatId(int Value);
+```
+
+### CombatManager
+
+| Type/Member | 0.109 | 0.110 |
+| --- | --- | --- |
+| Return type changed `BeginCardOrPotionEffect` | `void BeginCardOrPotionEffect(Player)` | `CombatId? BeginCardOrPotionEffect(Player)` |
+| Added param `EndCardOrPotionEffect` | `Task EndCardOrPotionEffect(Player)` | `Task EndCardOrPotionEffect(CombatId?, Player)` |
+| Added param `CheckForEmptyHand` | `Task CheckForEmptyHand(PlayerChoiceContext, Player)` | `Task CheckForEmptyHand(CombatId?, PlayerChoiceContext, Player)` |
+| Added param `HandlePlayerDeath` | `Task HandlePlayerDeath(Player)` | `Task HandlePlayerDeath(CombatId?, Player)` |
+| Added param `RemoveDeadPlayerCardsFromCombat` | `Task RemoveDeadPlayerCardsFromCombat(Player)` | `Task RemoveDeadPlayerCardsFromCombat(CombatId?, Player)` |
+| Removed param `EndPlayerTurnPhaseTwoInternal` | `Task EndPlayerTurnPhaseTwoInternal(CancellationToken?)` | `Task EndPlayerTurnPhaseTwoInternal()` |
+| Removed param `SwitchFromPlayerToEnemySide` | `Task SwitchFromPlayerToEnemySide(Func<Task>?)` | `Task SwitchFromPlayerToEnemySide()` |
+
+New field:
+
+```csharp
+public CombatId? CurrentCombatId { get; }
+```
+
+> **Migration note:** When calling `BeginCardOrPotionEffect`, capture the returned `CombatId?` and pass it back to `EndCardOrPotionEffect` / `CheckForEmptyHand`.
+
+### CardModel / PotionModel
+
+All call sites for `BeginCardOrPotionEffect` / `EndCardOrPotionEffect` / `CheckForEmptyHand` must be adapted for `CombatId?`.
+
+```csharp
+// 0.109
+CombatManager.Instance.BeginCardOrPotionEffect(Owner);
+await CombatManager.Instance.EndCardOrPotionEffect(Owner);
+await CombatManager.Instance.CheckForEmptyHand(choiceContext, originalOwner);
+
+// 0.110
+CombatId? effectCombatId = CombatManager.Instance.BeginCardOrPotionEffect(Owner);
+await CombatManager.Instance.EndCardOrPotionEffect(effectCombatId, Owner);
+await CombatManager.Instance.CheckForEmptyHand(effectCombatId, choiceContext, originalOwner);
+```
+
+### MegaInput
+
+| Type/Member | 0.109 | 0.110 |
+| --- | --- | --- |
+| Renamed `MegaInput.accept` | `accept` | `confirm` |
+| Removed `MegaInput.releaseCard` | `releaseCard` | removed |
+
+New:
+
+```csharp
+public static readonly StringName endTurn = "ui_end_turn";
+```
+
+### BranchingPlayerChoiceContext
+
+| Type/Member | 0.109 | 0.110 |
+|---|---|---|
+| Added param ctor | `BranchingPlayerChoiceContext(ulong, GameActionType, PlayerChoiceContext)` | `BranchingPlayerChoiceContext(GameAction, ulong, GameActionType, PlayerChoiceContext)` |
+
+### InputType (new enum)
+
+```csharp
+public enum InputType
+{
+    MouseAndKeyboard = 0,
+    KeyboardOnlyMode = 1,
+    Controller = 2
+}
+```
+
+### PeerVersionInfo (new type)
+
+Used for multiplayer version validation and mod compatibility checks.
+
+```csharp
+public struct PeerVersionInfo : IPacketSerializable
+{
+    public string version;
+    public PlatformBranch branch;
+    public uint idDatabaseHash;
+    public List<string>? gameplayAffectingMods;
+    public List<string>? otherMods;
+    public static PeerVersionInfo LocalDefault();
+}
+```
+
+### LobbyPlayer Split
+
+| Type/Member | 0.109 | 0.110 |
+| --- | --- | --- |
+| Split `LobbyPlayer` | Single `LobbyPlayer` class | Split into `RunLobbyPlayer` / `LoadRunLobbyPlayer` / `StartRunLobbyPlayer` |
+| Renamed `RunLobby.ConnectedPlayerIds` | `ConnectedPlayerIds` | `PlayerIds` |
+
+### ProgressState
+
+| Type/Member | 0.109 | 0.110 |
+|---|---|---|
+| Field → computed property `TotalUnlocks` | `public int TotalUnlocks { get; set; }` | `public int TotalUnlocks => EpochModel.AgnosticUnlockOrder.Count(IsEpochObtained);` |
+
+New:
+
+```csharp
+public string? GrantNextUnlock();
+```
+
+---
+
 ## 0.108 to 0.109
 
 ### AbstractModel
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Signature changed `AbstractModel.AfterBlockBroken` | `virtual Task AfterBlockBroken(Creature creature)` | `virtual Task AfterBlockBroken(PlayerChoiceContext choiceContext, Creature target, Creature? breaker)` |
 | Renamed + return type changed `ModifyCardPlayResultPileTypeAndPosition` | `virtual (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(CardModel, bool, ResourceInfo, PileType, CardPilePosition)` | `virtual CardLocation ModifyCardPlayResultLocation(CardModel, bool, ResourceInfo, CardLocation)` |
 | Renamed `AfterModifyingCardPlayResultPileOrPosition` | `virtual Task AfterModifyingCardPlayResultPileOrPosition(CardModel, PileType, CardPilePosition)` | `virtual Task AfterModifyingCardPlayResultLocation(CardModel, CardLocation)` |
@@ -15,7 +128,7 @@ This records some changes that may require you to update your code. Not an exhau
 ### Hook
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Signature changed `Hook.AfterBlockBroken` | `static Task AfterBlockBroken(ICombatState, Creature)` | `static Task AfterBlockBroken(ICombatState, PlayerChoiceContext, Creature target, Creature? breaker)` |
 | Renamed + return type changed `Hook.ModifyCardPlayResultPileTypeAndPosition` | `static (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(...)` | `static CardLocation ModifyCardPlayResultLocation(...)` |
 
@@ -30,7 +143,7 @@ public record struct CardLocation(Player player, PileType pileType, CardPilePosi
 ### CardModel
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Renamed + return type changed `GetResultPileTypeAndPositionForCardPlay` | `protected (PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()` | `protected CardLocation GetResultLocationForCardPlay()` |
 | Added param `CardModel.CreateDupe` | `CardModel CreateDupe()` | `CardModel CreateDupe(Player newOwner)` |
 
@@ -69,7 +182,7 @@ public static void ApplySingleTurnRetain(CardModel card);
 ### CombatManager
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Return type changed `EndCardOrPotionEffect` | `void EndCardOrPotionEffect(Player)` | `Task EndCardOrPotionEffect(Player)` |
 | Added optional param `EndPlayerTurnPhaseTwoInternal` | `Task EndPlayerTurnPhaseTwoInternal()` | `Task EndPlayerTurnPhaseTwoInternal(CancellationToken? combatCt = null)` |
 
@@ -92,7 +205,7 @@ public static Mod? ModForType(Type type, out bool isBaseGame);
 ### RunManager
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Added param `SetUpReplay` | `SetUpReplay(RunState, CombatReplay)` | `SetUpReplay(RunState, CombatReplay, ulong playerIdToLoad)` |
 | Visibility changed `FadeIn` | `private Task FadeIn(bool)` | `public Task FadeIn(bool)` |
 | Visibility changed `FadeOut` | `private Task FadeOut()` | `public Task FadeOut()` |
@@ -125,7 +238,7 @@ public static int GetDeterministicHashCodeOld(string str);
 #### Rng
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Type changed `Rng.Seed` | `uint Seed` | `ulong Seed` |
 | Signature changed `Rng` ctor | `Rng(uint seed = 0u, int counter = 0)` | `Rng(ulong seed = 0uL)` |
 | Signature changed `Rng` ctor | `Rng(Player, ModelId, uint mixin = 0u, int counter = 0)` | `Rng(Player, ModelId, ulong mixin = 0uL)` |
@@ -163,7 +276,7 @@ public void FillSerializableState(SerializableRng rng);
 #### PlayerRngSet
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Type changed `PlayerRngSet.Seed` | `uint Seed` | `ulong Seed` |
 | Signature changed `PlayerRngSet` ctor | `PlayerRngSet(uint seed)` | `PlayerRngSet(ulong seed)` |
 | Visibility changed `PlayerRngSet.GetRng` | `private Rng GetRng(PlayerRngType)` | `public Rng GetRng(PlayerRngType)` |
@@ -171,7 +284,7 @@ public void FillSerializableState(SerializableRng rng);
 #### RunRngSet
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Type changed `RunRngSet.Seed` | `uint Seed` | `ulong Seed` |
 | Signature changed `RunRngSet.MockRng` | `MockRng(RunRngType, uint seed)` | `MockRng(RunRngType, ulong seed)` |
 | Visibility changed `RunRngSet.GetRng` | `private Rng GetRng(RunRngType)` | `public Rng GetRng(RunRngType)` |
@@ -193,7 +306,7 @@ public static void CacheSavedPropertiesForTypeDebug(Type type);
 #### MegaCritSerializerContext
 
 | Type/Member | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | Removed `UInt32` | `JsonTypeInfo<uint> UInt32` | removed |
 | New `SerializableRng` | - | `JsonTypeInfo<SerializableRng> SerializableRng` |
 | Type parameter changed | `Dictionary<PlayerRngType, int>` | `Dictionary<PlayerRngType, SerializableRng>` |
@@ -246,7 +359,7 @@ public class BranchingPlayerChoiceContext : PlayerChoiceContext
 ### AbstractModel
 
 | Type/Member | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | Added param `AbstractModel.ModifyDamageAdditive` | `(..., CardModel? cardSource)` | `(..., CardModel? cardSource, CardPlay? cardPlay)` |
 | Added param `AbstractModel.ModifyDamageMultiplicative` | same | same |
 | Added param `AbstractModel.ModifyDamageCap` | `(..., CardModel? cardSource)` | `(..., CardModel? cardSource, CardPlay? cardPlay)` |
@@ -262,7 +375,7 @@ public virtual bool IsMock => false;
 ### CardModel
 
 | Type/Member | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | Renamed + return type changed `CardModel.GetResultPileTypeForCardPlay` | `PileType GetResultPileTypeForCardPlay()` | `(PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()` |
 | Visibility changed `CardModel.PortraitPngPath` | `private` | `protected virtual` |
 | Added param `AttackCommand.FromCard` | `FromCard(CardModel)` | `FromCard(CardModel, CardPlay?)` |
@@ -282,7 +395,7 @@ public CardPlay? CardPlay { get; }
 ### OrbModel
 
 | Type/Member | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | Renamed `OrbModel.Triggered` event | `event Action? Triggered` | `event Action? PassiveActivated` |
 | Renamed + split `OrbModel.Trigger()` | `void Trigger()` | `void ActivateEvoke(Creature[])` + `Task TriggerPassive(PlayerChoiceContext, Creature?)` |
 
@@ -291,7 +404,7 @@ New event `event Action<Creature[]>? EvokeActivated`.
 ### EventModel / EventCombatSynchronizer
 
 | Type/Member | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | Added param `EventModel.BeginEvent` | `BeginEvent(Player, bool)` | `BeginEvent(Player, EventCombatSynchronizer?, bool)` |
 | Removed `EventModel.GenerateInternalCombatState` | `void GenerateInternalCombatState(IRunState)` | removed |
 | Removed `EventModel.ResetInternalCombatState` | `void ResetInternalCombatState()` | removed |
@@ -302,7 +415,7 @@ New class `EventCombatSynchronizer` (`InitializeForEvent`/`ReadyToEnterCombat`/`
 ### EpochModel
 
 | Type/Member | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | Removed `EpochModel.Year` | `string Year` | removed/private |
 | Removed `EpochModel.EraName` | `string EraName` | removed/private |
 | Removed `EpochModel.ModelId` | `ModelId ModelId` | removed/private |
@@ -321,7 +434,7 @@ public static IReadOnlyList<Type> AllEpochs;
 `CardCreationOptions` card pool and filter split.
 
 | Type/Member | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | Removed `CardCreationOptions.CustomCardPool` | `IEnumerable<CardModel>? CustomCardPool` | removed |
 | Removed `CardCreationOptions.ForNonCombatWithDefaultOdds` | static method | removed |
 | Removed `CardCreationOptions.WithRngOverride` | `WithRngOverride(Rng)` | removed |
@@ -330,7 +443,7 @@ public static IReadOnlyList<Type> AllEpochs;
 New `CardCreationOptions WithFilter(Func<CardModel,bool>)` replaces the previously inlined filter predicate.
 
 | Type/Member | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | Param type changed `SaveManager.IncrementNumReloads` | `(SerializableRun, bool isMultiplayer)` | `(SerializableRun, NetGameType, bool forceInTest=false)` |
 | Added overload `UserDataPathProvider.GetProfileDir` | `GetProfileDir(int)` | `GetProfileDir(int, bool? forceModState)` (old overload kept) |
 
@@ -341,7 +454,7 @@ New `UserDataPathProvider.GetAccountDir(bool? forceModState=null)`, `PrefsSave.I
 `VoteToMoveToNextActAction` ctor gains a param; controller D-pad keys unified to `Up/Down/Left/Right`.
 
 | Type/Member | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | Added param `VoteToMoveToNextActAction` ctor | `VoteToMoveToNextActAction(Player)` | `VoteToMoveToNextActAction(Player, int currentActIndex)` |
 | Renamed `Controller.dPadNorth` | `dPadNorth` | `dPadUp` |
 | Renamed `Controller.dPadSouth` | `dPadSouth` | `dPadDown` |
@@ -418,7 +531,7 @@ public virtual Task AfterModifyingGoldGained(Player player, decimal amount)
 ### Removed Methods
 
 | STS2 0.106 | Replacement |
-|---|---|
+| --- | --- |
 | `ModifyPowerAmountGiven(...)` | `ModifyPowerAmountGivenAdditive` + `ModifyPowerAmountGivenMultiplicative` |
 | `ShouldGainGold(decimal, Player)` | Use `ModifyGoldGained` + check the return value |
 
@@ -433,6 +546,7 @@ Card models now have a direct Title property. Previously you had to look it up v
 ## EncounterModel Changes
 
 New:
+
 ```csharp
 public virtual float CalculateGoldProportion(CombatState combatState)
 ```
@@ -451,7 +565,7 @@ public virtual float CalculateGoldProportion(CombatState combatState)
 Some renames and new parameters.
 
 | 0.105 | 0.106 |
-|---|---|
+| --- | --- |
 | `BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, ICombatState combatState)` | `BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)` |
 | `AfterSideTurnStart(CombatSide side, ICombatState combatState)` | `AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)` |
 | `BeforeTurnEndVeryEarly(PlayerChoiceContext choiceContext, CombatSide side)` | `BeforeSideTurnEndVeryEarly(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)` |
@@ -467,14 +581,14 @@ Some `ModifyHpLost` functions were merged. The new `HpLossHookPhase` enum is use
 The old `ModifyHpLostBeforeOsty` is now equivalent to passing `HpLossHookPhase.BeforeOsty`. AfterOsty follows the same pattern.
 
 | 0.105 | 0.106 |
-|---|---|
+| --- | --- |
 | `ModifyHpLostBeforeOsty(..., out IEnumerable<AbstractModel> modifiers)` | `ModifyHpLost(..., HpLossHookPhase phases, out IEnumerable<AbstractModel> modifiers)` |
 | `ModifyHpLostAfterOsty(..., out IEnumerable<AbstractModel> modifiers)` | `ModifyHpLost(..., HpLossHookPhase phases, out IEnumerable<AbstractModel> modifiers)` |
 
 ### CardPileCmd
 
 | 0.105 | 0.106 |
-|---|---|
+| --- | --- |
 | `Task AddCurseToDeck<T>(Player owner)` | `Task<CardModel?> AddCurseToDeck<T>(Player owner)` |
 | `Task AddCursesToDeck(IEnumerable<CardModel> curses, Player owner)` | `Task<IEnumerable<CardPileAddResult>> AddCursesToDeck(...)` |
 | `Add(..., AbstractModel? source = null, ...)` | `Add(..., AbstractModel? clonedBy = null, ...)` |
@@ -508,14 +622,14 @@ New function `FromCombatPile`.
 * `GetResultPileType` renamed to `GetResultPileTypeForCardPlay`. Added `GetResultPileTypeForOnTurnEndInHandEffect`.
 
 Old `AbstractModel` had:
-- `BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Player player)`
-- `BeforePlayPhaseStartLate(PlayerChoiceContext choiceContext, Player player)`
+* `BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Player player)`
+* `BeforePlayPhaseStartLate(PlayerChoiceContext choiceContext, Player player)`
 
 0.104 replaced these with:
-- `AfterAutoPrePlayPhaseEnteredEarly(PlayerChoiceContext choiceContext, Player player)`
-- `AfterAutoPrePlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)`
-- `AfterAutoPrePlayPhaseEnteredLate(PlayerChoiceContext choiceContext, Player player)`
-- `AfterAutoPostPlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)`
+* `AfterAutoPrePlayPhaseEnteredEarly(PlayerChoiceContext choiceContext, Player player)`
+* `AfterAutoPrePlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)`
+* `AfterAutoPrePlayPhaseEnteredLate(PlayerChoiceContext choiceContext, Player player)`
+* `AfterAutoPostPlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)`
 
 ### Interface Changes
 
