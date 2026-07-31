@@ -9,12 +9,123 @@ categories:
 
 ---
 
+## 0.109 至 0.110
+
+### CombatId（新增类型）
+
+不透明标识符，标识一次战斗。防止已结束战斗的延迟操作泄露到下一场战斗。
+
+```csharp
+public readonly record struct CombatId(int Value);
+```
+
+### CombatManager
+
+| 类型/成员 | 0.109 | 0.110 |
+| --- | --- | --- |
+| 改返回类型 `BeginCardOrPotionEffect` | `void BeginCardOrPotionEffect(Player)` | `CombatId? BeginCardOrPotionEffect(Player)` |
+| 加参 `EndCardOrPotionEffect` | `Task EndCardOrPotionEffect(Player)` | `Task EndCardOrPotionEffect(CombatId?, Player)` |
+| 加参 `CheckForEmptyHand` | `Task CheckForEmptyHand(PlayerChoiceContext, Player)` | `Task CheckForEmptyHand(CombatId?, PlayerChoiceContext, Player)` |
+| 加参 `HandlePlayerDeath` | `Task HandlePlayerDeath(Player)` | `Task HandlePlayerDeath(CombatId?, Player)` |
+| 加参 `RemoveDeadPlayerCardsFromCombat` | `Task RemoveDeadPlayerCardsFromCombat(Player)` | `Task RemoveDeadPlayerCardsFromCombat(CombatId?, Player)` |
+| 去参 `EndPlayerTurnPhaseTwoInternal` | `Task EndPlayerTurnPhaseTwoInternal(CancellationToken?)` | `Task EndPlayerTurnPhaseTwoInternal()` |
+| 去参 `SwitchFromPlayerToEnemySide` | `Task SwitchFromPlayerToEnemySide(Func<Task>?)` | `Task SwitchFromPlayerToEnemySide()` |
+
+新增字段：
+
+```csharp
+public CombatId? CurrentCombatId { get; }
+```
+
+> **迁移要点：** 调用 `BeginCardOrPotionEffect` 时需捕获返回值 `CombatId?`，并在对应的 `EndCardOrPotionEffect` / `CheckForEmptyHand` 中传回。
+
+### CardModel / PotionModel
+
+`BeginCardOrPotionEffect` / `EndCardOrPotionEffect` / `CheckForEmptyHand` 调用点均需适配 `CombatId?`。
+
+```csharp
+// 0.109
+CombatManager.Instance.BeginCardOrPotionEffect(Owner);
+await CombatManager.Instance.EndCardOrPotionEffect(Owner);
+await CombatManager.Instance.CheckForEmptyHand(choiceContext, originalOwner);
+
+// 0.110
+CombatId? effectCombatId = CombatManager.Instance.BeginCardOrPotionEffect(Owner);
+await CombatManager.Instance.EndCardOrPotionEffect(effectCombatId, Owner);
+await CombatManager.Instance.CheckForEmptyHand(effectCombatId, choiceContext, originalOwner);
+```
+
+### MegaInput
+
+| 类型/成员 | 0.109 | 0.110 |
+| --- | --- | --- |
+| 改名 `MegaInput.accept` | `accept` | `confirm` |
+| 删除 `MegaInput.releaseCard` | `releaseCard` | 删除 |
+
+新增：
+
+```csharp
+public static readonly StringName endTurn = "ui_end_turn";
+```
+
+### BranchingPlayerChoiceContext
+
+| 类型/成员 | 0.109 | 0.110 |
+|---|---|---|
+| 加参 ctor | `BranchingPlayerChoiceContext(ulong, GameActionType, PlayerChoiceContext)` | `BranchingPlayerChoiceContext(GameAction, ulong, GameActionType, PlayerChoiceContext)` |
+
+### InputType（新增枚举）
+
+```csharp
+public enum InputType
+{
+    MouseAndKeyboard = 0,
+    KeyboardOnlyMode = 1,
+    Controller = 2
+}
+```
+
+### PeerVersionInfo（新增类型）
+
+用于多人游戏版本校验和 mod 兼容性检查。
+
+```csharp
+public struct PeerVersionInfo : IPacketSerializable
+{
+    public string version;
+    public PlatformBranch branch;
+    public uint idDatabaseHash;
+    public List<string>? gameplayAffectingMods;
+    public List<string>? otherMods;
+    public static PeerVersionInfo LocalDefault();
+}
+```
+
+### LobbyPlayer 拆分
+
+| 类型/成员 | 0.109 | 0.110 |
+| --- | --- | --- |
+| 拆分 `LobbyPlayer` | 单一 `LobbyPlayer` 类 | 拆分为 `RunLobbyPlayer` / `LoadRunLobbyPlayer` / `StartRunLobbyPlayer` |
+| 改名 `RunLobby.ConnectedPlayerIds` | `ConnectedPlayerIds` | `PlayerIds` |
+
+### ProgressState
+
+| 类型/成员 | 0.109 | 0.110 |
+|---|---|---|
+| 字段→计算属性 `TotalUnlocks` | `public int TotalUnlocks { get; set; }` | `public int TotalUnlocks => EpochModel.AgnosticUnlockOrder.Count(IsEpochObtained);` |
+
+新增：
+
+```csharp
+public string? GrantNextUnlock();
+```
+
 ## 0.108 至 0.109
 
 ### AbstractModel
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 改签名 `AbstractModel.AfterBlockBroken` | `virtual Task AfterBlockBroken(Creature creature)` | `virtual Task AfterBlockBroken(PlayerChoiceContext choiceContext, Creature target, Creature? breaker)` |
 | 改名+改返回类型 `ModifyCardPlayResultPileTypeAndPosition` | `virtual (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(CardModel, bool, ResourceInfo, PileType, CardPilePosition)` | `virtual CardLocation ModifyCardPlayResultLocation(CardModel, bool, ResourceInfo, CardLocation)` |
 | 改名 `AfterModifyingCardPlayResultPileOrPosition` | `virtual Task AfterModifyingCardPlayResultPileOrPosition(CardModel, PileType, CardPilePosition)` | `virtual Task AfterModifyingCardPlayResultLocation(CardModel, CardLocation)` |
@@ -22,7 +133,7 @@ categories:
 ### Hook
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 改签名 `Hook.AfterBlockBroken` | `static Task AfterBlockBroken(ICombatState, Creature)` | `static Task AfterBlockBroken(ICombatState, PlayerChoiceContext, Creature target, Creature? breaker)` |
 | 改名+改返回类型 `Hook.ModifyCardPlayResultPileTypeAndPosition` | `static (PileType, CardPilePosition) ModifyCardPlayResultPileTypeAndPosition(...)` | `static CardLocation ModifyCardPlayResultLocation(...)` |
 
@@ -37,7 +148,7 @@ public record struct CardLocation(Player player, PileType pileType, CardPilePosi
 ### CardModel
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 改名+改返回类型 `GetResultPileTypeAndPositionForCardPlay` | `protected (PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()` | `protected CardLocation GetResultLocationForCardPlay()` |
 | 加参 `CardModel.CreateDupe` | `CardModel CreateDupe()` | `CardModel CreateDupe(Player newOwner)` |
 
@@ -76,7 +187,7 @@ public static void ApplySingleTurnRetain(CardModel card);
 ### CombatManager
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 改返回类型 `EndCardOrPotionEffect` | `void EndCardOrPotionEffect(Player)` | `Task EndCardOrPotionEffect(Player)` |
 | 加可选参 `EndPlayerTurnPhaseTwoInternal` | `Task EndPlayerTurnPhaseTwoInternal()` | `Task EndPlayerTurnPhaseTwoInternal(CancellationToken? combatCt = null)` |
 
@@ -99,7 +210,7 @@ public static Mod? ModForType(Type type, out bool isBaseGame);
 ### RunManager
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 加参 `SetUpReplay` | `SetUpReplay(RunState, CombatReplay)` | `SetUpReplay(RunState, CombatReplay, ulong playerIdToLoad)` |
 | 改可见性 `FadeIn` | `private Task FadeIn(bool)` | `public Task FadeIn(bool)` |
 | 改可见性 `FadeOut` | `private Task FadeOut()` | `public Task FadeOut()` |
@@ -132,7 +243,7 @@ public static int GetDeterministicHashCodeOld(string str);
 #### Rng
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 改类型 `Rng.Seed` | `uint Seed` | `ulong Seed` |
 | 改签名 `Rng` ctor | `Rng(uint seed = 0u, int counter = 0)` | `Rng(ulong seed = 0uL)` |
 | 改签名 `Rng` ctor | `Rng(Player, ModelId, uint mixin = 0u, int counter = 0)` | `Rng(Player, ModelId, ulong mixin = 0uL)` |
@@ -170,7 +281,7 @@ public void FillSerializableState(SerializableRng rng);
 #### PlayerRngSet
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 改类型 `PlayerRngSet.Seed` | `uint Seed` | `ulong Seed` |
 | 改签名 `PlayerRngSet` ctor | `PlayerRngSet(uint seed)` | `PlayerRngSet(ulong seed)` |
 | 改可见性 `PlayerRngSet.GetRng` | `private Rng GetRng(PlayerRngType)` | `public Rng GetRng(PlayerRngType)` |
@@ -178,7 +289,7 @@ public void FillSerializableState(SerializableRng rng);
 #### RunRngSet
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 改类型 `RunRngSet.Seed` | `uint Seed` | `ulong Seed` |
 | 改签名 `RunRngSet.MockRng` | `MockRng(RunRngType, uint seed)` | `MockRng(RunRngType, ulong seed)` |
 | 改可见性 `RunRngSet.GetRng` | `private Rng GetRng(RunRngType)` | `public Rng GetRng(RunRngType)` |
@@ -200,7 +311,7 @@ public static void CacheSavedPropertiesForTypeDebug(Type type);
 #### MegaCritSerializerContext
 
 | 类型/成员 | 0.108 | 0.109 |
-|---|---|---|
+| --- | --- | --- |
 | 删除 `UInt32` | `JsonTypeInfo<uint> UInt32` | 删除 |
 | 新增 `SerializableRng` | - | `JsonTypeInfo<SerializableRng> SerializableRng` |
 | 改类型参数 | `Dictionary<PlayerRngType, int>` | `Dictionary<PlayerRngType, SerializableRng>` |
@@ -253,7 +364,7 @@ public class BranchingPlayerChoiceContext : PlayerChoiceContext
 ### AbstractModel
 
 | 类型/成员 | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | 加参 `AbstractModel.ModifyDamageAdditive` | `(..., CardModel? cardSource)` | `(..., CardModel? cardSource, CardPlay? cardPlay)` |
 | 加参 `AbstractModel.ModifyDamageMultiplicative` | 同上 | 同上 |
 | 加参 `AbstractModel.ModifyDamageCap` | `(..., CardModel? cardSource)` | `(..., CardModel? cardSource, CardPlay? cardPlay)` |
@@ -269,7 +380,7 @@ public virtual bool IsMock => false;
 ### CardModel
 
 | 类型/成员 | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | 改名和改返回类型 `CardModel.GetResultPileTypeForCardPlay` | `PileType GetResultPileTypeForCardPlay()` | `(PileType, CardPilePosition) GetResultPileTypeAndPositionForCardPlay()` |
 | 改可见性 `CardModel.PortraitPngPath` | `private` | `protected virtual` |
 | 加参 `AttackCommand.FromCard` | `FromCard(CardModel)` | `FromCard(CardModel, CardPlay?)` |
@@ -289,7 +400,7 @@ public CardPlay? CardPlay { get; }
 ### OrbModel
 
 | 类型/成员 | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | 改名 `OrbModel.Triggered` 事件 | `event Action? Triggered` | `event Action? PassiveActivated` |
 | 改名+拆分 `OrbModel.Trigger()` | `void Trigger()` | `void ActivateEvoke(Creature[])` + `Task TriggerPassive(PlayerChoiceContext, Creature?)` |
 
@@ -298,7 +409,7 @@ public CardPlay? CardPlay { get; }
 ### EventModel / EventCombatSynchronizer
 
 | 类型/成员 | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | 加参 `EventModel.BeginEvent` | `BeginEvent(Player, bool)` | `BeginEvent(Player, EventCombatSynchronizer?, bool)` |
 | 删除 `EventModel.GenerateInternalCombatState` | `void GenerateInternalCombatState(IRunState)` | 删除 |
 | 删除 `EventModel.ResetInternalCombatState` | `void ResetInternalCombatState()` | 删除 |
@@ -309,7 +420,7 @@ public CardPlay? CardPlay { get; }
 ### EpochModel
 
 | 类型/成员 | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | 删除 `EpochModel.Year` | `string Year` | 删除/私有化 |
 | 删除 `EpochModel.EraName` | `string EraName` | 删除/私有化 |
 | 删除 `EpochModel.ModelId` | `ModelId ModelId` | 删除/私有化 |
@@ -328,7 +439,7 @@ public static IReadOnlyList<Type> AllEpochs;
 `CardCreationOptions` 卡池与过滤器拆分。
 
 | 类型/成员 | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | 删除 `CardCreationOptions.CustomCardPool` | `IEnumerable<CardModel>? CustomCardPool` | 删除 |
 | 删除 `CardCreationOptions.ForNonCombatWithDefaultOdds` | 静态方法 | 删除 |
 | 删除 `CardCreationOptions.WithRngOverride` | `WithRngOverride(Rng)` | 删除 |
@@ -337,7 +448,7 @@ public static IReadOnlyList<Type> AllEpochs;
 新增 `CardCreationOptions WithFilter(Func<CardModel,bool>)` 替代原先内联的过滤 predicate。
 
 | 类型/成员 | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | 改参数类型 `SaveManager.IncrementNumReloads` | `(SerializableRun, bool isMultiplayer)` | `(SerializableRun, NetGameType, bool forceInTest=false)` |
 | 加重载 `UserDataPathProvider.GetProfileDir` | `GetProfileDir(int)` | `GetProfileDir(int, bool? forceModState)`（旧重载保留） |
 
@@ -348,7 +459,7 @@ public static IReadOnlyList<Type> AllEpochs;
 `VoteToMoveToNextActAction` 构造加参，控制器方向键统一为 `Up/Down/Left/Right`。
 
 | 类型/成员 | 0.107 | 0.108 |
-|---|---|---|
+| --- | --- | --- |
 | 加参 `VoteToMoveToNextActAction` ctor | `VoteToMoveToNextActAction(Player)` | `VoteToMoveToNextActAction(Player, int currentActIndex)` |
 | 改名 `Controller.dPadNorth` | `dPadNorth` | `dPadUp` |
 | 改名 `Controller.dPadSouth` | `dPadSouth` | `dPadDown` |
@@ -425,7 +536,7 @@ public virtual Task AfterModifyingGoldGained(Player player, decimal amount)
 ### 删除的方法
 
 | sts2106 | 替代 |
-|---|---|
+| --- | --- |
 | `ModifyPowerAmountGiven(...)` | `ModifyPowerAmountGivenAdditive` + `ModifyPowerAmountGivenMultiplicative` |
 | `ShouldGainGold(decimal, Player)` | 改用 `ModifyGoldGained` + 检查返回值 |
 
@@ -440,6 +551,7 @@ public virtual string Title
 ## EncounterModel 变更
 
 新增：
+
 ```csharp
 public virtual float CalculateGoldProportion(CombatState combatState)
 ```
@@ -459,7 +571,7 @@ public virtual float CalculateGoldProportion(CombatState combatState)
 涉及一些函数改名和参数新增。
 
 | 0.105 | 0.106 |
-|---|---|
+| --- | --- |
 | `BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, ICombatState combatState)` | `BeforeSideTurnStart(PlayerChoiceContext choiceContext, CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)` |
 | `AfterSideTurnStart(CombatSide side, ICombatState combatState)` | `AfterSideTurnStart(CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)` |
 | `BeforeTurnEndVeryEarly(PlayerChoiceContext choiceContext, CombatSide side)` | `BeforeSideTurnEndVeryEarly(PlayerChoiceContext choiceContext, CombatSide side, IEnumerable<Creature> participants)` |
@@ -475,14 +587,14 @@ public virtual float CalculateGoldProportion(CombatState combatState)
 之前的`ModifyHpLostBeforeOsty`相当于传入参数`HpLossHookPhase.BeforeOsty`，afterosty以此类推。
 
 | 0.105 | 0.106 |
-|---|---|
+| --- | --- |
 | `ModifyHpLostBeforeOsty(..., out IEnumerable<AbstractModel> modifiers)` | `ModifyHpLost(..., HpLossHookPhase phases, out IEnumerable<AbstractModel> modifiers)` |
 | `ModifyHpLostAfterOsty(..., out IEnumerable<AbstractModel> modifiers)` | `ModifyHpLost(..., HpLossHookPhase phases, out IEnumerable<AbstractModel> modifiers)` |
 
 ### CardPileCmd
 
 | 0.105 | 0.106 |
-|---|---|
+| --- | --- |
 | `Task AddCurseToDeck<T>(Player owner)` | `Task<CardModel?> AddCurseToDeck<T>(Player owner)` |
 | `Task AddCursesToDeck(IEnumerable<CardModel> curses, Player owner)` | `Task<IEnumerable<CardPileAddResult>> AddCursesToDeck(...)` |
 | `Add(..., AbstractModel? source = null, ...)` | `Add(..., AbstractModel? clonedBy = null, ...)` |
@@ -523,15 +635,15 @@ public virtual float CalculateGoldProportion(CombatState combatState)
 
 旧版 `AbstractModel` 里有：
 
-- `BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Player player)`
-- `BeforePlayPhaseStartLate(PlayerChoiceContext choiceContext, Player player)`
+* `BeforePlayPhaseStart(PlayerChoiceContext choiceContext, Player player)`
+* `BeforePlayPhaseStartLate(PlayerChoiceContext choiceContext, Player player)`
 
 0.104 版这两个点被移除了，换成了：
 
-- `AfterAutoPrePlayPhaseEnteredEarly(PlayerChoiceContext choiceContext, Player player)`
-- `AfterAutoPrePlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)`
-- `AfterAutoPrePlayPhaseEnteredLate(PlayerChoiceContext choiceContext, Player player)`
-- `AfterAutoPostPlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)`
+* `AfterAutoPrePlayPhaseEnteredEarly(PlayerChoiceContext choiceContext, Player player)`
+* `AfterAutoPrePlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)`
+* `AfterAutoPrePlayPhaseEnteredLate(PlayerChoiceContext choiceContext, Player player)`
+* `AfterAutoPostPlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)`
 
 ### 接口变动
 
