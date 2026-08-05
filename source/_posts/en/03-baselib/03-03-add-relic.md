@@ -32,7 +32,7 @@ public class TestRelic : CustomRelicModel
     }
 
     // For starter relic upgrades, override this:
-    // public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<Circlet>().ToMutable();
+    // public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<Circlet>();
 }
 ```
 
