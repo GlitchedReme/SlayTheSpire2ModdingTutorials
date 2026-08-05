@@ -25,7 +25,7 @@ public class TestRelic : CustomRelicModel
     }
 
     // 初始遗物的升级可以写这里
-    // public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<Circlet>().ToMutable();
+    // public override RelicModel? GetUpgradeReplacement() => ModelDb.Relic<Circlet>();
 }
 ```
 
