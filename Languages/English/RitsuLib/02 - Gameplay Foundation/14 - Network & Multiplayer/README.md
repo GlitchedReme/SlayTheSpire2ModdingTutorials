@@ -133,6 +133,94 @@ Each send method has both `INetGameService` and `RunManager` overloads; pick eit
 | `BestEffort` | Unreliable transport (may drop/reorder frames), better performance |
 | `StableSync` | Reliable transport (default), no loss or duplication |
 
+### Practical Example: Skin Sync
+
+Sync each player's chosen skin to all teammates in co-op (simplified from Goldenglow). The core logic: a client sends its skin to the host, the host rebroadcasts it to the other teammates, and everyone applies it on receipt.
+
+```csharp
+using System.Text.Json;
+using MegaCrit.Sts2.Core.Multiplayer.Game;
+using MegaCrit.Sts2.Core.Runs;
+using STS2RitsuLib.Networking.Sidecar;
+
+public static class SkinSync
+{
+    // The skin currently selected on this machine (replace with your own storage)
+    public static string MySkinKey = "default";
+
+    // Cache of remote players' skins: NetId -> skin
+    public static readonly Dictionary<ulong, string> RemoteSkins = [];
+
+    // Message: who + which skin
+    public record SkinSyncMessage(ulong NetId, string SkinKey);
+
+    private static readonly RitsuLibSidecarMessageDescriptor<SkinSyncMessage> SkinSyncDescriptor = new(
+        ModuleId: Entry.ModId,
+        MessageKey: "skin_sync_v1",
+        Serialize: static msg => JsonSerializer.SerializeToUtf8Bytes(msg),
+        Deserialize: static bytes => JsonSerializer.Deserialize<SkinSyncMessage>(bytes)!,
+        Delivery: RitsuLibSidecarDeliverySemantics.StableSync);
+
+    private static IDisposable? _subscription;
+
+    // Call once in Entry.Init
+    public static void Init()
+    {
+        _subscription ??= RitsuLibSidecarTypedMessageRegistry.Subscribe(SkinSyncDescriptor, OnSkinSyncReceived);
+    }
+
+    // Call on run start / skin change / save load: broadcast your own skin
+    public static void SendSkinSync()
+    {
+        var netService = RunManager.Instance?.NetService;
+        if (netService == null)
+            return;
+
+        var msg = new SkinSyncMessage(netService.NetId, MySkinKey);
+
+        // Client → Host; Host/Singleplayer → broadcast
+        switch (netService.Type)
+        {
+            case NetGameType.Client:
+                RitsuLibSidecarTypedMessageRegistry.SendToHost(netService, SkinSyncDescriptor, msg);
+                break;
+            default: // Host / Singleplayer
+                RitsuLibSidecarTypedMessageRegistry.Broadcast(netService, SkinSyncDescriptor, msg);
+                break;
+        }
+    }
+
+    private static void OnSkinSyncReceived(RitsuLibSidecarTypedDispatchContext<SkinSyncMessage> context)
+    {
+        // Record the remote player's chosen skin
+        RemoteSkins[context.Message.NetId] = context.Message.SkinKey;
+
+        // When the host receives a client's skin, rebroadcast it to the other teammates
+        // so everyone ends up with it
+        if (context.IsHostIngest && context.Message.NetId != context.SenderNetId)
+        {
+            RitsuLibSidecarTypedMessageRegistry.Broadcast(
+                RunManager.Instance?.NetService, SkinSyncDescriptor, context.Message);
+        }
+
+        // Apply the skin (replace with your actual logic)
+        ApplySkin(context.Message.NetId, context.Message.SkinKey);
+    }
+
+    private static void ApplySkin(ulong netId, string skinKey)
+    {
+        // Find the player character by netId and apply the skin
+    }
+}
+```
+
+Key points:
+
+- **Who sends**: clients send to the host; host/singleplayer broadcast directly
+- **Who receives**: all ends subscribe to the same message; on receipt, record into `RemoteSkins` and apply
+- **Host rebroadcast**: messages from client to host have `IsHostIngest == true` on the host; the host then broadcasts to the other teammates so everyone stays in sync
+- **Minimal message**: only `NetId + SkinKey`, no large objects, well within the 64KB limit
+
 ## RitsuLib Networking Tool 2: ManagedNetAction (Action Queue)
 
 Sidecar is an instant message — callback on receipt, **no guarantee** of executing in game action order. If your cross-player effect needs to run in the same order and determinism as other actions (card plays, resolutions) — and be recorded in replays — use ManagedNetAction.

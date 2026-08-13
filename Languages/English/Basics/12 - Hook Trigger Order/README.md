@@ -1,6 +1,8 @@
 # Hook Trigger Order
 
-> This article was verified line-by-line against the game 0.110.1 source code. All ordering comes directly from `CombatManager`, `CreatureCmd`, `Hook` and other source files — nothing is inferred.
+> This article is based on the game 0.110.1 source code. All ordering comes directly from `CombatManager`, `CreatureCmd`, `Hook` and other source files.
+
+> Organized and reviewed by AI. Please point out any errors.
 
 ## Traversal Order (within one hook, who is called first)
 
@@ -117,7 +119,7 @@ This is the most commonly used and most complex hook chain. For each target in o
 3. **`Hook.ModifyPowerAmountReceived`** (receiver's perspective)
 4. Multiplayer scaling (`ShouldScaleInMultiplayer`)
 5. `power.BeforeApplied` → `power.ApplyInternal` (actually attached)
-6. **`Hook.AfterModifyingPowerAmountGiven`** + **`Hook.AfterModifyingPowerAmountReceived`** (notified only after attaching)
+6. **`Hook.AfterModifyingPowerAmountGiven`** + **`Hook.AfterModifyingPowerAmountReceived`**
 7. `power.AfterApplied` → **`Hook.AfterPowerAmountChanged`**
 
 ## 6. Player Turn End (CombatManager)
