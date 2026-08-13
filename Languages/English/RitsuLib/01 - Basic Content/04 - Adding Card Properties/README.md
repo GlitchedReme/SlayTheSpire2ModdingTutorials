@@ -55,7 +55,7 @@ Can be combined with a singleton (`SingletonModel`) for logic. See the correspon
 
 ## Adding New Dynamic Variables
 
-Dynamic variables refer to dynamic numeric values like `Damage`, `Block`, `draw count`, `energy gained`, etc. While you can add them through forms like `new DynamicPower("xxx", 1)`, writing a new class is more standardized and easier to extend with features. See the Variables & Descriptions chapter.
+Dynamic variables refer to dynamic numeric values like `Damage`, `Block`, `draw count`, `energy gained`, etc. While you can add them through forms like `new DynamicPower("xxx", 1)`, writing a new class is more standardized and easier to extend with features. See the Variables & Descriptions chapter; for runtime-computed values (depending on target, upgrade, preview, etc.), see `RitsuLib Chapter 19: Computed Dynamic Variables`.
 
 Adding `WithSharedTooltip` via `ritsulib` adds a tooltip. <b>If you don't need localization text, skip this line.</b>
 
