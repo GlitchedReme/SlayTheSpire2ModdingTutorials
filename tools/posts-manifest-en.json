@@ -66,6 +66,12 @@
       "post": "11-upload-workshop.md",
       "permalink": "en/docs/11-upload-workshop/",
       "title": "Workshop Upload"
+    },
+    {
+      "source": "Languages/English/Basics/12 - Hook Trigger Order/README.md",
+      "post": "12-hook-trigger-order.md",
+      "permalink": "docs/12-hook-trigger-order/",
+      "title": "Hook Trigger Order"
     }
   ],
   "baselib": {
@@ -294,6 +300,12 @@
             "post": "04-ritsulib/04-18-add-capability.md",
             "permalink": "en/docs/04-ritsulib/04-18-add-capability/",
             "title": "Adding Components"
+          },
+          {
+            "source": "Languages/English/RitsuLib/01 - Basic Content/19 - Computed Dynamic Variables/README.md",
+            "post": "04-ritsulib/04-19-computed-dynamic-variables.md",
+            "permalink": "docs/04-ritsulib/04-19-computed-dynamic-variables/",
+            "title": "Computed Dynamic Variables"
           }
         ]
       },
@@ -385,6 +397,12 @@
             "post": "04-ritsulib/04-22-7-secondary-resources.md",
             "permalink": "en/docs/04-ritsulib/04-22-7-secondary-resources/",
             "title": "Secondary Resources"
+          },
+          {
+            "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/14 - Network & Multiplayer/README.md",
+            "post": "04-ritsulib/04-31-network-multiplayer.md",
+            "permalink": "docs/04-ritsulib/04-31-network-multiplayer/",
+            "title": "Network & Multiplayer"
           }
         ]
       },

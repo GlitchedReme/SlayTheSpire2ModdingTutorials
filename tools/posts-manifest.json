@@ -66,6 +66,12 @@
       "post": "11-upload-workshop.md",
       "permalink": "docs/11-upload-workshop/",
       "title": "上传工坊"
+    },
+    {
+      "source": "Basics/12 - 触发顺序/README.md",
+      "post": "12-hook-trigger-order.md",
+      "permalink": "docs/12-hook-trigger-order/",
+      "title": "触发顺序"
     }
   ],
   "baselib": {
@@ -294,6 +300,12 @@
             "post": "04-ritsulib/04-18-add-capability.md",
             "permalink": "docs/04-ritsulib/04-18-add-capability/",
             "title": "添加组件"
+          },
+          {
+            "source": "RitsuLib/01 - 添加基础内容/19 - 计算动态变量/README.md",
+            "post": "04-ritsulib/04-19-computed-dynamic-variables.md",
+            "permalink": "docs/04-ritsulib/04-19-computed-dynamic-variables/",
+            "title": "计算动态变量"
           }
         ]
       },
@@ -385,6 +397,12 @@
             "post": "04-ritsulib/04-22-7-secondary-resources.md",
             "permalink": "docs/04-ritsulib/04-22-7-secondary-resources/",
             "title": "次要资源"
+          },
+          {
+            "source": "RitsuLib/02 - 玩法基底/14 - 网络与联机/README.md",
+            "post": "04-ritsulib/04-31-network-multiplayer.md",
+            "permalink": "docs/04-ritsulib/04-31-network-multiplayer/",
+            "title": "网络与联机"
           }
         ]
       },

@@ -148,6 +148,8 @@ description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
 stringBuilder.Append(description.GetFormattedText());
 ```
 
+你在hovertip等里面写描述时，能用的占位变量都是游戏预先注入好的。你可以看源码了解更多原理。
+
 ## DynamicVar
 
 `DynamicVar`是记录在一个model上的指定值。使用`CanonicalVars`指定这个model的各种初始值，例如：
@@ -185,59 +187,4 @@ protected override IEnumerable<DynamicVar> CanonicalVars => [
 
 `ComputedDynamicVar` 是 RitsuLib 提供的 `DynamicVar` 子类，适合需要根据目标、升级状态、预览模式等动态计算数值的场景。
 
-#### 基本用法
-
-使用 `ModCardVars.Computed()` 创建计算变量，传入变量名、后备基础值和计算委托：
-
-```csharp
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using STS2RitsuLib.Cards.DynamicVars;
-
-public class MyStrike : ModCardTemplate(1, CardType.Attack, CardRarity.Common, TargetType.SingleEnemy)
-{
-    public override DynamicVarSet DynamicVars => [
-        // 计算变量：升级时显示5，否则显示3
-        ModCardVars.Computed("TestValue", 3, card => card?.Upgraded == true ? 5 : 3),
-    ];
-}
-```
-
-#### 包装
-
-如果你计算的是伤害或格挡值，并且希望预览时仍经过原版的修正流程，使用 `ComputedDamage` 和 `ComputedBlock` 而非普通 `Computed`：
-
-```csharp
-public override DynamicVarSet DynamicVars => new()
-{
-    // BonusDamage由你自己实现。
-    // 预览时会经过 Hook.ModifyDamage（力量、易伤等）
-    ModCardVars.ComputedDamage("ExtraDamage", 6, (card, target) => DynamicVars["ExtraDamage"].BaseValue + BonusDamage(card, target)),
-    // 预览时会经过 Hook.ModifyBlock（敏捷、脆弱等）
-    ModCardVars.ComputedBlock("ExtraBlock", 5, card => DynamicVars["ExtraBlock"].BaseValue + BonusBlock(card)),
-};
-```
-
-此外还有 `ComputedEnergy`、`ComputedStars`、`ComputedPower` 等。
-
-`ComputedPower<T>` 默认**不经过**能力层数修正 hook。如果你的计算值表示卡牌将要施加的能力层数，并且希望预览时走和原版 `PowerVar<T>` 相同的修正路径（如 `Hook.ModifyPowerAmountGiven`），使用 `ComputedPowerAmountGiven<T>`：
-
-```csharp
-// 预览时会经过 Hook.ModifyPowerAmountGiven
-ModCardVars.ComputedPowerAmountGiven<WeakPower>(
-    baseValue: 2,
-    currentValueFactory: (card, target) => ResolveWeakAmount(card, target));
-```
-
-#### 读取计算值
-
-当需要从其他卡牌读取 `ComputedDynamicVar` 的当前值时，使用扩展方法 `ComputeDynamicValue`：
-
-```csharp
-// 读取 ComputedDynamicVar 的计算值，不存在时返回默认值
-decimal damage = card.DynamicVars.ComputeDynamicValue("CalcDamage", defaultValue: 0m, target: enemy);
-
-// 同理可用于其他计算型变量
-decimal energy = card.DynamicVars.ComputeEnergyValue("EnergyGain");
-decimal stars = card.DynamicVars.ComputeStarsValue("StarGain");
-decimal power = card.DynamicVars.ComputePowerValue<StrengthPower>("StrengthPower");
-```
+详细用法（基本用法、上下文工厂、预览、伤害/格挡包装、图标变量、读取计算值、完整示例）见 `RitsuLib 第19章：计算动态变量`。

@@ -62,7 +62,7 @@ public override IEnumerable<CardKeyword> CanonicalKeywords => [
 
 ## 添加新动态变量
 
-动态变量是指`伤害`，`格挡`，`抽牌数`，`获得能量数`等这种动态数值。虽然可以通过`new DynamicPower("xxx", 1)`这种形式添加，但是写一个新的类比较规范也便于扩展功能。参考`变量与描述`这章。
+动态变量是指`伤害`，`格挡`，`抽牌数`，`获得能量数`等这种动态数值。虽然可以通过`new DynamicPower("xxx", 1)`这种形式添加，但是写一个新的类比较规范也便于扩展功能。参考`变量与描述`这章；需要运行时计算数值（依赖目标、升级、预览等）时，看`RitsuLib第19章：计算动态变量`。
 
 通过`ritsulib`的`WithSharedTooltip`可以添加tooltip。<b>如果不需要添加本地化文本，就不添加这行。</b>
 
