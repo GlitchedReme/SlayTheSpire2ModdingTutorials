@@ -132,6 +132,95 @@ RitsuLibSidecarTypedMessageRegistry.Broadcast(RunManager.Instance, PingDescripto
 | `BestEffort` | 不可靠传输（可能丢帧/乱序），性能好 |
 | `StableSync` | 可靠传输（默认），不丢不重 |
 
+### 实际例子：皮肤同步
+
+联机时把玩家选择的皮肤同步给所有队友。
+
+核心逻辑：客户端把自己的皮肤发给主机，主机收到后转发广播给其他队友，每个人收到后应用。
+
+```csharp
+using System.Text.Json;
+using MegaCrit.Sts2.Core.Multiplayer.Game;
+using MegaCrit.Sts2.Core.Runs;
+using STS2RitsuLib.Networking.Sidecar;
+
+public static class SkinSync
+{
+    // 本机当前选择的皮肤（换成你自己的实际存储）
+    public static string MySkinKey = "default";
+
+    // 远端玩家的皮肤缓存：NetId -> 皮肤
+    public static readonly Dictionary<ulong, string> RemoteSkins = [];
+
+    // 消息：谁 + 哪个皮肤
+    public record SkinSyncMessage(ulong NetId, string SkinKey);
+
+    private static readonly RitsuLibSidecarMessageDescriptor<SkinSyncMessage> SkinSyncDescriptor = new(
+        ModuleId: Entry.ModId,
+        MessageKey: "skin_sync_v1",
+        Serialize: static msg => JsonSerializer.SerializeToUtf8Bytes(msg),
+        Deserialize: static bytes => JsonSerializer.Deserialize<SkinSyncMessage>(bytes)!,
+        Delivery: RitsuLibSidecarDeliverySemantics.StableSync);
+
+    private static IDisposable? _subscription;
+
+    // 在 Entry.Init 里调用一次
+    public static void Init()
+    {
+        _subscription ??= RitsuLibSidecarTypedMessageRegistry.Subscribe(SkinSyncDescriptor, OnSkinSyncReceived);
+    }
+
+    // 开局 / 换肤 / 读档时调用：把自己的皮肤同步出去
+    public static void SendSkinSync()
+    {
+        var netService = RunManager.Instance?.NetService;
+        if (netService == null)
+            return;
+
+        var msg = new SkinSyncMessage(netService.NetId, MySkinKey);
+
+        // 客户端 → 主机；主机/单机 → 广播
+        switch (netService.Type)
+        {
+            case NetGameType.Client:
+                RitsuLibSidecarTypedMessageRegistry.SendToHost(netService, SkinSyncDescriptor, msg);
+                break;
+            default: // Host / Singleplayer
+                RitsuLibSidecarTypedMessageRegistry.Broadcast(netService, SkinSyncDescriptor, msg);
+                break;
+        }
+    }
+
+    private static void OnSkinSyncReceived(RitsuLibSidecarTypedDispatchContext<SkinSyncMessage> context)
+    {
+        // 记下远端玩家选的皮肤
+        RemoteSkins[context.Message.NetId] = context.Message.SkinKey;
+
+        // 主机收到客户端的皮肤后，转发给其他队友（这样所有人都有）
+        if (context.IsHostIngest && context.Message.NetId != context.SenderNetId)
+        {
+            RitsuLibSidecarTypedMessageRegistry.Broadcast(
+                RunManager.Instance?.NetService, SkinSyncDescriptor, context.Message);
+        }
+
+        // 应用皮肤（换成你的实际逻辑）
+        ApplySkin(context.Message.NetId, context.Message.SkinKey);
+    }
+
+    private static void ApplySkin(ulong netId, string skinKey)
+    {
+        // 根据 netId 找到对应玩家角色并套用皮肤
+    }
+}
+```
+
+要点：
+
+- **谁发**：客户端发给主机，主机/单机直接广播
+- **谁收**：所有端订阅同一条消息，收到就记入 `RemoteSkins` 并应用
+- **主机转发**：客户端→主机的消息在主机上 `IsHostIngest == true`，主机再广播给其他队友，保证全员一致
+- **消息内容最小化**：只传 `NetId + SkinKey`，不含大对象，符合 64KB 限制
+
 ## RitsuLib 网络工具二：ManagedNetAction（动作队列）
 
 Sidecar 是即时消息——收到就回调，**不保证**按游戏动作顺序执行。如果你的跨端效果需要和其他动作（出牌、结算）按同一顺序、同一确定性执行（且能被回放记录），用 ManagedNetAction。
