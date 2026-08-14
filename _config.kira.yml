@@ -55,6 +55,10 @@ docsTree:
                     { title: 08 控制台指令, path: /docs/09-console-commands/ },
                     { title: 09 Patch, path: /docs/10-patch/ },
                     { title: 10 上传工坊, path: /docs/11-upload-workshop/ },
+                    {
+                        title: 11 触发顺序,
+                        path: /docs/12-hook-trigger-order/,
+                    },
                 ],
         },
         {
@@ -140,6 +144,10 @@ docsTree:
                                     title: 18 添加组件,
                                     path: /docs/04-ritsulib/04-18-add-capability/,
                                 },
+                                {
+                                    title: 19 计算动态变量,
+                                    path: /docs/04-ritsulib/04-19-computed-dynamic-variables/,
+                                },
                             ],
                     },
                     {
@@ -198,6 +206,10 @@ docsTree:
                                 {
                                     title: 13 次要资源,
                                     path: /docs/04-ritsulib/04-22-7-secondary-resources/,
+                                },
+                                {
+                                    title: 14 网络与联机,
+                                    path: /docs/04-ritsulib/04-31-network-multiplayer/,
                                 },
                             ],
                     },
