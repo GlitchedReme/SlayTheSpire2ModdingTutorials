@@ -2,6 +2,146 @@
 
 ---
 
+## 0.110 至 0.111
+
+### CardModel
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| 新增 `GeneratePlayCount` | - | `protected Task<int> GeneratePlayCount(ICombatState, Creature?)` |
+| 新增 `MoveToResultPileWithoutPlaying` | - | `public Task MoveToResultPileWithoutPlaying(PlayerChoiceContext)` |
+
+### CardCmd
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| 改返回类型 `Exhaust` | `Task Exhaust(PlayerChoiceContext, CardModel, bool causedByEthereal = false, bool skipVisuals = false)` | `Task<CardPileAddResult?> Exhaust(...)` |
+
+### 回合结束卡牌（行为）
+
+带回合结束效果（如虚无 Ethereal）的卡牌在结束回合时改为交错飞入打出牌堆后统一结算，不再逐张线性处理。新增 `StuckCombatException`。
+
+### CharacterModel —— 角色动画
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| 加参 `GenerateAnimator` | `virtual CreatureAnimator GenerateAnimator(MegaSprite controller)` | `virtual CreatureAnimator GenerateAnimator(MegaSprite controller, Creature creature)` |
+
+新增：
+
+```csharp
+protected virtual List<(AnimState, string)> AnimationStates { get; }   // 声明标准动画（触发名 → 状态）
+protected Func<Creature, bool> IsLowHealth;                            // 生命 ≤ 25% 切换低血量待机动画
+```
+
+`Defect` / `Ironclad` / `Necrobinder` / `Silent` 改为覆写 `AnimationStates`；`Regent` 另移除 `GetSovereignBladeAnimIfApplicable` / `GetSovereignBladeDelayIfApplicable`。
+
+> **迁移要点：** 覆写 `GenerateAnimator` 的自定义角色需补 `Creature` 参数，或改用 `AnimationStates` 声明动画。
+
+### AnimState
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| 新增 `AddNextState` | - | `void AddNextState(AnimState state)` / `void AddNextState(AnimState state, Func<bool>? condition)` |
+| 新增 `GetNextState` | - | `AnimState? GetNextState()` |
+| 新增 `RemoveBranch` | - | `void RemoveBranch(string trigger, string stateId)` |
+| 新增常量 | - | `lowHealthIdleAnim = "low_health_loop"` |
+
+### Multiplayer —— 握手系统
+
+新增连接握手子系统：`HandshakeManager` / `HandshakeResult` / `HandshakeStatus` / `IHandshakeHandler`。连接早期即校验版本与 Mod 兼容性。
+
+#### PeerVersionInfo
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| 移除接口 | `struct PeerVersionInfo : IPacketSerializable` | `struct PeerVersionInfo` |
+| 改返回类型 `Deserialize` | `void Deserialize(PacketReader)` | `bool TryDeserialize(PacketReader)` |
+| 新增 `IsModded` | - | `bool IsModded()` |
+
+#### 大厅玩家
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| `RunLobbyPlayer` / `LoadRunLobbyPlayer` / `StartRunLobbyPlayer` | `PeerVersionInfo versionInfo` | `bool isModded` |
+| `NetClientData` 新增 | - | `PeerVersionInfo versionInfo` |
+
+#### 大厅消息
+
+`ClientLobbyJoinRequestMessage` / `ClientLoadJoinRequestMessage` / `ClientRejoinRequestMessage` / `InitialGameInfoMessage` 移除 `versionInfo` 字段；`ClientConnectionFailedMessage` 类型删除；`INetMessageSubtypes` 注册表 53 → 52。
+
+#### 网络服务接口
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| `INetGameService` 新增 | - | `PeerVersionInfo LocalVersion { get; }` |
+| `INetClientGameService` 新增 | - | `event Action<NetErrorInfo>? ConnectionFailed` |
+| `INetHostGameService` 删除 | `IReadOnlyList<NetClientData> ConnectedPeers { get; }` | 删除 |
+| `INetHostGameService` 新增 | - | `event Action<ulong, NetErrorInfo>? ClientConnectionFailed` / `PeerVersionInfo? GetVersionInfoForPeer(ulong)` |
+
+#### 构造函数
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| `NetClientGameService` ctor | `NetClientGameService()` | `NetClientGameService(PeerVersionInfo versionInfo)` |
+| `NetHostGameService` ctor | `NetHostGameService()` | `NetHostGameService(PeerVersionInfo versionInfo)` |
+| `NetMessageBus` ctor | `NetMessageBus()` | `NetMessageBus(PacketReader reader, PacketWriter writer)` |
+
+#### NetError（整体重新编号）
+
+| 值 | 0.110 | 0.111 |
+| --- | --- | --- |
+| `LobbyFull` / `RunInProgress` / `NotInSaveGame` / `VersionMismatch` / `JoinBlockedByUser` / `StateDivergence` / `HandshakeTimeout` / `ModMismatch` | 7~14 | **100~107** |
+| `NoInternet` / `Timeout` / `InternalError` / `UnknownNetworkError` / `RateLimited` / `TryAgainLater` / `FailedToHost` / `SecureConnectionFailed` | 15~22 | **200~207** |
+| `InvalidHandshake` / `LobbyJoinTimeout` | - | 新增 = 108 / 109 |
+
+> **迁移要点：** 硬编码 `NetError` 数值的代码需要全部同步。
+
+#### 其他
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| `LoadRunLobby` / `StartRunLobby` 事件 | `event Action<ClientConnectionFailedMessage, ulong>? PlayerFailedToConnect` | `event Action<ulong, NetErrorInfo>? PlayerFailedToConnect` |
+| `ClientConnectionFailedException` | 移除 `rawReason` 字段与 `(string, ConnectionFailureReason, ConnectionFailureExtraInfo?)` 构造函数 |
+| `ConnectionFailureReason` 新增 | - | `HandshakeTimeout = 6` |
+| `SteamUtil` 删除 | `handshakeMagicBytes` | 删除（移入 `HandshakeManager.magicBytes`） |
+| `SteamDisconnectionReason` | `AppInternalError = 1017` | `AppInternalError = 1202` |
+
+### IModManagerFileIo
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| 新增 `MakeDirRecursive` | - | `void MakeDirRecursive(string path)` |
+| 新增 `CopyFile` | - | `Error CopyFile(string sourcePath, string destinationPath)` |
+
+> **迁移要点：** 自定义 `IModManagerFileIo` 实现需补全这两个方法。
+
+### ModManager
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| 加参 `CopyUnmoddedSaveFilesIfNeeded` | `()` | `(IModManagerFileIo fileIo)` |
+| 加参 `Copy` | `(string baseDir, string sourceFile, string targetFile)` | `(IModManagerFileIo fileIo, ...)` |
+
+### PlatformUtil
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| 改返回类型 `OpenInviteDialog` | `void OpenInviteDialog(INetGameService)` | `bool TryOpenInviteDialog(INetGameService)` |
+
+### 输入系统
+
+`MegaInput.confirm` 默认键 Enter → E（与 `endTurn` 同为 E）；重绑定时 `confirm` / `endTurn` 自动保持一致；新增 `SettingsSaveV7ToV8` 迁移同步旧存档键位。
+
+### 其他
+
+| 类型/成员 | 0.110 | 0.111 |
+| --- | --- | --- |
+| `SaveManager` / `PrefsSaveManager` 新增 | - | `IsPrefsLoaded` / `IsLoaded` |
+| VFX 类命名空间迁移 | 全局命名空间 | `NOrbVfx` 等 → `MegaCrit.Sts2.Core.Nodes.Orbs` / `Nodes.Vfx.Utilities` / `Nodes.Debug` |
+
+---
+
 ## 0.109 至 0.110
 
 ### CombatId（新增类型）
