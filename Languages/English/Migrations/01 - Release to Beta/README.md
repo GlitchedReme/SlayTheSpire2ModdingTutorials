@@ -2,6 +2,146 @@ This records some changes that may require you to update your code. Not an exhau
 
 ---
 
+## 0.110 to 0.111
+
+### CardModel — Card Play Flow Rework
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| New `GeneratePlayCount` | - | `protected Task<int> GeneratePlayCount(ICombatState, Creature?)` |
+| New `MoveToResultPileWithoutPlaying` | - | `public Task MoveToResultPileWithoutPlaying(PlayerChoiceContext)` |
+
+### CardCmd
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| Return type changed `Exhaust` | `Task Exhaust(PlayerChoiceContext, CardModel, bool causedByEthereal = false, bool skipVisuals = false)` | `Task<CardPileAddResult?> Exhaust(...)` |
+
+### Turn-End Cards (behavior)
+
+Cards with turn-end effects (such as Ethereal) now fly into the play pile in an interleaved fashion at turn end and are resolved together, instead of being processed linearly one by one. New `StuckCombatException` added.
+
+### CharacterModel — Character Animation Rework
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| Param added `GenerateAnimator` | `virtual CreatureAnimator GenerateAnimator(MegaSprite controller)` | `virtual CreatureAnimator GenerateAnimator(MegaSprite controller, Creature creature)` |
+
+New:
+
+```csharp
+protected virtual List<(AnimState, string)> AnimationStates { get; }   // declare standard animations (trigger name → state)
+protected Func<Creature, bool> IsLowHealth;                            // switch to low-health idle animation at HP ≤ 25%
+```
+
+`Defect` / `Ironclad` / `Necrobinder` / `Silent` now override `AnimationStates`; `Regent` additionally removed `GetSovereignBladeAnimIfApplicable` / `GetSovereignBladeDelayIfApplicable`.
+
+> **Migration note:** custom characters overriding `GenerateAnimator` need the new `Creature` parameter, or should declare animations via `AnimationStates` instead.
+
+### AnimState
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| New `AddNextState` | - | `void AddNextState(AnimState state)` / `void AddNextState(AnimState state, Func<bool>? condition)` |
+| New `GetNextState` | - | `AnimState? GetNextState()` |
+| New `RemoveBranch` | - | `void RemoveBranch(string trigger, string stateId)` |
+| New constant | - | `lowHealthIdleAnim = "low_health_loop"` |
+
+### Multiplayer — Handshake System
+
+New connection handshake subsystem: `HandshakeManager` / `HandshakeResult` / `HandshakeStatus` / `IHandshakeHandler`. Version and mod compatibility are validated early during connection.
+
+#### PeerVersionInfo
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| Interface removed | `struct PeerVersionInfo : IPacketSerializable` | `struct PeerVersionInfo` |
+| Return type changed `Deserialize` | `void Deserialize(PacketReader)` | `bool TryDeserialize(PacketReader)` |
+| New `IsModded` | - | `bool IsModded()` |
+
+#### Lobby Players
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| `RunLobbyPlayer` / `LoadRunLobbyPlayer` / `StartRunLobbyPlayer` | `PeerVersionInfo versionInfo` | `bool isModded` |
+| `NetClientData` new | - | `PeerVersionInfo versionInfo` |
+
+#### Lobby Messages
+
+`ClientLobbyJoinRequestMessage` / `ClientLoadJoinRequestMessage` / `ClientRejoinRequestMessage` / `InitialGameInfoMessage` removed the `versionInfo` field; `ClientConnectionFailedMessage` type deleted; `INetMessageSubtypes` registry 53 → 52.
+
+#### Network Service Interfaces
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| `INetGameService` new | - | `PeerVersionInfo LocalVersion { get; }` |
+| `INetClientGameService` new | - | `event Action<NetErrorInfo>? ConnectionFailed` |
+| `INetHostGameService` removed | `IReadOnlyList<NetClientData> ConnectedPeers { get; }` | removed |
+| `INetHostGameService` new | - | `event Action<ulong, NetErrorInfo>? ClientConnectionFailed` / `PeerVersionInfo? GetVersionInfoForPeer(ulong)` |
+
+#### Constructors
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| `NetClientGameService` ctor | `NetClientGameService()` | `NetClientGameService(PeerVersionInfo versionInfo)` |
+| `NetHostGameService` ctor | `NetHostGameService()` | `NetHostGameService(PeerVersionInfo versionInfo)` |
+| `NetMessageBus` ctor | `NetMessageBus()` | `NetMessageBus(PacketReader reader, PacketWriter writer)` |
+
+#### NetError (fully renumbered)
+
+| Value | 0.110 | 0.111 |
+| --- | --- | --- |
+| `LobbyFull` / `RunInProgress` / `NotInSaveGame` / `VersionMismatch` / `JoinBlockedByUser` / `StateDivergence` / `HandshakeTimeout` / `ModMismatch` | 7~14 | **100~107** |
+| `NoInternet` / `Timeout` / `InternalError` / `UnknownNetworkError` / `RateLimited` / `TryAgainLater` / `FailedToHost` / `SecureConnectionFailed` | 15~22 | **200~207** |
+| `InvalidHandshake` / `LobbyJoinTimeout` | - | new = 108 / 109 |
+
+> **Migration note:** code hardcoding `NetError` numeric values must be updated across the board.
+
+#### Other
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| `LoadRunLobby` / `StartRunLobby` event | `event Action<ClientConnectionFailedMessage, ulong>? PlayerFailedToConnect` | `event Action<ulong, NetErrorInfo>? PlayerFailedToConnect` |
+| `ClientConnectionFailedException` | removed `rawReason` field and `(string, ConnectionFailureReason, ConnectionFailureExtraInfo?)` ctor |
+| `ConnectionFailureReason` new | - | `HandshakeTimeout = 6` |
+| `SteamUtil` removed | `handshakeMagicBytes` | removed (moved to `HandshakeManager.magicBytes`) |
+| `SteamDisconnectionReason` | `AppInternalError = 1017` | `AppInternalError = 1202` |
+
+### IModManagerFileIo
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| New `MakeDirRecursive` | - | `void MakeDirRecursive(string path)` |
+| New `CopyFile` | - | `Error CopyFile(string sourcePath, string destinationPath)` |
+
+> **Migration note:** custom `IModManagerFileIo` implementations must add both methods.
+
+### ModManager
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| Param added `CopyUnmoddedSaveFilesIfNeeded` | `()` | `(IModManagerFileIo fileIo)` |
+| Param added `Copy` | `(string baseDir, string sourceFile, string targetFile)` | `(IModManagerFileIo fileIo, ...)` |
+
+### PlatformUtil
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| Return type changed `OpenInviteDialog` | `void OpenInviteDialog(INetGameService)` | `bool TryOpenInviteDialog(INetGameService)` |
+
+### Input System
+
+`MegaInput.confirm` default key Enter → E (same as `endTurn`); rebinding keeps `confirm` / `endTurn` in sync automatically; new `SettingsSaveV7ToV8` migration updates old save keybinds.
+
+### Other
+
+| Type/Member | 0.110 | 0.111 |
+| --- | --- | --- |
+| `SaveManager` / `PrefsSaveManager` new | - | `IsPrefsLoaded` / `IsLoaded` |
+| VFX class namespace migration | global namespace | `NOrbVfx` etc. → `MegaCrit.Sts2.Core.Nodes.Orbs` / `Nodes.Vfx.Utilities` / `Nodes.Debug` |
+
+---
+
 ## 0.109 to 0.110
 
 ### CombatId (new type)
