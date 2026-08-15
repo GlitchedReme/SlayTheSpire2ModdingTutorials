@@ -37,7 +37,7 @@ public class MyStrike() : ModCardTemplate(1, CardType.Attack, CardRarity.Common,
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         // 显示值 = 基础值加上目标的力量层数
-        ModCardVars.Computed("TestValue", 3, (card, target) => DynamicVars["TestValue"].BaseValue + (target?.GetPowerAmount<StrengthPower>() ?? 0)),
+        ModCardVars.Computed("TestValue", 3, (card, target) => card.DynamicVars["TestValue"].BaseValue + (target?.GetPowerAmount<StrengthPower>() ?? 0)),
     ];
 
     // 升级时修改 BaseValue
@@ -56,15 +56,17 @@ public class MyStrike() : ModCardTemplate(1, CardType.Attack, CardRarity.Common,
 }
 ```
 
+读取方式见下方`读取计算值`章节。
+
 参数说明：
 
 | 参数 | 含义 |
 | - | - |
 | `name` | 变量键，描述里用 `{name}` 引用 |
-| `baseValue` | 初始存储的基础值。**求值器不会自动返回它**，只作为后备数据存在，需要时用 `ctx.BaseValue` 或 `DynamicVars["x"].BaseValue` 读取 |
+| `baseValue` | 初始存储的基础值。**求值器不会自动返回它**，只作为后备数据存在，需要时用 `ctx.BaseValue` 或 `card.DynamicVars["x"].BaseValue` 读取 |
 | `currentValueFactory` | 计算当前值的委托，参数是所属卡牌（可能为 `null`，比如预览规范卡牌时）以及目标 |
 
-> **注意：** 计算变量读取基础值时要通过 `DynamicVars["xxx"].BaseValue`（上下文形式里是 `ctx.BaseValue`），不要硬编码一个常量。升级带来的数值变化请在 `OnUpgrade` 里通过 `UpgradeValueBy` 修改 `BaseValue`。这样升级高亮、`IntValue` 等依赖 `BaseValue` 的逻辑都会保持一致。
+> **注意：** 计算变量读取基础值时要通过 `card.DynamicVars["xxx"].BaseValue`（上下文形式里是 `ctx.BaseValue`），不要硬编码一个常量。升级带来的数值变化请在 `OnUpgrade` 里通过 `UpgradeValueBy` 修改 `BaseValue`。这样升级高亮、`IntValue` 等依赖 `BaseValue` 的逻辑都会保持一致。
 
 ### 上下文形式
 
@@ -199,7 +201,7 @@ ModCardVars.Computed(
 ModCardVars.ComputedDamage(
     "ExtraDamage",
     6,
-    (card, target) => DynamicVars["ExtraDamage"].BaseValue + ResolveTargetBonus(card?.CombatState, target));
+    (card, target) => card.DynamicVars["ExtraDamage"].BaseValue + ResolveTargetBonus(card?.CombatState, target));
 ```
 
 ### ComputedOstyDamage
@@ -214,7 +216,7 @@ ModCardVars.ComputedOstyDamage("ExtraDamage", 7, (card, target) => ResolveOstyDa
 
 ```csharp
 // 预览时会经过 Hook.ModifyBlock（敏捷、脆弱、附魔等）
-ModCardVars.ComputedBlock("ExtraBlock", 5, _ => DynamicVars["ExtraBlock"].BaseValue);
+ModCardVars.ComputedBlock("ExtraBlock", 5, card => card.DynamicVars["ExtraBlock"].BaseValue);
 ```
 
 ### 自定义伤害来源 / 格挡接收者
@@ -360,13 +362,13 @@ public class TestComputedVarCard() : ModCardTemplate(1, CardType.Attack, CardRar
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         // 基础：显示值 = BaseValue（升级变化在 OnUpgrade 里改 BaseValue）
-        ModCardVars.Computed("TestValue", 3, _ => DynamicVars["TestValue"].BaseValue),
+        ModCardVars.Computed("TestValue", 3, card => card.DynamicVars["TestValue"].BaseValue),
 
         // 目标感知
         ModCardVars.Computed(
             "TestTarget",
             4,
-            (card, target) => DynamicVars["TestTarget"].BaseValue + (target != null ? 1 : 0)),
+            (card, target) => card.DynamicVars["TestTarget"].BaseValue + (target != null ? 1 : 0)),
 
         // 上下文
         ModCardVars.Computed(
@@ -394,20 +396,20 @@ public class TestComputedVarCard() : ModCardTemplate(1, CardType.Attack, CardRar
         ModCardVars.ComputedDamage(
             "ExtraDamage",
             6,
-            (card, target) => DynamicVars["ExtraDamage"].BaseValue + ResolveTargetBonus(card?.CombatState, target)),
+            (card, target) => card.DynamicVars["ExtraDamage"].BaseValue + ResolveTargetBonus(card?.CombatState, target)),
 
         // 伤害 + 独立 preview base factory
         ModCardVars.ComputedDamage(
             "ExtraDamagePreview",
             6,
-            (card, target) => DynamicVars["ExtraDamagePreview"].BaseValue,
-            (card, mode, target, runGlobalHooks) => DynamicVars["ExtraDamagePreview"].BaseValue + 2m),
+            (card, target) => card.DynamicVars["ExtraDamagePreview"].BaseValue,
+            (card, mode, target, runGlobalHooks) => card.DynamicVars["ExtraDamagePreview"].BaseValue + 2m),
 
         // 奥斯提伤害
-        ModCardVars.ComputedOstyDamage("OstyDamage", 7, (card, target) => DynamicVars["OstyDamage"].BaseValue),
+        ModCardVars.ComputedOstyDamage("OstyDamage", 7, (card, target) => card.DynamicVars["OstyDamage"].BaseValue),
 
         // 格挡包装：预览经过 Hook.ModifyBlock
-        ModCardVars.ComputedBlock("ExtraBlock", 5, _ => DynamicVars["ExtraBlock"].BaseValue),
+        ModCardVars.ComputedBlock("ExtraBlock", 5, card => card.DynamicVars["ExtraBlock"].BaseValue),
 
         // 上下文版本的格挡 / 能量
         ModCardVars.ComputedBlock(
@@ -420,20 +422,20 @@ public class TestComputedVarCard() : ModCardTemplate(1, CardType.Attack, CardRar
             baseValue: 1),
 
         // 能量 / 星星 / 能力图标
-        ModCardVars.ComputedEnergy("EnergyGain", 1, _ => DynamicVars["EnergyGain"].BaseValue),
-        ModCardVars.ComputedStars("StarGain", 1, _ => DynamicVars["StarGain"].BaseValue),
-        ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, _ => DynamicVars["StrengthPower"].BaseValue),
+        ModCardVars.ComputedEnergy("EnergyGain", 1, card => card.DynamicVars["EnergyGain"].BaseValue),
+        ModCardVars.ComputedStars("StarGain", 1, card => card.DynamicVars["StarGain"].BaseValue),
+        ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, card => card.DynamicVars["StrengthPower"].BaseValue),
         ModCardVars.ComputedPowerAmountGiven<WeakPower>(
             "WeakPower",
             2,
-            (card, target) => DynamicVars["WeakPower"].BaseValue),
+            (card, target) => card.DynamicVars["WeakPower"].BaseValue),
         ModCardVars.ComputedPower<StrengthPower>(
             "StrengthCtx",
             static ctx => ctx.BaseValue + ResolveStrengthBonus(ctx),
             baseValue: 2),
 
         // tooltip
-        ModCardVars.Computed("TestTooltip", 3, _ => DynamicVars["TestTooltip"].BaseValue)
+        ModCardVars.Computed("TestTooltip", 3, card => card.DynamicVars["TestTooltip"].BaseValue)
             .WithSharedTooltip("MY_MOD_HEAT"),
     ];
 

@@ -37,7 +37,7 @@ public class MyStrike() : ModCardTemplate(1, CardType.Attack, CardRarity.Common,
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         // Displayed value = base value + the target's Strength stacks
-        ModCardVars.Computed("TestValue", 3, (card, target) => DynamicVars["TestValue"].BaseValue + (target?.GetPowerAmount<StrengthPower>() ?? 0)),
+        ModCardVars.Computed("TestValue", 3, (card, target) => card.DynamicVars["TestValue"].BaseValue + (target?.GetPowerAmount<StrengthPower>() ?? 0)),
     ];
 
     // Modify BaseValue on upgrade
@@ -61,10 +61,10 @@ Parameters:
 | Parameter | Meaning |
 | - | - |
 | `name` | Variable key, referenced as `{name}` in descriptions |
-| `baseValue` | Initial stored base value. **The evaluator does not return it automatically** — it only exists as fallback data; read it via `ctx.BaseValue` or `DynamicVars["x"].BaseValue` when needed |
+| `baseValue` | Initial stored base value. **The evaluator does not return it automatically** — it only exists as fallback data; read it via `ctx.BaseValue` or `card.DynamicVars["x"].BaseValue` when needed |
 | `currentValueFactory` | Delegate computing the current value; parameters are the owning card (may be `null`, e.g. when previewing a canonical card) and the target |
 
-> **Note:** read base values via `DynamicVars["xxx"].BaseValue` (or `ctx.BaseValue` in the context form) instead of hardcoding a constant. Apply upgrade changes in `OnUpgrade` via `UpgradeValueBy` so upgrade highlighting, `IntValue`, and everything depending on `BaseValue` stays consistent.
+> **Note:** read base values via `card.DynamicVars["xxx"].BaseValue` (or `ctx.BaseValue` in the context form) instead of hardcoding a constant. Apply upgrade changes in `OnUpgrade` via `UpgradeValueBy` so upgrade highlighting, `IntValue`, and everything depending on `BaseValue` stays consistent.
 
 ### Context form
 
@@ -200,7 +200,7 @@ If you're computing a **damage** or **block** value and want the preview to stil
 ModCardVars.ComputedDamage(
     "ExtraDamage",
     6,
-    (card, target) => DynamicVars["ExtraDamage"].BaseValue + ResolveTargetBonus(card?.CombatState, target));
+    (card, target) => card.DynamicVars["ExtraDamage"].BaseValue + ResolveTargetBonus(card?.CombatState, target));
 ```
 
 ### ComputedOstyDamage
@@ -215,7 +215,7 @@ ModCardVars.ComputedOstyDamage("damage", 7, (card, target) => ResolveOstyDamage(
 
 ```csharp
 // Preview goes through Hook.ModifyBlock (Dexterity, Frail, enchantments, etc.)
-ModCardVars.ComputedBlock("ExtraBlock", 5, _ => DynamicVars["ExtraBlock"].BaseValue);
+ModCardVars.ComputedBlock("ExtraBlock", 5, card => card.DynamicVars["ExtraBlock"].BaseValue);
 ```
 
 ### Custom dealer / receiver
@@ -361,13 +361,13 @@ public class TestComputedVarCard() : ModCardTemplate(1, CardType.Attack, CardRar
     protected override IEnumerable<DynamicVar> CanonicalVars =>
     [
         // Basic: displayed value = BaseValue (upgrade changes modify BaseValue in OnUpgrade)
-        ModCardVars.Computed("TestValue", 3, _ => DynamicVars["TestValue"].BaseValue),
+        ModCardVars.Computed("TestValue", 3, card => card.DynamicVars["TestValue"].BaseValue),
 
         // Target-aware
         ModCardVars.Computed(
             "TestTarget",
             4,
-            (card, target) => DynamicVars["TestTarget"].BaseValue + (target != null ? 1 : 0)),
+            (card, target) => card.DynamicVars["TestTarget"].BaseValue + (target != null ? 1 : 0)),
 
         // Context
         ModCardVars.Computed(
@@ -395,20 +395,20 @@ public class TestComputedVarCard() : ModCardTemplate(1, CardType.Attack, CardRar
         ModCardVars.ComputedDamage(
             "ExtraDamage",
             6,
-            (card, target) => DynamicVars["ExtraDamage"].BaseValue + ResolveTargetBonus(card?.CombatState, target)),
+            (card, target) => card.DynamicVars["ExtraDamage"].BaseValue + ResolveTargetBonus(card?.CombatState, target)),
 
         // Damage + separate preview base factory
         ModCardVars.ComputedDamage(
             "ExtraDamagePreview",
             6,
-            (card, target) => DynamicVars["ExtraDamagePreview"].BaseValue,
-            (card, mode, target, runGlobalHooks) => DynamicVars["ExtraDamagePreview"].BaseValue + 2m),
+            (card, target) => card.DynamicVars["ExtraDamagePreview"].BaseValue,
+            (card, mode, target, runGlobalHooks) => card.DynamicVars["ExtraDamagePreview"].BaseValue + 2m),
 
         // Osty damage
-        ModCardVars.ComputedOstyDamage("OstyDamage", 7, (card, target) => DynamicVars["OstyDamage"].BaseValue),
+        ModCardVars.ComputedOstyDamage("OstyDamage", 7, (card, target) => card.DynamicVars["OstyDamage"].BaseValue),
 
         // Block wrapper: preview goes through Hook.ModifyBlock
-        ModCardVars.ComputedBlock("ExtraBlock", 5, _ => DynamicVars["ExtraBlock"].BaseValue),
+        ModCardVars.ComputedBlock("ExtraBlock", 5, card => card.DynamicVars["ExtraBlock"].BaseValue),
 
         // Context versions of block / energy
         ModCardVars.ComputedBlock(
@@ -421,20 +421,20 @@ public class TestComputedVarCard() : ModCardTemplate(1, CardType.Attack, CardRar
             baseValue: 1),
 
         // Energy / star / power icons
-        ModCardVars.ComputedEnergy("EnergyGain", 1, _ => DynamicVars["EnergyGain"].BaseValue),
-        ModCardVars.ComputedStars("StarGain", 1, _ => DynamicVars["StarGain"].BaseValue),
-        ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, _ => DynamicVars["StrengthPower"].BaseValue),
+        ModCardVars.ComputedEnergy("EnergyGain", 1, card => card.DynamicVars["EnergyGain"].BaseValue),
+        ModCardVars.ComputedStars("StarGain", 1, card => card.DynamicVars["StarGain"].BaseValue),
+        ModCardVars.ComputedPower<StrengthPower>("StrengthPower", 2, card => card.DynamicVars["StrengthPower"].BaseValue),
         ModCardVars.ComputedPowerAmountGiven<WeakPower>(
             "WeakPower",
             2,
-            (card, target) => DynamicVars["WeakPower"].BaseValue),
+            (card, target) => card.DynamicVars["WeakPower"].BaseValue),
         ModCardVars.ComputedPower<StrengthPower>(
             "StrengthCtx",
             static ctx => ctx.BaseValue + ResolveStrengthBonus(ctx),
             baseValue: 2),
 
         // Tooltip
-        ModCardVars.Computed("TestTooltip", 3, _ => DynamicVars["TestTooltip"].BaseValue)
+        ModCardVars.Computed("TestTooltip", 3, card => card.DynamicVars["TestTooltip"].BaseValue)
             .WithSharedTooltip("MY_MOD_HEAT"),
     ];
 
