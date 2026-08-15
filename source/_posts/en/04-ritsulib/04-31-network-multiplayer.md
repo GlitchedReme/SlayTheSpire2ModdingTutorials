@@ -1,7 +1,7 @@
 ---
 title: Network & Multiplayer
-date: 2026-08-13 22:41:58
-permalink: docs/04-ritsulib/04-31-network-multiplayer/
+date: 2026-08-13 23:00:01
+permalink: en/docs/04-ritsulib/04-31-network-multiplayer/
 categories:
 - Basics
 ---

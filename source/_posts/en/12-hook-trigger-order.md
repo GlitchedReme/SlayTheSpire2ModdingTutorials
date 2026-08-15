@@ -1,7 +1,7 @@
 ---
 title: Hook Trigger Order
-date: 2026-08-13 22:41:58
-permalink: docs/12-hook-trigger-order/
+date: 2026-08-13 23:00:01
+permalink: en/docs/12-hook-trigger-order/
 categories:
 - Basics
 ---

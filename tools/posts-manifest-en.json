@@ -70,7 +70,7 @@
     {
       "source": "Languages/English/Basics/12 - Hook Trigger Order/README.md",
       "post": "12-hook-trigger-order.md",
-      "permalink": "docs/12-hook-trigger-order/",
+      "permalink": "en/docs/12-hook-trigger-order/",
       "title": "Hook Trigger Order"
     }
   ],
@@ -304,7 +304,7 @@
           {
             "source": "Languages/English/RitsuLib/01 - Basic Content/19 - Computed Dynamic Variables/README.md",
             "post": "04-ritsulib/04-19-computed-dynamic-variables.md",
-            "permalink": "docs/04-ritsulib/04-19-computed-dynamic-variables/",
+            "permalink": "en/docs/04-ritsulib/04-19-computed-dynamic-variables/",
             "title": "Computed Dynamic Variables"
           }
         ]
@@ -401,7 +401,7 @@
           {
             "source": "Languages/English/RitsuLib/02 - Gameplay Foundation/14 - Network & Multiplayer/README.md",
             "post": "04-ritsulib/04-31-network-multiplayer.md",
-            "permalink": "docs/04-ritsulib/04-31-network-multiplayer/",
+            "permalink": "en/docs/04-ritsulib/04-31-network-multiplayer/",
             "title": "Network & Multiplayer"
           }
         ]

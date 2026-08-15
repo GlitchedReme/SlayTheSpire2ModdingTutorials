@@ -1,7 +1,7 @@
 ---
 title: Computed Dynamic Variables
-date: 2026-08-13 22:41:58
-permalink: docs/04-ritsulib/04-19-computed-dynamic-variables/
+date: 2026-08-13 23:00:01
+permalink: en/docs/04-ritsulib/04-19-computed-dynamic-variables/
 categories:
 - Basics
 ---
