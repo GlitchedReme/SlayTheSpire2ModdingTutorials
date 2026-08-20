@@ -6,11 +6,11 @@
 
 在手写注册前，RitsuLib 的 `CustomTargetType` 类为你预先配备好了原版没有，但呼声极高的常用目标类型：
 
-- **`CustomTargetType.Anyone`**: 单体目标，允许你把指向箭头指在**任意存活的友方或敌方**。
-- **`CustomTargetType.Everyone`**: 群体目标，包含场上所有存活的生物。
-- **`CustomTargetType.AnyAttackingEnemy`** / **`AllAttackingEnemies`**: 单体 / 群体目标，限定为“当前拥有攻击意图的存活敌人”。
-- **`CustomTargetType.AnyBlockingEnemy`** / **`AllBlockingEnemies`**: 单体 / 群体目标，限定为“当前护甲大于0的存活敌人”。
-- **`CustomTargetType.AllHighestHpEnemies`** / **`AllLowestHpEnemies`**: 群体目标，当前血量并列最高 / 最低的所有存活敌人。
+- `CustomTargetType.Anyone`: 单体目标，允许你把指向箭头指在**任意存活的友方或敌方**。
+- `CustomTargetType.Everyone`: 群体目标，包含场上所有存活的生物。
+- `CustomTargetType.AnyAttackingEnemy` / `AllAttackingEnemies`: 单体 / 群体目标，限定为“当前拥有攻击意图的存活敌人”。
+- `CustomTargetType.AnyBlockingEnemy` / `AllBlockingEnemies`: 单体 / 群体目标，限定为“当前护甲大于0的存活敌人”。
+- `CustomTargetType.AllHighestHpEnemies` / `AllLowestHpEnemies`: 群体目标，当前血量并列最高 / 最低的所有存活敌人。
 - 等等...
 
 如果这些恰好符合你的需求，直接看`结算目标`一节如何使用即可，不需要做任何注册动作，你可以**直接将卡牌中的 `TargetType` 填为上述值。**
@@ -63,7 +63,7 @@ public static class TestTargets
 
 ## 结算目标
 
-不管你使用了原生自带的目标类型、上述第一点提到的 RitsuLib 预置类型、还是手写的自定义类型，你都可以用 **`CardModelTargetingExtensions.GetTargets()`** 来获得合法的目标。
+不管你使用了原生自带的目标类型、上述第一点提到的 RitsuLib 预置类型、还是手写的自定义类型，你都可以用 `CardModelTargetingExtensions.GetTargets()` 来获得合法的目标。
 
 ```csharp
 using MegaCrit.Sts2.Core.Commands;

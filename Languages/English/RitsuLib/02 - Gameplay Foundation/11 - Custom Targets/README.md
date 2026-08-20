@@ -6,11 +6,11 @@ If your card has more specialized targeting conditions (e.g., requiring "only an
 
 Before writing custom registrations, RitsuLib's `CustomTargetType` class provides you with pre-configured, highly-requested target types that vanilla lacks:
 
-- **`CustomTargetType.Anyone`**: Single target; allows you to point the targeting arrow at **any living ally or enemy**.
-- **`CustomTargetType.Everyone`**: AoE target; includes all living creatures on the field.
-- **`CustomTargetType.AnyAttackingEnemy`** / **`AllAttackingEnemies`**: Single / AoE target, limited to "living enemies that currently have an attack intent".
-- **`CustomTargetType.AnyBlockingEnemy`** / **`AllBlockingEnemies`**: Single / AoE target, limited to "living enemies whose Block is greater than 0".
-- **`CustomTargetType.AllHighestHpEnemies`** / **`AllLowestHpEnemies`**: AoE target; all living enemies with the highest / lowest current HP.
+- `CustomTargetType.Anyone`: Single target; allows you to point the targeting arrow at **any living ally or enemy**.
+- `CustomTargetType.Everyone`: AoE target; includes all living creatures on the field.
+- `CustomTargetType.AnyAttackingEnemy` / `AllAttackingEnemies`: Single / AoE target, limited to "living enemies that currently have an attack intent".
+- `CustomTargetType.AnyBlockingEnemy` / `AllBlockingEnemies`: Single / AoE target, limited to "living enemies whose Block is greater than 0".
+- `CustomTargetType.AllHighestHpEnemies` / `AllLowestHpEnemies`: AoE target; all living enemies with the highest / lowest current HP.
 - And more...
 
 If these happen to match your needs, skip directly to the **Resolving Targets** section for usage. No registration is required — you can **directly set your card's `TargetType` to the above values.**
@@ -63,7 +63,7 @@ Don't forget to call `TestTargets.Register()` once at your mod's initialization 
 
 ## Resolving Targets
 
-Regardless of whether you used vanilla target types, the pre-built RitsuLib types mentioned in section one, or custom hand-written types, you can use **`CardModelTargetingExtensions.GetTargets()`** to obtain the valid targets.
+Regardless of whether you used vanilla target types, the pre-built RitsuLib types mentioned in section one, or custom hand-written types, you can use `CardModelTargetingExtensions.GetTargets()` to obtain the valid targets.
 
 ```csharp
 using MegaCrit.Sts2.Core.Commands;
