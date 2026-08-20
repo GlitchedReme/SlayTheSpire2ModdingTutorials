@@ -40,14 +40,16 @@ public sealed class TestEvent : CustomEventModel
     // Logic before the event starts. Prevents the player from removing potions.
     protected override Task BeforeEventStarted(bool isPreFinished)
     {
-        Owner!.CanRemovePotions = false;
+        // 0.107: Owner!.CanRemovePotions = false;
+        Owner!.CanUseOrRemovePotions = false;
         return Task.CompletedTask;
     }
 
     // Logic after the event finishes. Allows potion removal again.
     protected override void OnEventFinished()
     {
-        Owner!.CanRemovePotions = true;
+        // 0.107: Owner!.CanRemovePotions = true;
+        Owner!.CanUseOrRemovePotions = true;
     }
 
     // Generate initial options: lose HP or lose gold, then move to reward selection
@@ -60,7 +62,8 @@ public sealed class TestEvent : CustomEventModel
     // Lose HP
     private async Task TakeDamage()
     {
-        await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner!.Creature, DynamicVars.Damage, null, null);
+        // 0.107: await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner!.Creature, DynamicVars.Damage, null, null);
+        await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner!.Creature, DynamicVars.Damage, null, null, null);
         ChooseRewardTypePage();
     }
 
