@@ -118,9 +118,9 @@ Cards have extra context variables:
 
 Power tooltip localization usually has three entries: `description`, `smartDescription`, and for multiplayer, `remoteDescription`.
 
-- **`description`**: Static description. Used when the power is non-variable (e.g. the card tooltip shows non-smart text). No special variables.
-- **`smartDescription`**: Dynamic description. Used when the power is variable (hovering over the player character) and `smartDescription` is configured. Injects the runtime variables listed below, plus `DynamicVars`.
-- **`remoteDescription`**: Multiplayer only. When a power is applied by someone else (`Applier` exists and is not the local player) and this key is configured, it replaces `smartDescription`.
+- `description`: Static description. Used when the power is non-variable (e.g. the card tooltip shows non-smart text). No special variables.
+- `smartDescription`: Dynamic description. Used when the power is variable (hovering over the player character) and `smartDescription` is configured. Injects the runtime variables listed below, plus `DynamicVars`.
+- `remoteDescription`: Multiplayer only. When a power is applied by someone else (`Applier` exists and is not the local player) and this key is configured, it replaces `smartDescription`.
 
 Runtime variables available in `smartDescription` / `remoteDescription`:
 

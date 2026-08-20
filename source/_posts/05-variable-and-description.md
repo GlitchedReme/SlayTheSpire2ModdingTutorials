@@ -118,9 +118,9 @@ https://github.com/axuno/SmartFormat/wiki
 
 能力的提示本地化里通常写三条：`description`、`smartDescription`，联机时还可写 `remoteDescription`。
 
-- **`description`**：静态描述。能力非可变（例如从卡牌弹出的这个能力的提示显示非smart文本）使用，没有任何独有变量。
-- **`smartDescription`**：动态描述。能力可变（悬浮玩家角色弹出的提示）且配置了 `smartDescription` 时使用，会注入下文列出的运行时变量并叠加 `DynamicVars`。
-- **`remoteDescription`**：联机专用。当能力由他人施加（`Applier` 存在且不是本地玩家）且配置了该键时，用其替换 `smartDescription`。
+- `description`：静态描述。能力非可变（例如从卡牌弹出的这个能力的提示显示非smart文本）使用，没有任何独有变量。
+- `smartDescription`：动态描述。能力可变（悬浮玩家角色弹出的提示）且配置了 `smartDescription` 时使用，会注入下文列出的运行时变量并叠加 `DynamicVars`。
+- `remoteDescription`：联机专用。当能力由他人施加（`Applier` 存在且不是本地玩家）且配置了该键时，用其替换 `smartDescription`。
 
 `smartDescription` / `remoteDescription` 可用的运行时变量：
 
