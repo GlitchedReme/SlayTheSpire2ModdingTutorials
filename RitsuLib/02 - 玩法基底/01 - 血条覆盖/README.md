@@ -35,7 +35,8 @@ public class TestPower2 : ModPowerTemplate, IHealthBarForecastSource
         new DynamicVar("Weakness", 1.25m)
     ];
 
-    public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
+    // 0.107: public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
+    public override decimal ModifyDamageMultiplicative(Creature? target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource, CardPlay? cardPlay)
     {
         if (target != Owner || !props.IsPoweredAttack() || Owner.CurrentHp > Amount)
             return 1m;

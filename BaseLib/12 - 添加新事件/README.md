@@ -33,14 +33,16 @@ public sealed class TestEvent : CustomEventModel
     // 事件开始前的逻辑。这里是禁止玩家移除药水
     protected override Task BeforeEventStarted(bool isPreFinished)
     {
-        Owner!.CanRemovePotions = false;
+        // 0.107: Owner!.CanRemovePotions = false;
+        Owner!.CanUseOrRemovePotions = false;
         return Task.CompletedTask;
     }
 
     // 事件结束后的逻辑。这里是允许玩家移除药水
     protected override void OnEventFinished()
     {
-        Owner!.CanRemovePotions = true;
+        // 0.107: Owner!.CanRemovePotions = true;
+        Owner!.CanUseOrRemovePotions = true;
     }
 
     // 生成事件初始选项。这里是两个选项：失去生命值或者失去金币，然后进入选择奖励阶段
@@ -53,7 +55,8 @@ public sealed class TestEvent : CustomEventModel
     // 失去生命
     private async Task TakeDamage()
     {
-        await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner!.Creature, DynamicVars.Damage, null, null);
+        // 0.107: await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner!.Creature, DynamicVars.Damage, null, null);
+        await CreatureCmd.Damage(new ThrowingPlayerChoiceContext(), Owner!.Creature, DynamicVars.Damage, null, null, null);
         ChooseRewardTypePage();
     }
 
