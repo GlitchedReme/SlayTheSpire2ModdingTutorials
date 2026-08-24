@@ -144,7 +144,7 @@ Wait some time for deployment until a blue status shows deployment success. Afte
 
 ### Step 3: Workflow
 
-Use a workflow to automatically read the version number from your `mod_manifest.json`, so you don't need to manually fill in `update.json`.
+Use a workflow to automatically read the version number from your `{modid}.json`, so you don't need to manually fill in `update.json`.
 
 Create a `tools/generate-update-manifest.mjs` file (refer to RitsuLib):
 
