@@ -184,7 +184,6 @@ Back in the Godot editor, go to Project → Export, click `Add` at the top to ad
 * Click `Export PCK/Zip` and name the file `[ProjectName].pck`.
 * Select the same folder as your exported DLL.
 * <b>Must be PCK format!</b>
-* Optional: since you no longer need `mod_manifest.json` inside the pck, go to export options → `Resources` → `Exclude files or directories from project` and add `{modid}.json` (replace `{modid}` with yours).
 
 * Automated packing is recommended going forward. For macOS compatibility see below:
 

@@ -136,7 +136,7 @@ switch (result.Status)
 
 ### 第三步：工作流
 
-使用工作流自动从你的`mod_manifest.json`读取版本号，不用手动填写`update.json`。
+使用工作流自动从你的`{modid}.json`读取版本号，不用手动填写`update.json`。
 
 创建一个`tools/generate-update-manifest.mjs`文件（参考ritsulib）：
 
