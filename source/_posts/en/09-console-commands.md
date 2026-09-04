@@ -21,7 +21,7 @@ All commands listed below.
 
 * `<X>` means required parameter, `[X]` means optional.
 
-* `target index` starts at 0 (the player you control). In single player, 1 and up are enemies (ordered by spawn). In multiplayer, 1 and up are other players first.
+* `target index` starts at 0 (the player you control). In single player, 1 and up are enemies (ordered by spawn). In multiplayer, 0 is Host, 1 and up are other players first.
 
 ### Combat
 
