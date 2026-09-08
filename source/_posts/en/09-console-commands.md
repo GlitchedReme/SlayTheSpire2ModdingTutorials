@@ -9,6 +9,8 @@ categories:
 
 STS2 has a built-in console. With mods loaded, press `~` to open it.
 
+> In addition, recent `RitsuLib` updates added developer tools. Enable them in Settings, then press `Ctrl + Shift + F10` to open.
+
 * `Tab` autocompletes based on your current input. Use `↑` `↓` arrow keys to select a suggestion, then `Enter` to confirm.
 
 * `↑` recalls the previous command. Use `↑` `↓` to scroll through history.
