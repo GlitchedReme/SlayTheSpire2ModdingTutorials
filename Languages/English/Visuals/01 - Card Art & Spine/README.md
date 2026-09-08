@@ -6,18 +6,17 @@ A simple approach is to directly patch, like this. This only replaces vanilla ca
     [HarmonyPatch(typeof(CardModel), nameof(CardModel.PortraitPath), MethodType.Getter)]
     public static class CardModel_GetPortrait_Patch
     {
-        // Match class name to resource path
-        private static readonly Dictionary<string, string> CustomPortraits = new(StringComparer.OrdinalIgnoreCase)
+        // Match type to resource path
+        private static readonly Dictionary<Type, string> CustomPortraits = new()
         {
-            [nameof(StrikeIronclad)] = "res://test/images/image.png",
-            [nameof(DefendIronclad)] = "res://test/images/image.png",
+            [typeof(StrikeIronclad)] = "res://test/images/image.png",
+            [typeof(DefendIronclad)] = "res://test/images/image.png",
         };
 
         static void Postfix(CardModel __instance, ref string __result)
         {
-            var className = __instance?.GetType().Name;
-            if (string.IsNullOrEmpty(className)) return;
-            if (!CustomPortraits.TryGetValue(className, out var path)) return;
+            if (__instance == null) return;
+            if (!CustomPortraits.TryGetValue(__instance.GetType(), out var path)) return;
             if (!ResourceLoader.Exists(path)) return;
             __result = path;
         }
