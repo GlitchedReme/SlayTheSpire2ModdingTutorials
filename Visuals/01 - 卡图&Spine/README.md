@@ -6,18 +6,17 @@
     [HarmonyPatch(typeof(CardModel), nameof(CardModel.PortraitPath), MethodType.Getter)]
     public static class CardModel_GetPortrait_Patch
     {
-        // 按照类名和资源路径配对即可
-        private static readonly Dictionary<string, string> CustomPortraits = new(StringComparer.OrdinalIgnoreCase)
+        // 按照类型和资源路径配对即可
+        private static readonly Dictionary<Type, string> CustomPortraits = new()
         {
-            [nameof(StrikeIronclad)] = "res://test/images/image.png",
-            [nameof(DefendIronclad)] = "res://test/images/image.png",
+            [typeof(StrikeIronclad)] = "res://test/images/image.png",
+            [typeof(DefendIronclad)] = "res://test/images/image.png",
         };
 
         static void Postfix(CardModel __instance, ref string __result)
         {
-            var className = __instance?.GetType().Name;
-            if (string.IsNullOrEmpty(className)) return;
-            if (!CustomPortraits.TryGetValue(className, out var path)) return;
+            if (__instance == null) return;
+            if (!CustomPortraits.TryGetValue(__instance.GetType(), out var path)) return;
             if (!ResourceLoader.Exists(path)) return;
             __result = path;
         }
