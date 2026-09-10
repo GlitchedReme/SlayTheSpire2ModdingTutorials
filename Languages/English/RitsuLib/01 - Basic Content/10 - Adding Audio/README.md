@@ -152,18 +152,78 @@ For method 3, copy the audio to a directory at the same level as your mod.
 
 ### Load and play
 
-(Optional) First preload your audio somewhere, e.g. in your initialization function `Entry.Init`:
+There are two approaches. Use **virtual event registration** if you want audio to respect the game's **master / SFX / music** volume settings; use **direct file playback** for quick tests.
+
+#### Method A: Direct playback (simple, does not follow game volume)
+
+(Optional) Preload audio in your initialization function `Entry.Init`:
 
 ```csharp
- public static void Init()
-    {
-        // rest omitted
-        FmodStudioStreamingFiles.TryPreloadAsSound("res://Test/audios/waveform.ogg");
-    }
+public static void Init()
+{
+    // rest omitted
+    FmodStudioStreamingFiles.TryPreloadAsSound("res://Test/audios/waveform.ogg");
+}
 ```
 
-Play the audio wherever you need it:
+Play wherever you need it:
 
 ```csharp
 FmodStudioStreamingFiles.TryPlaySoundFile("res://Test/audios/waveform.ogg");
 ```
+
+This does not automatically apply the in-game volume sliders. It is best for debugging or fixed-volume use cases.
+
+#### Method B: Register virtual events (recommended, respects game volume)
+
+Register loose audio files as virtual FMOD events, then play them through the same APIs as vanilla events, such as `SfxCmd.Play("event:/...")`. RitsuLib samples the current bus volume **when playback starts** (`bus:/master/sfx` or `bus:/master/music`, including the game's volume curve).
+
+Register during initialization:
+
+```csharp
+using STS2RitsuLib.Audio;
+
+public static void Init()
+{
+    // rest omitted
+
+    // SFX (uses the SFX bus, affected by SFX volume)
+    VirtualFmodEventRegistry.RegisterOneShot(
+        "event:/TestMod/sfx/hit",
+        "res://Test/audios/hit.ogg",
+        busPath: FmodStudioRouting.SfxBus);
+
+    // Background music (uses the Music bus, affected by music volume)
+    VirtualFmodEventRegistry.RegisterMusic(
+        "event:/TestMod/music/battle",
+        "res://Test/audios/battle.ogg");
+}
+```
+
+Register multiple SFX entries at once:
+
+```csharp
+VirtualFmodEventRegistry.RegisterOneShots(new Dictionary<string, string>
+    {
+        ["event:/TestMod/sfx/hit"] = "res://Test/audios/hit.ogg",
+        ["event:/TestMod/sfx/miss"] = "res://Test/audios/miss.ogg",
+    },
+    // busPath: FmodStudioRouting.SfxBus); // defaults to the SFX bus
+);
+```
+
+Play using event paths, same as the bank workflow:
+
+```csharp
+SfxCmd.Play("event:/TestMod/sfx/hit");
+
+await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+    .FromCard(this)
+    .WithHitFx(sfx: "event:/TestMod/sfx/hit")
+    .Targeting(cardPlay.Target!)
+    .Execute(choiceContext);
+```
+
+Use `RegisterOneShotVariants` when one event path should randomly pick from multiple audio files.
+
+> **Note**: Virtual events sample bus volume at playback start. Changing volume settings while audio is already playing may not update that instance immediately. For full Studio-style bus routing, use Method 1 (bank).
