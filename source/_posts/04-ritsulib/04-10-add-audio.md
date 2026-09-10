@@ -159,18 +159,78 @@ await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 
 ### 加载并播放
 
-（可选）首先找个地方预载你的音频，例如你的初始化函数`Entry.Init`里：
+有两种方式。若希望音频受游戏**主音量 / 音效 / 音乐**设置影响，请用**注册虚拟事件**；若只是快速测试，可直接播放文件。
+
+#### 方式 A：直接播放（简单，但不跟随游戏音量）
+
+（可选）在初始化函数 `Entry.Init` 里预载音频：
 
 ```csharp
- public static void Init()
-    {
-        // 其余省略
-        FmodStudioStreamingFiles.TryPreloadAsSound("res://Test/audios/waveform.ogg");
-    }
+public static void Init()
+{
+    // 其余省略
+    FmodStudioStreamingFiles.TryPreloadAsSound("res://Test/audios/waveform.ogg");
+}
 ```
 
-在你需要播放音频的地方播放：
+在需要播放的地方调用：
 
 ```csharp
 FmodStudioStreamingFiles.TryPlaySoundFile("res://Test/audios/waveform.ogg");
 ```
+
+这种方式不会自动套用游戏音量滑条，适合调试或固定音量的场景。
+
+#### 方式 B：注册虚拟事件（推荐，受游戏音量影响）
+
+把散装音频注册为虚拟 FMOD 事件后，可通过 `SfxCmd.Play("event:/...")` 等原版 API 播放。RitsuLib 会在**开始播放时**采样对应总线的当前音量（`bus:/master/sfx` 或 `bus:/master/music`，已包含游戏设置里的音量曲线）。
+
+在初始化时注册：
+
+```csharp
+using STS2RitsuLib.Audio;
+
+public static void Init()
+{
+    // 其余省略
+
+    // 音效（走 Sfx 总线，受音效音量影响）
+    VirtualFmodEventRegistry.RegisterOneShot(
+        "event:/TestMod/sfx/hit",
+        "res://Test/audios/hit.ogg",
+        busPath: FmodStudioRouting.SfxBus);
+
+    // 背景音乐（走 Music 总线，受音乐音量影响）
+    VirtualFmodEventRegistry.RegisterMusic(
+        "event:/TestMod/music/battle",
+        "res://Test/audios/battle.ogg");
+}
+```
+
+批量注册多个音效：
+
+```csharp
+VirtualFmodEventRegistry.RegisterOneShots(new Dictionary<string, string>
+    {
+        ["event:/TestMod/sfx/hit"] = "res://Test/audios/hit.ogg",
+        ["event:/TestMod/sfx/miss"] = "res://Test/audios/miss.ogg",
+    },
+    // busPath: FmodStudioRouting.SfxBus); // 默认走 Sfx 音效总线
+);
+```
+
+播放时与 bank 方式相同，使用事件路径：
+
+```csharp
+SfxCmd.Play("event:/TestMod/sfx/hit");
+
+await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+    .FromCard(this)
+    .WithHitFx(sfx: "event:/TestMod/sfx/hit")
+    .Targeting(cardPlay.Target!)
+    .Execute(choiceContext);
+```
+
+同一事件路径下有多段音频随机播放时，可使用 `RegisterOneShotVariants`。
+
+> **注意**：虚拟事件在开始播放时采样总线音量；播放过程中修改设置，已在播的音频可能不会即时跟随变化。若需要与原版 Studio 事件完全一致的总线路由，请使用方法一（bank）。
