@@ -514,3 +514,5 @@ TelemetryRegistry.RegisterApplicant(new()
 Once users who accepted sending telemetry data start sending, their information will appear in your PostHog. How exactly to analyze data is beyond the scope of this tutorial.
 
 In short, in the PostHog console, click `Apps - Product analytics - My insights - New insight` on the left, select the event type under `Series`, add `Country name` under `Breakdown`, and select `Bar chart` for chart type in the top right — this will show you the country distribution of users launching your mod daily. You can save this chart to quickly launch this analysis later.
+
+If you have a local agent tool, see https://posthog.com/docs/cli and use the CLI or MCP so the AI can build charts for you. Send it the URL and follow the login prompts.

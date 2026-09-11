@@ -514,3 +514,5 @@ TelemetryRegistry.RegisterApplicant(new()
 然后接受发送遥测数据的用户的信息就能来到你的posthog里了。具体怎么分析数据不在本教程范畴内。
 
 简单来说，在posthog控制台左侧点击`Apps - Product analytics - My insights - New insight`，`Series`选择事件类型，`Breakdown`添加`Country name`，右上角图表类型选择`Bar chart`即可查看每日启动你的mod的用户的国家分布。你可以保存这个图表之后快速启动本分析。
+
+如果你有自己的本地agent工具，可以查阅 https://posthog.com/docs/cli 网站，使用cli或者mcp工具让AI为你制作表格。将网址发送给它并按提示登录即可。
