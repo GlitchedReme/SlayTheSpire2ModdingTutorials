@@ -2,6 +2,514 @@ This records some changes that may require you to update your code. Not an exhau
 
 ---
 
+## 0.111 to 0.113
+
+### Hooks (Hook System)
+
+#### `Hooks/Hook.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `AfterDeath` | `(IRunState, ICombatState?, Creature, bool wasRemovalPrevented, float deathAnimLength)` | `(IRunState, ICombatState?, Creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength)` | 🔴 `source` param inserted |
+| `ShouldTakeExtraTurn` | `(ICombatState, Player)` → `bool` | `(ICombatState, Player, out AbstractModel? source)` → `bool` | 🔴 returns triggering model |
+| `AfterTakingExtraTurn` | `(ICombatState, Player)` | `(ICombatState, Player, AbstractModel source)` | 🔴 trailing param added |
+| `ModifyUnblockedDamageTarget` | `(ICombatState, Creature, decimal, ValueProp, Creature?)` → `Creature` | `(ICombatState?, Creature, decimal, ValueProp, Creature?)` → `Creature` | 🔴 combatState now nullable |
+| `AfterArrowShot` | — | `(ICombatState, Player, ArrowSlot?, PlayerChoiceContext, CardModel?)` | 🟢 Fool arrows |
+| `AfterArrowImpaled` | — | `(ICombatState, ImpaledPower, ArrowSlot, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `AfterArrowDislodged` | — | `(ICombatState, ImpaledPower, ArrowSlot, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `ModifyPreBlockDamageTarget` | — | `(ICombatState?, Creature, decimal, ValueProp, Creature?)` → `Creature?` | 🟢 modify target before block resolution |
+| `TryReplaceDefaultRoomRewards` | — | `(IRunState, Player, List<Reward>, AbstractRoom)` → `bool` | 🟢 replace default rewards |
+| `ModifyExtraRestSiteMendText` | — | `(IRunState, Player, IReadOnlyList<LocString>)` → `IReadOnlyList<LocString>` | 🟢 extra rest-site mend text |
+
+#### `Hooks/HpLossHookPhase.cs` (⚠️ enum bit values changed)
+
+| Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `BeforeWuppy` | — | `1` | 🟢 new (Wuppy intercept phase, before Osty) |
+| `BeforeOsty` | `1` | `2` | 🔴 **bit value changed** — code that stores/passes the integer will break |
+| `AfterOsty` | `2` | `4` | 🔴 **bit value changed** |
+| `All` | `3` | `6` | 🔴 **bit value changed** (no longer includes BeforeWuppy bit) |
+
+### Model Base Classes
+
+#### `Models/AbstractModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `AfterDeath` | `(PlayerChoiceContext, Creature, bool wasRemovalPrevented, float deathAnimLength)` | `(PlayerChoiceContext, Creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength)` | 🔴 all overrides must change |
+| `AfterArrowShot` | — | `virtual Task (Player, ArrowSlot?, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `AfterArrowImpaled` | — | `virtual Task (ImpaledPower, ArrowSlot, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `AfterArrowDislodged` | — | `virtual Task (ImpaledPower, ArrowSlot, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `ModifyDamageMultiplicativeLate` | — | `virtual decimal (Creature?, decimal, ValueProp, Creature?, CardModel?, CardPlay?)` | 🟢 late multiplicative modifier |
+| `ModifyPreBlockDamageTarget` | — | `virtual Creature? (Creature, Creature?, decimal, ValueProp, Creature?)` | 🟢 |
+| `ShouldTakeExtraTurnEarly` | — | `virtual bool (Player)` | 🟢 runs before `ShouldTakeExtraTurn` |
+| `TryReplaceDefaultRoomRewards` | — | `virtual bool (Player, List<Reward>, AbstractRoom)` | 🟢 |
+| `ModifyExtraRestSiteMendText` | — | `virtual IReadOnlyList<LocString> (Player, IReadOnlyList<LocString>)` | 🟢 |
+
+#### `Models/CardModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| Transform callbacks | `virtual void AfterTransformedFrom()` + `virtual void AfterTransformedTo()` | `virtual void AfterThisWasTransformedFrom(CardModel)` + `void AfterThisWasTransformedInto(CardModel)` (via `protected virtual AfterThisWasTransformedIntoInternal`) | 🔴 renamed/split |
+| `BigPortrait` | — | `Texture2D` | 🟢 |
+| `ExtraReplayThisTurn` | — | `int` | 🟢 counted in EnchantPlayCount |
+| `TransformIntoAfterPlay` | — | `CardModel? { get; protected set; }` | 🟢 auto-transform after play |
+| `IsAllowedInBlitz` | — | `virtual bool` | 🟢 Blitz eligibility |
+| `IsAllowedInRun` | — | `bool (IRunState)` | 🟢 unified eligibility check |
+| `InvokeKeywordsChanged` | — | `void ()` | 🟢 refresh keywords |
+| `ArrowHoverTip` | — | `protected IHoverTip` | 🟢 |
+
+#### `Models/RelicModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `IsAllowed` | `public virtual bool (IRunState)` | `public bool (IRunState)` + `protected virtual bool IsAllowedInternal(IRunState)` | 🔴 no longer virtual; override point moved to Internal |
+| `IsBeforeAct3TreasureChest` | `protected static bool (IRunState)` | `protected static bool IsLateInAct3(IRunState)` | 🔴 renamed |
+| `IsAllowedInShops` | — | `virtual bool` | 🟢 shop eligibility |
+| `ArrowHoverTip` | — | `protected IHoverTip` | 🟢 |
+
+#### `Models/MonsterModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| Health bar / interaction | `virtual bool IsHealthBarVisible` | `virtual bool IsInteractable` | 🔴 renamed; semantics now "can interact/select"; use `NCreature.SetIsInteractable` for runtime toggling |
+
+#### `Models/PowerModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `GetExtraHoverTips` | — | `IEnumerable<IHoverTip> ()` | 🟢 |
+
+#### `Models/CharacterModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| Pronoun props ×4 | `LocString PronounObject/PossessiveAdjective/PronounPossessive/PronounSubject` | — | 🔴 removed; use `AddDetailsTo`/`GetPronoun(key, FoolPronounGuess)` |
+| `AddDetailsTo` | `(LocString str)` | `(LocString str, FoolPronounGuess pronounGuess = Neutral)` | 🔴 signature changed |
+| `DeathSfx` | `string` | `virtual string` | 🔵 can now be overridden |
+| `ShortTitle` | — | `LocString` | 🟢 |
+| `BaseArrowSlotCount` | — | `virtual int` | 🟢 Fool=1, default 0 |
+| `DreadBgBrightness`/`DreadBgContrast`/`DreadNameColor` | — | `virtual float` ×2 + `virtual Color` | 🟢 Dread UI colors |
+
+#### `Models/EventModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `FoolPronounGuess` | — | `virtual FoolPronounGuess` | 🟢 event pronoun gender |
+| `OnRoomExit` | — | `virtual void ()` | 🟢 room-exit callback |
+
+#### `Models/AncientEventModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `RelicOption<T>` | `protected EventOption (string pageName = "", string? customDonePage = null)` | `protected EventOption (string pageName = "")` | 🔴 `customDonePage` removed |
+| `RelicOption(RelicModel)` | `protected EventOption (RelicModel, string pageName = "", string? customDonePage = null)` | `protected EventOption (RelicModel, string pageName = "")` | 🔴 same |
+| `AllowedOptions` | — | `protected List<EventOption> (IEnumerable<EventOption>)` | 🟢 option-pool filtering |
+| `GetOptionsFromThreePools` | — | `protected List<EventOption> (List, List, List)` | 🟢 |
+| `ConfigureBackgroundScene` | — | `virtual void (Control)` | 🟢 custom background |
+
+#### `Models/EncounterModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `DebugRandomizeRng` | `void ()` | `ulong ()` | 🔴 now returns seed |
+| `DebugSetRng` | — | `void (ulong seed)` | 🟢 |
+| `ScenePath` | — | `protected virtual string` | 🟢 scene-path override point |
+| `GetDominion` | — | `virtual DominionModel? ()` | 🟢 Dread boss empowerment |
+
+#### `Models/ActModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `GenerateRooms` | `void (Rng, UnlockState, bool isMultiplayer = false)` | `void (RunState)` + `void (Rng, UnlockState, bool isMultiplayer = false, bool isBlitz = false)` | 🟢 new overload + 🔵 trailing param |
+| `SetRooms`/`GetRoomsDebug` | — | `void (RoomSet)` / `RoomSet ()` | 🟢 |
+
+#### `Models/PotionModel.cs` / `ModifierModel.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `PotionModel.ArrowHoverTip` | — | `protected IHoverTip` | 🟢 |
+| `ModifierModel.AdditionalRestSiteMendText` | — | `protected LocString?` | 🟢 |
+
+#### `Models/ModelId.cs` / `ModelDb.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `ModelId` copy ctor | `protected ModelId(ModelId original)` | — | 🔴 removed |
+| `ModelId.Compare` | — | `static int (ModelId?, ModelId?)` | 🟢 |
+| `ModelDb.Singleton<T>` | `static T Singleton<T>() where T : SingletonModel` | `static T RunModel<T>() where T : RunModel` + `static T Dominion<T>() where T : DominionModel` | 🔴 renamed/re-constrained; `SingletonModel` deleted, `MultiplayerScalingModel` moved to `Models/` root |
+
+### Commands
+
+#### `Commands/CreatureCmd.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `Damage(Creature)` | `static Task<IEnumerable<DamageResult>> (PlayerChoiceContext, IEnumerable<Creature>?, decimal, ValueProp, Creature?, CardModel?, CardPlay?)` | same + `ModifyDamageHookType modifyDamageHookType = All` | 🔵 trailing default param |
+| `Damage(DamageTargetData)` | — | `static Task<IEnumerable<DamageResult>> (PlayerChoiceContext, IEnumerable<DamageTargetData>?, decimal, ValueProp, Creature?, CardModel?, CardPlay?, ModifyDamageHookType = All)` | 🟢 new overload |
+| `Kill` | `static Task (Creature)` | `static Task (Creature, CardModel? cardSource, bool force = false)` + `static Task (IReadOnlyCollection<Creature>, CardModel?, bool)` | 🔴🟢 |
+| `LoseMaxHp` | `static Task (PlayerChoiceContext, Creature, decimal, bool isFromCard)` | `static Task (PlayerChoiceContext, Creature, decimal, CardModel? cardSource)` | 🔴 last param type changed |
+
+#### `Commands/CardSelectCmd.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| Static selector stack | `static ICardSelector? Selector/LocalSelector` + `UseSelector`/`PushSelector`/`SuspendSelectorForTest`/`Reset` + `StackedSelectorScope`/`RestoreSelectorScope`/`SelectorScope` | — | 🔴 all removed → `RunManager.CardSelectorStack` (new `CardSelectorStack` class); `TestSupport.ICardSelector` unchanged |
+| `FromChooseABundleScreen` | `(Player, IReadOnlyList<IReadOnlyList<CardModel>>)` | same + `bool canSkip = false` | 🔵 |
+
+#### `Commands/CardPileCmd.cs` / `Cmd.cs` / `VfxCmd.cs` / `Builders/AttackCommand.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `CardPileCmd.AutoPlayFromDrawPile` | — | `static Task (PlayerChoiceContext, Player, int count, CardPilePosition, bool forceExhaust, Action<CardModel>)` | 🟢 auto-play from draw pile |
+| `Cmd.TryWait` | — | `static Task<bool> (float seconds, CancellationToken = default, bool ignoreCombatEnd = false)` | 🟢 |
+| `VfxCmd.PlayOnCreature[Center]` | `(Creature, string path)` | same + `bool forceIfDead = false` | 🔵 |
+| `AttackCommand.FromArrow` | — | `()` chain call | 🟢 arrow attack |
+| `ArrowCmd` / `MelodyCmd` | — | new files | 🟢 Fool/Cho mechanics commands |
+
+### Combat State & Player/Creature Entities
+
+#### `Combat/CombatState.cs` / `CombatManager.cs` / `CombatTurnState.cs` / `CombatHistory.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `CombatState` ctor | `(EncounterModel?, IRunState?, IReadOnlyList<ModifierModel>?, IReadOnlyList<BadgeModel>?, MultiplayerScalingModel?)` | `(EncounterModel?, IRunState?, IReadOnlyList<ModifierModel>?, IReadOnlyList<BadgeModel>?, IReadOnlyList<RunModel>?, DominionModel?)` | 🔴 params swapped |
+| `CombatState` models | `MultiplayerScalingModel? MultiplayerScalingModel { get; private set; }` | `IReadOnlyList<RunModel> RunModels { get; private set; }` + `DominionModel? Dominion` + `SetDominion(DominionModel?)` | 🔴 renamed/split |
+| `CombatManager.UndoReadyToEndTurn` | `void (Player)` | `void TryUndoReadyToEndTurn(Player)` + `bool CanUnEndTurn(Player)` | 🔴 renamed + 🟢 |
+| `CombatManager.ShouldSkipCombatEffect` | — | `bool` | 🟢 |
+| `CombatTurnState.PlayersThatCannotUnEndTurn` | — | `HashSet<Player>` | 🟢 |
+| `CombatHistory.ArrowShot` | — | `void (ICombatState, ArrowSlot)` | 🟢 new entry `ArrowShotEntry` |
+
+#### `Entities/Players/Player.cs` / `PlayerCombatState.cs` / `ExtraPlayerFields.cs`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `Player.MaxAscensionWhenRunStarted` | `int { get; }` | — | 🔴 removed |
+| `Player.PopulateCombatState` | `void (Rng, CombatState)` | `void (Rng, ICombatState)` | 🔴 param changed to interface |
+| `Player.PopulateRelicGrabBagDebug` | — | `void (List<RelicModel>, Rng)` | 🟢 |
+| `PlayerCombatState` arrows | — | `IReadOnlyList<ArrowSlot> Arrows` + `int AvailableArrowCount` + `void GainArrow()` + `event Action? ArrowsChanged` | 🟢 |
+| `ExtraPlayerFields.IsPlayingRotatingCharacter` | — | `bool { get; set; }` | 🟢 Dread rotation |
+
+#### `Entities/Cards/` / `Creatures/` / `RestSite/` / `FoolArrows/`
+
+| Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `CardPile` | `class CardPile` + `CardPile(PileType)` | `class CardPile(PileType)` primary ctor | 🔵 equivalent; `RandomizeOrderInternal` param `CombatState`→`ICombatState` |
+| `DamageResult` | `Creature Target`/`HpLoss`/`Blocked`… | + `Creature OriginalTarget { get; set; }` + `int IntendedHpLoss { get; set; }` | 🟢 |
+| `DamageTargetData` | — | new type | 🟢 used by `CreatureCmd.Damage` overload |
+| `ArrowSlot`/`ArrowStatus` | — | new dir & types | 🟢 Fool arrow slots/status |
+| `SmithRestSiteOption` | `int SmithCount { get; set; } = 1` + `override LocString Description` | — | 🔴 removed |
+| `EvolveRestSiteOption`/`RestoreRestSiteOption` | — | new files | 🟢 new rest-site options |
+| `TarotCards` | — | new file | 🟢 `TarotCards.All` tarot card set |
+
+### Rewards & Card Selection
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `Rewards/CardReward.cs` | both ctors | `(CardCreationOptions, int, Player, PlayerChoiceSynchronizer?)` / `(IEnumerable<CardModel>, CardCreationSource, Player, CardCreationOptions, PlayerChoiceSynchronizer?)` | same + `CardSelectorStack? selectorStack = null` | 🔵 |
+| `Rewards/RelicReward.cs` | both ctors | `(RelicModel, Player)` / `(RelicRarity, Player)` | same + `Rng? rngOverride = null` | 🔵 |
+| `Rewards/CardUpgradeReward.cs` | new type | — | `UpgradeCard` reward | 🟢 |
+| `Odds/CardRarityOdds.cs` | `Roll*` ×4 | `(CardRarityOddsType)` / `(CardRarityOddsType, float)` / `(CardRarityOddsType)` | same + `Rng? rngOverride = null` | 🔵; + 🟢 `blitzShop*/blitzNeow*` 6 rarity constants |
+| `CardSelection/CardSelectorStack.cs` | new class | — | `RunManager.CardSelectorStack` | 🟢 takes over old `CardSelectCmd` static stack |
+| `Nodes/Screens/CardSelection/` | `ICardSelector.cs` | `ICardSelector` interface | `ICardSelectionScreen.cs` | 🔴 renamed |
+| `Entities/TreasureRelicPicking/RelicPickingResult.cs` | `GenerateRelicFight` + field | `(List<Player>, RelicModel, Func<RelicPickingFightMove>)` | `(List<Player>, RelicModel, int relicIndex, Func<RelicPickingFightMove>)` + `required int relicIndex` | 🔴 |
+
+### Multiplayer Contexts & Interfaces
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `PlayerChoiceContext.cs` | `GameActionType` | — | `abstract GameActionType? GameActionType { get; }` | 🟢 all subclasses add override |
+| `BranchingPlayerChoiceContext.cs` | both ctors | `(ulong, GameActionType, PlayerChoiceContext)` / `(AbstractModel, ulong, GameActionType, PlayerChoiceContext)` | `(ulong, PlayerChoiceContext)` / `(AbstractModel, ulong, PlayerChoiceContext)` | 🔴 `gameActionType` removed |
+| `ActionQueueSet.cs` | `WasReset`/`AreAnyPlayerDrivenActionsBeingExecuted` | — | `bool` / `bool (bool excludeEndOfTurn = false)` | 🟢 |
+| `Runs/IRunState.cs` | interface members | `MultiplayerScalingModel? MultiplayerScalingModel` | `IReadOnlyList<RunModel> RunModels` + `DominionModel? Dominion` + `IReadOnlyList<MapCoord> VisitedMapCoords` + `bool IsCustomGame` | 🔴 implementers must change |
+| `Combat/ICombatState.cs` | interface members | `MultiplayerScalingModel? MultiplayerScalingModel` | `IReadOnlyList<RunModel> RunModels` | 🔴 `Null*` updated in sync |
+| `Game/INetHostGameService.cs` | `ConnectedPeers`/`DisconnectClient` | `(ulong, NetError, bool)` | + `IReadOnlyList<ulong> ConnectedPeers`; `DisconnectClient` gains `string? debugReason = null` | 🟢🔵 |
+| `Game/Lobby/IStartRunLobbyListener.cs` | `PlayerChanged`/`GameModeChanged` | `PlayerChanged(Player, bool isRandomCharacterResolution)` | `PlayerChanged(Player)` + `GameModeChanged()` | 🔴 |
+| `Connection/IClientConnectionInitializer.cs` | `Platform`/`GetHostId` | — | `PlatformType Platform` + `ulong? GetHostId()` | 🟢 (ENet/Steam impls updated too) |
+| `Game/JoinResult.cs` | `isCustom` | — | `bool` | 🟢 |
+| `Messages/Lobby/ClientLobbyJoinResponseMessage.cs` | `gameMode`/`isCustom` | — | new fields | 🟢 |
+| `Messages/Lobby/InitialGameInfoMessage.cs` | `gameMode` | present | — | 🔴 |
+| `Messages/Lobby/LobbyPlayerChangedCharacterMessage.cs` | `isRotatingDread` | — | `bool` | 🟢 |
+| `Messages/Lobby/` | `LobbyGameModeChangedMessage` | — | new file | 🟢 |
+| `Entities/Multiplayer/NetFullCombatState.cs` | `ArrowSlotState` | — | nested struct | 🟢 arrow network sync |
+| `Entities/Multiplayer/NetErrorInfo.cs` | `JoinExtraInfo`/`ConnectionExtraInfo` | `ConnectionExtraInfo` get only | + `JoinExtraInfo` prop; `ConnectionExtraInfo` get→get,set | 🟢 |
+| `Entities/Multiplayer/StartRunLobbyPlayer.cs` | ascension | `int maxMultiplayerAscensionUnlocked` | `int maxStandardAscension` + `int maxBlitzAscension` + `bool isRotatingDread` | 🔴🟢 |
+| `Nodes/Debug/IBootstrapSettings.cs` | `Setup` | `(Player localPlayer)` | `(Player player)` — param renamed/purposed for `debugActMap` | 🔴 |
+| `Nodes/Screens/CharacterSelect/ICharacterSelectButtonDelegate.cs` | `SelectCharacter` | `(NCharacterSelectButton, CharacterModel)` | `(NCharacterSelectButton)` | 🔴; `NCharacterSelectButton` +`InitAsRandom`/`InitAsRotating` |
+| `Game/JoinFlow.cs` | ctor/`Begin` | `JoinFlow(INetClientGameService)` + `Begin(IClientConnectionInitializer, SceneTree?)` | `JoinFlow(INetClientGameService, IClientConnectionInitializer)` + `Begin(SceneTree?)` | 🔴 initializer moved to ctor |
+| `Game/FlavorSynchronizer.cs` | `OnEndTurnPingReceived` | `event Action<ulong>?` | `event Action<ulong>? EndTurnPingReceived` + `event Action<Player, MapCoord>? MapPingReceived` | 🔴 renamed + 🟢 |
+| `Game/MapSelectionSynchronizer.cs` | ctor/`PlayerVoteCancelled` | `(INetGameService, ActionQueueSynchronizer, RunState)` + `event Action<Player>?` | `(INetGameService, ActionQueueSynchronizer, IRunState)` + `event Action<Player, MapVote?>?` | 🔴; + 🟢 `OnLocalPlayerVotedFor`/`BeforeBeginningMoveToNewMapCoord` |
+| `Game/MapVote.cs` | type | `struct` | `record struct` | 🔵 equivalent |
+| `Game/OneOffSynchronizer.cs` | `DoLocalMerchantCardRemoval` | `(int, bool)` → `Task<bool>` | — | 🔴 handled by MerchantSynchronizer |
+| `Game/TreasureRoomRelicSynchronizer.cs` | `RelicsAwarded`/ctor | `event Action<List<RelicPickingResult>>?` + `(IPlayerCollection, ulong, ActionQueueSynchronizer, RelicGrabBag, Rng)` | event signature changed; ctor drops `sharedGrabBag`, adds `treasureRelics` | 🔴 |
+| `Game/RewardsSetSynchronizer.cs` | internal fields | — | — | 🔵 implementation change |
+| `Messages/Lobby/ClientLobbyJoinRequestMessage.cs` | `password` | `string` | — | 🔴 |
+| `Serialization/QuantizeParams.cs` | `maxValue` | — | field | 🟢 |
+| `Platform/AchievementsUtil.cs` | ctor | `(ILogger)` | `(IPlatformServices)` | 🔴 |
+| `Platform/Steam/SteamInitializer.cs` | `AchievementsUtil` | — | `AchievementsUtil` prop | 🟢 |
+
+### Merchant
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `MerchantEntry.cs` | `Cost` | `int` | `virtual int` | 🔵; + 🟢 `Player`, `uint? Id` |
+| same | purchase hooks | `public Task<bool> OnTryPurchaseWrapper(MerchantInventory?, bool)` + `protected abstract Task<(bool,int)> OnTryPurchase(MerchantInventory?, bool)` | `public Task<bool> OnTryPurchaseUnsynchronized(MerchantInventory?, bool)` + `protected abstract Task<(bool,int)> OnTryPurchaseInternal(MerchantInventory?, bool)` | 🔴 renamed; subclasses updated |
+| `MerchantCardEntry.cs` | ctor/`Populate` | `(Player, MerchantInventory?, IEnumerable<CardModel>, CardType/CardRarity)` + `Populate()` | `(Player, IEnumerable<CardModel>, CardType/CardRarity)` + `Populate(MerchantInventory?)` | 🔴 inventory moved to Populate |
+| `MerchantCardRemovalEntry.cs` | cancel/removal | `OnTryPurchaseWrapper(..., bool cancelable)` | `SetPurchaseUncancelable()` + `static Task<bool> DoCardRemoval(Player, bool)` | 🔴 |
+| `MerchantInventory.cs` | `AllEntries` | `IEnumerable<MerchantEntry>` | `List<MerchantEntry>` | 🔴 |
+| same | Blitz/transactions | — | `IReadOnlyList<BlitzMerchantEntry> BlitzEntries` + `bool IsBlitzShop` + `int BlitzChoicesRemaining` + `TryBeginPurchase`/`EndPurchase`/`Setup`/`CreateForBlitzMerchant`/`TryPurchaseEntryWithIdUnsynchronized` + new ctor | 🟢 |
+| `MerchantDialogueSet.cs` | `BlitzFinishedLines` | — | `IReadOnlyList<LocString>` | 🟢 |
+| `Rooms/MerchantRoom.cs` | `Inventories`/`GetLocalInventory` | present | — | 🔴 |
+| `Entities/Merchant/` | `BlitzMerchant*` | — | 21 new files | 🟢 Blitz shop entry system |
+| `Multiplayer/Game/` | `MerchantSynchronizer` | — | new type | 🟢; `MerchantCardRemovalMessage` deleted |
+
+### RNG
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `Random/Rng.cs` | `Shuffle<T>` | `void (IList<T>)` | — | 🔴 deleted; use `list.StableShuffle(rng)`/`UnstableShuffle(rng)` (`Extensions/ListExtensions.cs`) |
+| same | `Chaotic`/`CreateChaoticSeed` | `static Rng Chaotic { get; } = new Rng((ulong)DateTimeOffset.Now.ToUnixTimeSeconds())` | `= new Rng(CreateChaoticSeed())` + `static ulong CreateChaoticSeed()` | 🟢 |
+| `Random/PlayerRngSet.cs` | `NonCombatGeneration` | — | `Rng` | 🟢 non-combat generation RNG |
+
+### Factories
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `RelicFactory.cs` | pull/rarity | `PullNextRelicFromFront(Player)` + `PullNextRelicFromBack(Player)` (auto-roll) + `RollRarity(Player)` | `PullNextRelicForRewardFromFront(Player)` + `RollRarityForReward(Player)` | 🔴 renamed; auto-roll `PullNextRelicFromBack` deleted (shops use `(player, rarity, filter)`) |
+| `CardFactory.cs` | `CreateForMerchant` ×2 | `(Player, IEnumerable<CardModel> options, CardType/CardRarity)` | `(Player, IEnumerable<CardModel> options, IEnumerable<CardModel> blacklist, CardType/CardRarity)` | 🔴 param inserted |
+
+### HoverTips
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `HoverTip.cs` | `Id`/`IsSmart`/`IsDebuff`/`IsInstanced` | `{ get; set; }` | `{ get; }` | 🔴 object-initializer syntax no longer works |
+| same | `ShouldOverrideTextOverflow` | `{ get; set; }` | `{ get; init; }` | 🔴 |
+| `HoverTipFactory.cs` | new factories | — | `FromEnchantment(EnchantmentModel, int)` + `FromCardWithCardHoverTips` ×2 + `ForEnergy(DominionModel)` + `ForArrow(Player?, bool)` | 🟢 |
+
+### Localization
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `LocManager.cs` | RTL | — | `bool IsRtl` + `static bool IsHiddenLanguage(string)` + `static bool IsRtlLanguage(string)` | 🟢 Arabic |
+| `DynamicVars/DynamicVarSet.cs` | `HitCount` | — | `HitCountVar` | 🟢 (new files `HitCountVar`/`CalculatedHitCountVar`) |
+| `DynamicVars/DynamicVar.cs` | `GetBaseValueForIConvertible` | `protected virtual decimal ()` | — | 🔴 removed |
+| new files | `ArabicPluralRule`/`RtlControlUtils`/`AraFontPathSet` | — | new files | 🟢 |
+
+### Map
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `ActMap.cs` | `ConnectChildren` ×2 / `RestoreStartMapPoints` | — | `protected static`/`protected` methods | 🟢 serialization restore moved down |
+| `MapPoint.cs` | `FromSerializable` | — | `static MapPoint (SerializableMapPoint)` | 🟢 |
+| `MapCoord.cs`/`Runs/MapLocation.cs` | primary-ctor syntax | `struct` + explicit ctor | `struct(int col, int row)` primary ctor | 🔵 equivalent |
+| `BlitzActMap.cs` | new file | — | Blitz map | 🟢 |
+
+### Run Flow (RunManager / RunState)
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `RunManager.cs` | `OnEnded` | `SerializableRun (bool)` | `PostRunProgressUpdateResult (bool)` | 🔴 return type |
+| same | `ProceedFromTerminalRewardsScreen` | `async Task ()` | `void ProceedFromTerminalRewardsScreen()` + `async Task ProceedFromTerminalRewardsScreenAsync()` + `void Proceed()` | 🔴 split |
+| same | new | — | `HasRunEnded`/`IsChangingRooms`/`IsPotionUseLocked`/`MerchantSynchronizer`/`CardSelectorStack`/`MapChanged`/`OnIsChangingRoomsModified`/`InvokeMapChanged`/`IsDread()` | 🟢 |
+| `RunHistory.cs`/`Runs/Metrics/*` | `SerializableMapPointHistoryEntry` | — | new type | 🟢 |
+| `Runs/RunHistory.cs` | `IsCustomGame`/`GameMode` | — | `bool`/`GameMode` | 🟢 |
+| `RunState.cs` | models | `MultiplayerScalingModel? MultiplayerScalingModel` | `IReadOnlyList<RunModel> RunModels` + `DominionModel? Dominion` + `SetDominion(DominionModel?)` | 🔴 |
+| same | `IsCustomGame` | — | `bool { get; init; }` | 🟢 |
+| same | `CreateForNewRun` | `(players, acts, modifiers, gameMode, ascensionLevel, seed)` | `(players, acts, modifiers, gameMode, bool isCustom, ascensionLevel, seed)` | 🔴 param inserted after `gameMode` |
+| same | `CreateForTest` | `(…, GameMode gameMode, int ascensionLevel, string? seed)` | `(…, GameMode gameMode, bool isCustomGame = false, int ascensionLevel, string? seed)` | 🔵 |
+| `ExtraRunFields.cs`/`SerializableExtraRunFields.cs` | `UsedDebugCommand`/`MarkDebugToolUsed` | — | `bool` + `void ()` | 🟢 |
+| `Runs/` | `RunRichPresence`/`History/BlitzMerchantHistoryEntry` | — | new files | 🟢 |
+
+### GameMode / Ascension / New Modes
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `Runs/GameMode.cs` | enum | `None,Standard,Daily,Custom` | `None,Standard,Daily,Dread,Blitz` | 🔴 `Custom=3` deleted; custom games use `IsCustomGame` bool |
+| `Runs/GameModeExtension.cs` → `Helpers/GameModeHelper.cs` | `AreAchievementsAndEpochsLocked` | `static bool (GameMode, bool?)` (`GameModeExtension`) | `static bool AreAchievementsAndEpochsLocked(GameMode, bool)` + `ForRun`/`ForHistory`/`ForSerializableRun` (`GameModeHelper`) | 🔴 file/signature rework |
+| `Entities/Ascension/AscensionManager.cs` | ctor | `(int)` / `(AscensionLevel)` | `(GameMode, int)` | 🔴; + 🟢 `GetMaxAllowed`/`ClampToMode`/`maxAscensionAllowedBlitz=5` |
+| `Helpers/AscensionHelper.cs` | queries | `GetTitle(int)`/`GetDescription(int)`/`GetHoverTip(CharacterModel,int,bool achievementsLocked)` | `GetTitle(int,GameMode)`/`GetDescription(int,GameMode)`/`GetHoverTip(CharacterModel,int,GameMode,bool isCustomGame)` | 🔴 `GameMode` param added everywhere |
+| same | `PovertyAscensionGoldMultiplier` | `static double` property | `const decimal povertyAscensionGoldMultiplier = 0.75m` | 🔴 now a lowercase const |
+| same | Dread/rotation | — | `IsDread`/`GetLevelForBlitz`/`GetPortraitHoverTip`/`GetDreadStreak`/`GetNextRotatingDreadCharacter*`/`GetRotatingCharacterIdForStreak`/`GetCurrentRotatingDread*` | 🟢 |
+| `Models/Blitz/`/`Models/Dread/` | new mode models | — | `BlitzRunModel`/`DreadRunModel`/`DominionModel`/`Dominions/*` | 🟢; `ModelDb.RunModel<T>()`/`Dominion<T>()` |
+| `AutoSlay/AutoSlayConfig.cs` | `GameMode` | — | field | 🟢 |
+| `Multiplayer` side | `StartRunLobby`/`StartHostAsync`/`FastHost` | `maxPlayers` required | `maxPlayers` optional/re-paramed | 🔵; + `LobbyGameModeChangedMessage` |
+| `StartRunLobbyPlayer.cs` | `IsCustomGame` field | — | `bool` | 🟢 |
+
+### Saves
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `SaveManager.cs` | `UpdateProgressWithRunData` | `void (SerializableRun, bool)` | `PostRunProgressUpdateResult (SerializableRun, bool)` | 🔴; + 🟢 `ObtainFoolEpochIfDefectRunCompleted` |
+| `Managers/ProgressSaveManager.cs` | `UpdateWithRunData` | `void (SerializableRun, bool)` | `PostRunProgressUpdateResult (SerializableRun, bool)` | 🔴; + 🟢 `UpdateDreadWinStreakOnVictory`/`ReconcileDreadWinStreakVersion`/`ObtainFoolEpochIfDefectRunCompleted` |
+| `Managers/RunSaveManager.cs` | `RenameBrokenMultiplayerRunSave` | `void (ReadSaveStatus)` | — | 🔴 |
+| `Runs/PlayerMapPointHistoryEntry.cs` | `BlitzMerchantChoices` | — | `List<BlitzMerchantHistoryEntry>` | 🟢 |
+| `Runs/History/*HistoryEntry.cs` | primary-ctor syntax | explicit ctors | `struct(...)` primary ctors | 🔵 equivalent (`CardEnchantment`/`CardTransformation`/`ModelChoice`/`ActMap`/`Ascension`) |
+| `Saves/Test/MockGodotFileIo.cs` | `UnreadablePaths` | — | `HashSet<string>` | 🟢 |
+| `SerializableRun.cs` | `IsCustomGame` | — | `bool { get; set; }` | 🟢 (save V21) |
+| `Migrations/**` | filenames | `*Migration*.cs` | `000N_*` prefix; new `SerializableRunV20ToV21`/`RunHistoryV10ToV11` | 🔵 |
+| `SaveContent.cs`/`PendingDreadWinStreakResult.cs`/`ProfileScopeUserDataMigrator.cs` | new files | — | new files | 🟢 |
+| `SerializableProgress.cs`/`ProgressState.cs` | prefs/streaks | — | `PreferredBlitzAscension`/`MaxBlitzAscension`/`Preferred*Character`×6/`PreferredDreadRotating*`×2/`Current*DreadStartingCharacterForRotation`×2/`Pending*DreadWinStreakResult`×2 | 🟢 |
+| `ProgressState.cs` | new methods | — | `GetStatsForCharacter<T>()`/`IsEmptyEpochSlotAvailable(epochId)` | 🟢 |
+| `CharacterStats.cs` | `Best*/Current*DreadWinStreak*` ×10 | — | properties | 🟢 |
+| `CloudSaveStore.cs` | `directoryPath` | `public string` | — | 🔴 |
+| `Managers/PrefsSaveManager.cs` | ctor | `(int profileId, ISaveStore, MigrationManager)` | — | 🔴 |
+| `MegaCritSerializerContext.cs` | JsonTypeInfo | — | `BlitzMerchantEntryType`/`BlitzMerchantHistoryEntry`/`PendingDreadWinStreakResult`/`ListBlitzMerchantHistoryEntry` | 🟢 |
+| `Runs/Metrics/RunMetrics.cs` | `GameMode` | — | `required string` | 🟢 |
+| `Runs/Metrics/EncounterMetric.cs` | `damage` | `readonly int` | `readonly int = Math.Clamp(damage,0,100)` | 🔵 |
+| `Runs/Metrics/CardChoiceMetric.cs` | `picked`/`skipped` | `readonly List<string>` | `readonly List<string> = new()` | 🔵 |
+| `Saves/Runs/SavedProperties.cs` | `SavedProperty<T>` | explicit ctor | primary ctor | 🔵 |
+
+### Timeline / Daily / Logging / Misc
+
+| File | Type/Member | 0.111 | 0.113 | Notes |
+|---|---|---|---|---|
+| `Nodes/Screens/Timeline/NEpochCard.cs` + `UnlockScreens/NUnlockEpochScreen.cs` | deleted | present | — | 🔴 Timeline UI rework |
+| `Timeline/Epochs/` | new Epochs | — | `BlitzEpoch`/`DreadEpoch`/`Fool1–7Epoch` + `Stories/FoolStory` | 🟢 |
+| `Daily/DailyRunUtility.cs` | time/seed | — | `GetDailySeed`/`GetDailySeedDate`/`TryGetDailySeedDate`/`IsFutureLeaderboardDay`/`IsCurrentLeaderboardDay`/`GetTimeServerTime` | 🟢 |
+| `Logging/LogSanitizer.cs` | `AnonymizeSteamIds` | — | `void` | 🟢 |
+| `Helpers/ImageHelper.cs` | `GetAtlasUvRegion` | — | `static` | 🟢 |
+| `Assets/PreloadManager.cs` | `LoadRoomBlitzMerchantAssets` | — | `void` | 🟢 |
+| `RichTextTags/RichTextYellow.cs` | new file | — | `RichTextEffect` | 🟢 |
+| `DevConsole/ConsoleCommands/` | new commands | — | `ScreenshotConsoleCmd`/`GetLogsConsoleCommand`/`UnlockConsoleCommand`/`AchievementConsoleCommand` + `BudgetedZipWriter`/`FeedbackAttachment`/`FeedbackLogFiles`/`FeedbackTextEntry` | 🟢 |
+| `DevConsole/ConsoleCommands/FightConsoleCmd.cs` | `FightArgs`/`TryParseFightArgs` | — | `record struct` + `static bool` | 🟢 fight command accepts seed |
+| `DevConsole/ConsoleCommands/GetLogsConsoleCmd.cs` | `CollectFeedbackLogFiles`/`WriteFeedbackZip` | — | `static` | 🟢 |
+| `Debug/` | screenshot reporting | — | `Bootstrapper`/`CaptureResult`/`CaptureStatus`/`ScreenshotPaths`/`ViewportCapture` | 🟢 |
+| `Helpers/StsColors.cs` | `halfTransparentBlack` | — | `static Color` | 🟢 |
+| `Assets/AssetSets.cs` | new asset sets | — | `NCardFlyShuffleVfx`/`ArrowSlot`/`NFoolUi`/`NBlitzTopBar`/`NBlitzIcon`/`NDreadIcon` etc. | 🟢 |
+| `Audio/Debug/` | `TmpSfx`/`NDebugAudioManager` | — | new | 🟢 |
+| `ControllerInput/ControllerConfig.cs`/`SteamControllerConfig.cs` | `GlyphType`/`SteamDeckOnly`/`IsSteamInputActive` | — | new | 🟢 |
+| `Entities/Cards/CardTransformation.cs` | `TransformResult.transformer` | — | `CardModel?` field | 🟢 |
+| `Entities/Enchantments/EnchantmentOption.cs` | `card` | — | `CardModel?` field | 🟢 |
+| `Runs/CardCreationOptions.cs` | `MerchantBlacklist`/`CustomPool` | — | `IEnumerable<CardModel>` | 🟢 |
+| `Runs/Metrics/ActWinMetric.cs` | `dread` | — | `bool` | 🟢 |
+| `Runs/History/*HistoryEntry.cs` | ctor params | old params | `transformer`/`enchantment` etc. reordered/added | 🔴 |
+| `Combat/History/Entries/` | `EnergySpentEntry`/`StarsModifiedEntry`/`SummonedEntry` | old ctors | params adjusted | 🔴 |
+| `GameInfo/NGameInfoUploader.cs` | `GameInfoPath`/`SerializeGameInfo` | — | `static` | 🟢 |
+| `Runs/PlayerMapPointHistoryEntry.cs` | `BlitzMerchantChoices` | — | `List<BlitzMerchantHistoryEntry>` | 🟢 |
+| `Saves/Test/MockGodotFileIo.cs` | `UnreadablePaths` | — | `HashSet<string>` | 🟢 |
+| `TestSupport/TestRngInjector.cs` | `SetRelicOverride<T>` | `static void` | `static void AddRelicOverride<T>` | 🔴 renamed |
+| `FmodSfx.cs` | `foolWah`/`foolCho`/`foolKi` | — | `const string` | 🟢 |
+| `Entities/Merchant/MerchantDialogueSet.cs` | `BlitzFinishedLines` | — | `IReadOnlyList<LocString>` | 🟢 |
+
+### Modding Namespace
+
+| File | 0.111 | 0.113 | Status |
+|---|---|---|---|
+| `Mod.cs`/`ModManifest.cs`/`ModSettings.cs`/`ModManager.cs`/`ModHelper.cs`/`ModDependency.cs`/`ModLoadState.cs`/`ModManagerState.cs`/`ModSource.cs`/`CombatHookSubscriptionDelegate.cs`/`RunHookSubscriptionDelegate.cs`/`IModManagerFileIo.cs`/`ModInitializerAttribute.cs`/`SettingsSaveMod.cs` | original signatures | identical | ✅ only decompiler formatting diffs; `OnModDetected`/`OnMetricsUpload` events still present |
+
+### AutoSlay (auto-testing, 🔴 major refactor)
+
+| Area | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `Launchers/` | — | `IRunLauncher`/`StandardRunLauncher`/`BlitzRunLauncher`/`DreadRunLauncher`/`ModeScreen`/`RunLaunchers` | 🟢 |
+| `Navigation/` | — | `IRoomNavigator`/`MapNavigator`/`BlitzNavigator`/`RunPosition`/`RoomNavigators` | 🟢 |
+| `Scenarios/` | — | `ScenarioScript`/`ScenarioRunner`/`ScenarioConditions`/`ScenarioStatement`/`ScenarioOutcome`/`ScenarioExitCode`/`ScenarioLog`/`ScenarioWaitCondition`/`ScenarioParseResult`/`ScenarioDirectives`/`ScenarioConditionDescriptor` | 🟢 scripted scenarios |
+| other | `AutoSlayTimeoutException` | `DriverTimeoutException` + `AutoSlayMode`/`AutoSlayModes`/`AutoSlayUnlocks`/`ActEntryCheck`/`ByrdEvolutionScreenHandler` | 🔴 renamed + 🟢 |
+| `AutoSlayer.cs` | `Start(string seed, string? logFile = null)` + `static Watchdog? CurrentWatchdog` | `Start(string seed, string? mode, string? logFile = null)` + `Watchdog.Current` | 🔴 |
+| `Helpers/Watchdog.cs` | `Watchdog()` | `Watchdog(Action<string>, Action<string>, TimeSpan?, TimeSpan?, Func<DateTime>?)` + `WatchdogScope`/`Use`/`Current` | 🔴 |
+
+### UI Nodes
+
+| Area | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| all `N*` classes | non-partial + handwritten signals | `partial` + source-generated signals | 🔵 equivalent; handwritten `EmitSignal*`/`SignalName` references break |
+| `Nodes/TopBar/` | single `NTopBar` class | `NTopBarButton`/`NTopBarDeckButton`/`NTopBarGold`/`NTopBarHp`/`NTopBarMapButton`/`NTopBarPauseButton`/`NTopBarPortrait`/`NTopBarPortraitTip`/`NTopBarBossIcon`/`NTopBarFloorIcon`/`NTopBarRoomIcon`/`NTopBarModifier`/`NRunTimer` + 3 IconConfig | 🔴 split |
+| `Nodes/Combat/` | `NCreature.SetCreatureIsInteractable` | `SetIsInteractable(on, changeVisibilityImmediately)` + `NFoolArrowUi`/`NFoolCombatUi`/`NFoolCombatSymbol` | 🔴 + 🟢 |
+| `Nodes/Rooms/` | `NMerchantRoom` | `NStandardMerchantRoom` + `NBlitzMerchantRoom` | 🔴 split |
+| `Nodes/Screens/` | — | `NBlitzScreen`/`NDreadScreen`/`NUnderConstruction`/`NSaveAndQuitButton`/`NSubmenuPortrait`/`NCustomGameModeDropdown`/`NLeaderboardDayArrow` | 🟢 |
+| `Nodes/Screens/CardLibrary/` | `SortingOrders.cs` | `NCardLibraryGrid.SortingOrders.cs` | 🔴 moved |
+| `Bindings/MegaSpine/MegaSlotNode.cs` | `(Node3D)` | `(MegaSlot)` + `SlotName`/`Slot`/`AttachmentName` | 🔴; new type `MegaSlot` |
+| `Nodes/GodotExtensions/` | — | `OwnedTween`/`OwnerFreeingTween`/`TweenOutcome`/`TweenWait` | 🟢 |
+| `Nodes/CommonUi/NInputManager.cs` | — | `DebugSkipRestSite`/`DebugProceedFromRewards`/`IsKbOnlyDirectionalKey` | 🟢 |
+| `Nodes/CommonUi/NErrorPopup.cs` | `NErrorPopup` | + `RunSaveErrorContent` record struct + `CreateForRunSave`/`GetRunSaveErrorContent` | 🟢 |
+| `Nodes/GodotExtensions/NMegaTextEdit.cs` | `class NMegaTextEdit : TextEdit` | `class NMegaTextEdit` holding a `TextEdit` prop | 🔴 inheritors must change |
+| `Nodes/GodotExtensions/NDropdown.cs` | — | `protected bool IsOpen` | 🟢 |
+| `Nodes/HoverTips/NHoverTipSet.cs` | — | `const float hoverTipWidth = 360f` + `SetAlignment` | 🟢 |
+| `Nodes/Combat/NCreatureStateDisplay.cs` | — | `Reposition`/`AnimateInSimple`/`AnimateOutSimple` | 🟢 |
+| `Nodes/Cards/NCard.cs` | — | `SetPortraitTexture(Texture2D)` | 🟢 |
+| `Nodes/Cards/NCardGrid.cs` | — | `IReadOnlyList<CardModel> SortedCards` | 🟢 |
+| `Nodes/Screens/Map/NNormalMapPoint.cs` | — | `static string IconName/IconPath/OutlinePath/UnknownIconPath/UnknownOutlinePath` | 🟢 |
+| `Nodes/Rooms/NMerchantButton.cs` | — | `protected MegaSkeleton? _merchantSkeleton` + `protected NSelectionReticle _merchantSelectionReticle` + `protected bool _focusedWhileTargeting` | 🟢 |
+| `Nodes/Relics/NRelicInventory.cs` | — | `UpdateNavigation()` | 🟢 |
+| `Nodes/Screens/Shops/NMerchantInventory.cs` | — | `const int blitzColumns = 3` + `ShowOpenInventory`/`Close` | 🟢 |
+| `Nodes/Screens/Shops/NMerchantDialogue.cs` | — | `ShowForBlitzFinished` | 🟢 |
+| `Nodes/Screens/MainMenu/` | — | `static AssetPaths` (`NCompendiumSubmenu`/`NSingleplayerSubmenu`) | 🟢 |
+| `Nodes/Screens/FeedbackScreen/NSendFeedbackScreen.cs` | — | `static GetUploadedScreenshotSize`/`SendFeedback` | 🟢 |
+| `Nodes/Audio/NRunMusicController.cs` | — | `UpdateTrack(RoomType)` | 🟢 |
+| `Nodes/Vfx/` | — | `NCardFlyVfx.Create`/`NFireSmokePuffVfx.Create`/`NCardSmithVfx()` | 🟢 |
+| `Events/Custom/CrystalSphereEvent/` | — | `CrystalSphereMinigame.Owner` | 🟢 |
+| `CardSelection/CardSelectorPrefs.cs` | — | `static bool AbsorbSelectionPrompt` | 🟢 |
+| `TestSupport/TestRngInjector.cs` | `SetRelicOverride<T>` | `AddRelicOverride<T>` | 🔴 renamed |
+| `addons/sentry/` | `Nodes/SentryBootstrap.cs`/`Nodes/SentryAutoInit.cs` | `addons/sentry/` | 🔵 moved |
+| `addons/mega_text/` | `MegaCrit.Sts2.addons.mega_text/MegaLabel`/`MegaRichTextLabel`/`ThemeConstants` | `addons/mega_text/` (same namespace) | 🔵 moved |
+
+### Enum Value Changes (real changes)
+
+| Enum | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `Runs/GameMode` | `None,Standard,Daily,Custom` | `None,Standard,Daily,Dread,Blitz` | 🔴 `-Custom`/`+Dread`/`+Blitz`; custom→`IsCustomGame` |
+| `Hooks/HpLossHookPhase` | `BeforeOsty=1,AfterOsty=2,All=3` | `BeforeWuppy=1,BeforeOsty=2,AfterOsty=4,All=6` | 🔴 all bit values shifted + 🟢 |
+| `ValueProps/ValueProp` | … | `+FromArrow = 0x20` | 🟢 |
+| `Entities/Cards/CardTag` | … | `+Wah`/`Cho`/`Ki`/`Shoot` | 🟢 |
+| `Entities/Characters/CharacterGender` | `Male,Female,NonBinary,Unspecified` | `+Tree` | 🟢 |
+| `Entities/Multiplayer/NetError` | … | `+DreadNotUnlocked=110`/`BlitzNotUnlocked=111` | 🟢 |
+| `Entities/Rngs/PlayerRngType` | … | `+NonCombatGeneration` | 🟢 |
+| `Rewards/RewardType` | … | `+UpgradeCard` | 🟢 |
+| `Nodes/Vfx/VfxColor` | … | `+Fool` | 🟢 |
+| `Runs/CardRarityOddsType` | … | `+Blitz`/`BlitzNeow` | 🟢 |
+| `HoverTips/StaticHoverTip` | … | `+WahMelody`/`ChoMelody`/`KiMelody`/`Tarot` | 🟢 |
+
+### Vanilla Model Behavior Changes (relevant if your mod hooks these classes)
+
+| File | 0.111 | 0.113 | Notes |
+|---|---|---|---|
+| `Models/Relics/Byrdpip.cs` | — | `SwoopsPlayed`/`ShowCounter`/`DisplayAmount`/`AfterCardPlayed`/`TryModifyRestSiteOptions` | 🟢 evolution counter + rest options |
+| `Models/Relics/PaelsEye.cs` | `ShouldTakeExtraTurn` | `ShouldTakeExtraTurnEarly` | 🔴 earlier check |
+| `Models/Relics/ScrollBoxes.cs` | `GenerateRandomBundles(count)` | `(Rng rng, count)` | 🔴 param |
+| `Models/Relics/` (BookOfFiveRings/FrozenEgg/MoltenEgg/LuckyFysh/JuzuBracelet/Girya/Shovel/WhiteBeastStatue/PotionBelt/LordsParasol/BowlerHat/MealTicket/MassiveScroll/Planisphere) | old impl | impl updated | 🔵 hook signatures unchanged |
+| `Models/Powers/JugglingPower.cs` | `BeforeCardPlayed` | `AfterCardPlayed` + public `cardToClone` field | 🔴 trigger point moved |
+| `Models/Powers/PhantomBladesPower.cs` | `AfterCardEnteredCombat` | `TryModifyKeywordsInCombat` | 🔴 |
+| `Models/Powers/InterceptPower.cs` | — | `IsCovering`/`RemoveCoveredCreature`/`AfterRemoved` | 🟢 |
+| `Models/Powers/` (Covered/Reattach/Dampen/Constrict/Adaptable/Infested/Ravenous/PaleBlueDot/Tank/SicEm/Hex/Shrink/PossessSpeed/Illusion/DrawCardsNextTurn) | old `AfterDeath` sig | new `AfterDeath` sig + tweaks | 🔴 signature adaptation |
+| `Models/Cards/` (Melancholy/SovereignBlade/ExpectAFight/SpoilsMap/ForgottenRitual/HandOfGreed/Royalties/Debt/Expertise/MementoMori) | old impl | hook-point tweaks (`AfterThisWasTransformedIntoInternal`/`ShouldGlowGoldInternal`/Blitz bans) | 🔵 |
+| `Models/Monsters/KinFollower.cs` | `StartsWithDance` | `Index` | 🔴 ctor param |
+| `Models/Monsters/` (Byrdpip/TheInsatiable/Queen/Aeonglass/PaelsLegion/LagavulinMatriarch/TestSubject/TwigSlimeS) | old impl | impl updated | 🔵 |
+| `Models/Encounters/*Boss.cs` | — | `GetDominion`/`ScenePath` wired in | 🟢 Dread empowerment |
+| `Models/Enchantments/Sown.cs`/`Swift.cs` | old members | members adjusted | 🔵 |
+| `Models/Events/*` (Neow/DoorsOfLightAndDark/Nonupeipe/Tanx/TheArchitect/WelcomeToWongos/Orobas/Darv/Pael/Reflections/Tezcatara/Vakuu) | — | `FoolPronounGuess`/`OnRoomExit`/`ConfigureBackgroundScene` wired in | 🟢 |
+| `Models/Characters/*` (Ironclad/Defect/Silent/Regent/Necrobinder/Fool) | — | `DreadBgBrightness`/`DreadBgContrast`/`DreadNameColor` overrides | 🟢 |
+
+### Removed Types/Files
+
+| File (0.111) | Destination (0.113) |
+|---|---|
+| `Runs/GameModeExtension.cs` | → `Helpers/GameModeHelper.cs` |
+| `Models/Singleton/SingletonModel.cs` + `Singleton/MultiplayerScalingModel.cs` | → `Models/RunModel.cs`, `Models/MultiplayerScalingModel.cs` |
+| `Nodes/Screens/CardSelection/ICardSelector.cs` | → `ICardSelectionScreen.cs` |
+| `Models/Powers/AmbergrisPower.cs` | deleted |
+| `AutoSlay/AutoSlayTimeoutException.cs` | → `DriverTimeoutException.cs` |
+| `Multiplayer/Messages/Game/MerchantCardRemovalMessage.cs` | deleted (handled by MerchantSynchronizer) |
+| `Nodes/Screens/Timeline/NEpochCard.cs`, `NUnlockEpochScreen.cs` | Timeline rework |
+| `Nodes/Screens/CardLibrary/SortingOrders.cs` | → `NCardLibraryGrid.SortingOrders.cs` |
+| `Nodes/SentryBootstrap.cs` / `SentryAutoInit.cs` | → `addons/sentry/` |
+| `MegaCrit.Sts2.addons.mega_text` (`MegaLabel`/`MegaRichTextLabel`/`ThemeConstants`) | → `addons/mega_text/` (same namespace) |
+
+### Per-Mod-Type Checklist
+
+| Mod type | Required changes |
+|---|---|
+| Cards/relics/powers | `AfterDeath` gains `source`; relic `IsAllowed`→`IsAllowedInternal`; monster `IsHealthBarVisible`→`IsInteractable`; card `AfterTransformed*` renamed; `IsAllowedInBlitz`/`IsAllowedInRun`/`IsAllowedInShops` |
+| Characters | 4 Pronoun props removed → `AddDetailsTo(str, pronounGuess)`; `ShortTitle`/`BaseArrowSlotCount`/`DreadBg*`/`virtual DeathSfx` |
+| Events | `RelicOption` loses `customDonePage`; `AllowedOptions`/`GetOptionsFromThreePools`/`OnRoomExit`/`FoolPronounGuess`/`ConfigureBackgroundScene` |
+| Boss/encounter | `GetDominion`, `ScenePath`, monster `IsInteractable` |
+| Merchant | `MerchantEntry` fully reworked (`OnTryPurchaseInternal`, inventory-free ctor, `Id`+`TryBeginPurchase`) |
+| Modes/ascension | `GameMode.Custom` deleted → `IsCustomGame`; `CreateForNewRun` gains `isCustom`; Ascension* signatures |
+| Map | `GenerateRooms(RunState)`, `ActMap` protected connection methods |
+| Hook subscriptions | `AfterDeath`/`AfterTakingExtraTurn`/`ShouldTakeExtraTurn`/`ModifyUnblockedDamageTarget` |
+| Saves/history | `SerializableRun` V21 + `IsCustomGame`; `OnEnded`/`UpdateProgressWithRunData` → `PostRunProgressUpdateResult` |
+| Card-select UI | `CardSelectCmd` static stack → `RunManager.CardSelectorStack`; `ICardSelector`→`ICardSelectionScreen` |
+| Auto-testing | AutoSlay refactor (Launchers/Navigation/Scenarios) |
+
 ## 0.110 to 0.111
 
 ### CardModel — Card Play Flow Rework

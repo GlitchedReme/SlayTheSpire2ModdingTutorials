@@ -49,7 +49,7 @@ public override IEnumerable<CardKeyword> CanonicalKeywords => [
 
 Check for existence: `Keywords.Contains(MyKeywords.Unique)`
 
-Can be combined with a singleton (`SingletonModel`) for logic. See the corresponding article.
+Can be combined with a singleton (`RunModel`, called `SingletonModel` before 0.113) for logic. See the corresponding article.
 
 ![alt text](../../../images/image23.webp)
 

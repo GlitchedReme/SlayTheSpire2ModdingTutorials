@@ -34,7 +34,7 @@ public class MyKeywords
 
 Check if a card has it: `Keywords.Contains(MyKeywords.Unique)`
 
-Can be combined with singletons (`SingletonModel`) for effect logic. See the corresponding article.
+Can be combined with singletons (`RunModel`, called `SingletonModel` before 0.113) for effect logic. See the corresponding article.
 
 ## Adding New Dynamic Variables
 
