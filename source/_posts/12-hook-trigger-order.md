@@ -7,7 +7,7 @@ categories:
 ---
 # Hook 执行顺序
 
-> 本文基于游戏 **0.111** 源码。所有顺序均直接来自 `CombatManager`、`CreatureCmd`、`CardModel`、`PowerCmd`、`Hook`、`CombatState`、`RunState` 等源码。
+> 本文基于游戏 **0.113** 源码。所有顺序均直接来自 `CombatManager`、`CreatureCmd`、`CardModel`、`PowerCmd`、`Hook`、`CombatState`、`RunState` 等源码。
 
 > 由 AI 整理和审核，如有错误请指出。
 
@@ -29,7 +29,7 @@ categories:
 
 所有生物遍历完后，最后追加：
 
-4. **全局 Modifiers** → **BadgeModels** → **MultiplayerScalingModel**（多人缩放模型，可空）。
+4. **全局 Modifiers** → **BadgeModels** → **RunModels**（多人缩放、Dread、Blitz 等模式模型）→ **Dominion**（Dread 强化模型，可空）。
 
 ### 战斗外（`IRunState.IterateHookListeners(childCombatState)`）
 
@@ -37,13 +37,13 @@ categories:
 2. **仅当不在战斗内（`childCombatState == null`）时**，才追加：
    - 每个玩家的**遗物**（跳过融化）。
    - 每个玩家的**药水**。
-   - **全局 Modifiers** → **BadgeModels** → **MultiplayerScalingModel**。
+   - **全局 Modifiers** → **BadgeModels** → **RunModels** → **Dominion**。
 3. **外部订阅者**（`ModHelper.IterateAllRunStateSubscribers`）。
 4. 若在战斗内（`childCombatState != null`）：递归到上面的"战斗内顺序"。
 
 > 战斗中 RunState 不重复加遗物/药水/Modifiers，因为这些已经被战斗内迭代器覆盖——战斗内迭代器遍历生物时已经把它们带进来了。RunState 级别只在战斗外才追加一次。
 
-> `RunState.IterateHookListeners` 还会用 `Contains(model)` 过滤，只允许 `RelicModel`/`PotionModel`/`CardModel`/`EnchantmentModel`/`AchievementModel`/`BadgeModel`/`ModifierModel`/`MultiplayerScalingModel` 通过。
+> `RunState.IterateHookListeners` 还会用 `Contains(model)` 过滤，只允许 `RelicModel`/`PotionModel`/`CardModel`/`EnchantmentModel`/`RunModel`/`DominionModel`/`AchievementModel`/`BadgeModel`/`ModifierModel` 通过；遗物/药水/卡牌/附魔还要求 `Owner.IsActiveForHooks` 且未被移出状态。
 
 ### `Hook.IterateCombatHookListeners` 的守卫
 
@@ -116,18 +116,19 @@ categories:
 1. `Hook.ModifyDamage` → `Hook.AfterModifyingDamageAmount`。
    - `ModifyDamage` 内部顺序：先对卡牌附魔应用 `EnchantDamageAdditive`（加算）和 `EnchantDamageMultiplicative`（乘算）→ 再进入 `ModifyDamageInternal`，遍历所有监听者（走 `runState.IterateHookListeners(combatState)`，战斗内会带上 RunState 级监听者，且**不经过** `IterateCombatHookListeners` 守卫）依次：`ModifyDamageAdditive`（加算）→ `ModifyDamageMultiplicative`（乘算）→ `ModifyDamageCap`（上限，取最小值）。
 2. `Hook.BeforeDamageReceived`。
-3. 格挡结算 `DamageBlockInternal`（格挡吸收部分伤害）。
-4. `Hook.ModifyHpLost`（`HpLossHookPhase.BeforeOsty`，奥斯提转移前）→ `Hook.AfterModifyingHpLostBeforeOsty`。
-5. `Hook.ModifyUnblockedDamageTarget`（未格挡伤害可转移到奥斯提）。
-6. `Hook.ModifyHpLost`（`HpLossHookPhase.AfterOsty`，奥斯提转移后）→ `Hook.AfterModifyingHpLostAfterOsty`。
-7. `LoseHpInternal`（掉血）。
-8. 若伤害被转移到其他目标（`unblockedDamageTarget != originalTarget`），对原目标的溢出伤害再走一次：`ModifyHpLost(AfterOsty)` → `AfterModifyingHpLostAfterOsty` → `LoseHpInternal`。
-9. 结算每个 `DamageResult`：
+3. `Hook.ModifyPreBlockDamageTarget`：可在格挡结算前指定一个"代受者"（如 Wuppy）。若返回非空：先对该代受者 `ModifyHpLost`（`HpLossHookPhase.BeforeWuppy`）→ 代受者 `LoseHpInternal`，溢出伤害作为剩余伤害继续。
+4. 格挡结算 `DamageBlockInternal`（格挡吸收部分伤害）。
+5. `Hook.ModifyHpLost`（`HpLossHookPhase.BeforeOsty`，奥斯提转移前）→ `Hook.AfterModifyingHpLostBeforeOsty`。
+6. `Hook.ModifyUnblockedDamageTarget`（未格挡伤害可转移到奥斯提）。
+7. `Hook.ModifyHpLost`（`HpLossHookPhase.AfterOsty`，奥斯提转移后）→ `Hook.AfterModifyingHpLostAfterOsty`。
+8. `LoseHpInternal`（掉血）。
+9. 若伤害被转移到其他目标（`unblockedDamageTarget != originalTarget`），对原目标的溢出伤害再走一次：`ModifyHpLost(AfterOsty)` → `AfterModifyingHpLostAfterOsty` → `LoseHpInternal`。
+10. 结算每个 `DamageResult`：
    - 破格挡时 `Hook.AfterBlockBroken`（绕过守卫）。
    - 掉血后 `Hook.AfterCurrentHpChanged`（仅 `UnblockedDamage > 0`）。
    - `Hook.AfterDamageGiven`（攻击者视角，绕过守卫）。
    - **若目标没死**：`Hook.AfterDamageReceived`（含 `AfterDamageReceivedLate`，两轮）；**若目标死了**：记入 `killedCreatures`。
-10. 循环结束后：`Kill(killedCreatures)`（见死亡流程）。
+11. 循环结束后：`Kill(killedCreatures)`（见死亡流程）。
 
 > `Hook.AfterDamageReceived` 只在**目标存活**时调用；目标死亡时跳过，改走死亡流程。
 

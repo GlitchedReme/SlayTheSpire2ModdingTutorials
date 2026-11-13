@@ -7,7 +7,7 @@ categories:
 ---
 # Hook Trigger Order
 
-> This article is based on the game **0.111** source code. All ordering comes directly from `CombatManager`, `CreatureCmd`, `CardModel`, `PowerCmd`, `Hook`, `CombatState`, `RunState` and other source files.
+> This article is based on the game **0.113** source code. All ordering comes directly from `CombatManager`, `CreatureCmd`, `CardModel`, `PowerCmd`, `Hook`, `CombatState`, `RunState` and other source files.
 
 > Organized and reviewed by AI. Please point out any errors.
 
@@ -29,7 +29,7 @@ Traverses all allies first, then all enemies. For each creature, in order:
 
 After all creatures are traversed, appended last:
 
-4. **Global Modifiers** → **BadgeModels** → **MultiplayerScalingModel** (the multiplayer scaling model, nullable).
+4. **Global Modifiers** → **BadgeModels** → **RunModels** (mode models: multiplayer scaling, Dread, Blitz, etc.) → **Dominion** (Dread empowerment model, nullable).
 
 ### Outside Combat (`IRunState.IterateHookListeners(childCombatState)`)
 
@@ -37,13 +37,13 @@ After all creatures are traversed, appended last:
 2. **Only when not in combat (`childCombatState == null`)** are these appended:
    - Each player's **relics** (skipping melted).
    - Each player's **potions**.
-   - **Global Modifiers** → **BadgeModels** → **MultiplayerScalingModel**.
+   - **Global Modifiers** → **BadgeModels** → **RunModels** → **Dominion**.
 3. **External subscribers** (`ModHelper.IterateAllRunStateSubscribers`).
 4. If in combat (`childCombatState != null`): recurse into the in-combat order above.
 
 > In combat, RunState does not re-add relics/potions/Modifiers, because the in-combat iterator already covers them — it walks creatures and brings them along. The RunState level only appends them once, outside combat.
 
-> `RunState.IterateHookListeners` also filters with `Contains(model)`, allowing only `RelicModel`/`PotionModel`/`CardModel`/`EnchantmentModel`/`AchievementModel`/`BadgeModel`/`ModifierModel`/`MultiplayerScalingModel` through.
+> `RunState.IterateHookListeners` also filters with `Contains(model)`, allowing only `RelicModel`/`PotionModel`/`CardModel`/`EnchantmentModel`/`RunModel`/`DominionModel`/`AchievementModel`/`BadgeModel`/`ModifierModel` through; relics/potions/cards/enchantments additionally require `Owner.IsActiveForHooks` and must not be removed from state.
 
 ### The `Hook.IterateCombatHookListeners` guard
 
@@ -116,18 +116,19 @@ This is the most commonly used and most complex hook chain. For each target, in 
 1. `Hook.ModifyDamage` → `Hook.AfterModifyingDamageAmount`.
    - Inside `ModifyDamage`: first apply the card enchantment's `EnchantDamageAdditive` (additive) and `EnchantDamageMultiplicative` (multiplicative) → then enter `ModifyDamageInternal`, which traverses all listeners (via `runState.IterateHookListeners(combatState)`; in combat this includes RunState-level listeners and **does not go through** the `IterateCombatHookListeners` guard) in order: `ModifyDamageAdditive` (additive) → `ModifyDamageMultiplicative` (multiplicative) → `ModifyDamageCap` (cap, takes the minimum).
 2. `Hook.BeforeDamageReceived`.
-3. Block resolution `DamageBlockInternal` (block absorbs part of the damage).
-4. `Hook.ModifyHpLost` (`HpLossHookPhase.BeforeOsty`, before the Osty redirect) → `Hook.AfterModifyingHpLostBeforeOsty`.
-5. `Hook.ModifyUnblockedDamageTarget` (unblocked damage may be redirected to Osty).
-6. `Hook.ModifyHpLost` (`HpLossHookPhase.AfterOsty`, after the Osty redirect) → `Hook.AfterModifyingHpLostAfterOsty`.
-7. `LoseHpInternal` (lose HP).
-8. If damage was redirected to another target (`unblockedDamageTarget != originalTarget`), the original target's overflow damage runs once more: `ModifyHpLost(AfterOsty)` → `AfterModifyingHpLostAfterOsty` → `LoseHpInternal`.
-9. Resolve each `DamageResult`:
+3. `Hook.ModifyPreBlockDamageTarget`: may nominate a "damage taker" before block resolution (e.g. Wuppy). If non-null: first `ModifyHpLost` (`HpLossHookPhase.BeforeWuppy`) → the taker's `LoseHpInternal`; overkill damage continues as the remaining amount.
+4. Block resolution `DamageBlockInternal` (block absorbs part of the damage).
+5. `Hook.ModifyHpLost` (`HpLossHookPhase.BeforeOsty`, before the Osty redirect) → `Hook.AfterModifyingHpLostBeforeOsty`.
+6. `Hook.ModifyUnblockedDamageTarget` (unblocked damage may be redirected to Osty).
+7. `Hook.ModifyHpLost` (`HpLossHookPhase.AfterOsty`, after the Osty redirect) → `Hook.AfterModifyingHpLostAfterOsty`.
+8. `LoseHpInternal` (lose HP).
+9. If damage was redirected to another target (`unblockedDamageTarget != originalTarget`), the original target's overflow damage runs once more: `ModifyHpLost(AfterOsty)` → `AfterModifyingHpLostAfterOsty` → `LoseHpInternal`.
+10. Resolve each `DamageResult`:
    - On block break: `Hook.AfterBlockBroken` (bypasses the guard).
    - After HP loss: `Hook.AfterCurrentHpChanged` (only when `UnblockedDamage > 0`).
    - `Hook.AfterDamageGiven` (attacker's perspective, bypasses the guard).
    - **If the target survived**: `Hook.AfterDamageReceived` (including `AfterDamageReceivedLate`, two passes); **if the target died**: added to `killedCreatures`.
-10. After the loop: `Kill(killedCreatures)` (see death flow).
+11. After the loop: `Kill(killedCreatures)` (see death flow).
 
 > `Hook.AfterDamageReceived` is only called when the **target survives**; when the target dies it is skipped and the death flow runs instead.
 

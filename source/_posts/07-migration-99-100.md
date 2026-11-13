@@ -9,6 +9,514 @@ categories:
 
 ---
 
+# 0.111 至 0.113
+
+## 1. Hooks（钩子系统）
+
+### `Hooks/Hook.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `AfterDeath` | `(IRunState, ICombatState?, Creature, bool wasRemovalPrevented, float deathAnimLength)` | `(IRunState, ICombatState?, Creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength)` | 🔴 插入 `source` |
+| `ShouldTakeExtraTurn` | `(ICombatState, Player)` → `bool` | `(ICombatState, Player, out AbstractModel? source)` → `bool` | 🔴 返回触发模型 |
+| `AfterTakingExtraTurn` | `(ICombatState, Player)` | `(ICombatState, Player, AbstractModel source)` | 🔴 尾加参数 |
+| `ModifyUnblockedDamageTarget` | `(ICombatState, Creature, decimal, ValueProp, Creature?)` → `Creature` | `(ICombatState?, Creature, decimal, ValueProp, Creature?)` → `Creature` | 🔴 combatState 可空 |
+| `AfterArrowShot` | — | `(ICombatState, Player, ArrowSlot?, PlayerChoiceContext, CardModel?)` | 🟢 Fool 箭矢 |
+| `AfterArrowImpaled` | — | `(ICombatState, ImpaledPower, ArrowSlot, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `AfterArrowDislodged` | — | `(ICombatState, ImpaledPower, ArrowSlot, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `ModifyPreBlockDamageTarget` | — | `(ICombatState?, Creature, decimal, ValueProp, Creature?)` → `Creature?` | 🟢 格挡结算前改目标 |
+| `TryReplaceDefaultRoomRewards` | — | `(IRunState, Player, List<Reward>, AbstractRoom)` → `bool` | 🟢 替换默认奖励 |
+| `ModifyExtraRestSiteMendText` | — | `(IRunState, Player, IReadOnlyList<LocString>)` → `IReadOnlyList<LocString>` | 🟢 休息治疗附加文本 |
+
+### `Hooks/HpLossHookPhase.cs`（⚠️ 枚举位值变化）
+
+| 成员 | 111 | 113 | 说明 |
+|---|---|---|---|
+| `BeforeWuppy` | — | `1` | 🟢 新增（Wuppy 拦截阶段，在 Osty 之前） |
+| `BeforeOsty` | `1` | `2` | 🔴 **位值改变**，按整数存/传的代码会错 |
+| `AfterOsty` | `2` | `4` | 🔴 **位值改变** |
+| `All` | `3` | `6` | 🔴 **位值改变**（不再包含 BeforeWuppy 位） |
+
+## 2. 模型基类（Models）
+
+### `Models/AbstractModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `AfterDeath` | `(PlayerChoiceContext, Creature, bool wasRemovalPrevented, float deathAnimLength)` | `(PlayerChoiceContext, Creature, CardModel? source, bool wasRemovalPrevented, float deathAnimLength)` | 🔴 所有 override 必改 |
+| `AfterArrowShot` | — | `virtual Task (Player, ArrowSlot?, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `AfterArrowImpaled` | — | `virtual Task (ImpaledPower, ArrowSlot, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `AfterArrowDislodged` | — | `virtual Task (ImpaledPower, ArrowSlot, PlayerChoiceContext, CardModel?)` | 🟢 |
+| `ModifyDamageMultiplicativeLate` | — | `virtual decimal (Creature?, decimal, ValueProp, Creature?, CardModel?, CardPlay?)` | 🟢 乘算后置修正 |
+| `ModifyPreBlockDamageTarget` | — | `virtual Creature? (Creature, Creature?, decimal, ValueProp, Creature?)` | 🟢 |
+| `ShouldTakeExtraTurnEarly` | — | `virtual bool (Player)` | 🟢 早于 `ShouldTakeExtraTurn` |
+| `TryReplaceDefaultRoomRewards` | — | `virtual bool (Player, List<Reward>, AbstractRoom)` | 🟢 |
+| `ModifyExtraRestSiteMendText` | — | `virtual IReadOnlyList<LocString> (Player, IReadOnlyList<LocString>)` | 🟢 |
+
+### `Models/CardModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| 变形回调 | `virtual void AfterTransformedFrom()` + `virtual void AfterTransformedTo()` | `virtual void AfterThisWasTransformedFrom(CardModel)` + `void AfterThisWasTransformedInto(CardModel)`（经 `protected virtual AfterThisWasTransformedIntoInternal`） | 🔴 改名/拆分 |
+| `BigPortrait` | — | `Texture2D` | 🟢 |
+| `ExtraReplayThisTurn` | — | `int` | 🟢 计入 EnchantPlayCount |
+| `TransformIntoAfterPlay` | — | `CardModel? { get; protected set; }` | 🟢 打出后自动变形 |
+| `IsAllowedInBlitz` | — | `virtual bool` | 🟢 Blitz 准入 |
+| `IsAllowedInRun` | — | `bool (IRunState)` | 🟢 统一准入 |
+| `InvokeKeywordsChanged` | — | `void ()` | 🟢 刷新关键字 |
+| `ArrowHoverTip` | — | `protected IHoverTip` | 🟢 |
+
+### `Models/RelicModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `IsAllowed` | `public virtual bool (IRunState)` | `public bool (IRunState)` + `protected virtual bool IsAllowedInternal(IRunState)` | 🔴 去 virtual，override 点改 Internal |
+| `IsBeforeAct3TreasureChest` | `protected static bool (IRunState)` | `protected static bool IsLateInAct3(IRunState)` | 🔴 改名 |
+| `IsAllowedInShops` | — | `virtual bool` | 🟢 商店准入 |
+| `ArrowHoverTip` | — | `protected IHoverTip` | 🟢 |
+
+### `Models/MonsterModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| 血条/交互 | `virtual bool IsHealthBarVisible` | `virtual bool IsInteractable` | 🔴 改名；语义为"可否交互/选中"；动态切换用 `NCreature.SetIsInteractable` |
+
+### `Models/PowerModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `GetExtraHoverTips` | — | `IEnumerable<IHoverTip> ()` | 🟢 |
+
+### `Models/CharacterModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| 代词属性 ×4 | `LocString PronounObject/PossessiveAdjective/PronounPossessive/PronounSubject` | — | 🔴 删除；改 `AddDetailsTo`/`GetPronoun(key, FoolPronounGuess)` |
+| `AddDetailsTo` | `(LocString str)` | `(LocString str, FoolPronounGuess pronounGuess = Neutral)` | 🔴 签名变更 |
+| `DeathSfx` | `string` | `virtual string` | 🔵 可 override |
+| `ShortTitle` | — | `LocString` | 🟢 |
+| `BaseArrowSlotCount` | — | `virtual int` | 🟢 Fool=1，默认 0 |
+| `DreadBgBrightness`/`DreadBgContrast`/`DreadNameColor` | — | `virtual float` ×2 + `virtual Color` | 🟢 Dread 界面配色 |
+
+### `Models/EventModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `FoolPronounGuess` | — | `virtual FoolPronounGuess` | 🟢 事件代词性别 |
+| `OnRoomExit` | — | `virtual void ()` | 🟢 离开房间回调 |
+
+### `Models/AncientEventModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `RelicOption<T>` | `protected EventOption (string pageName = "", string? customDonePage = null)` | `protected EventOption (string pageName = "")` | 🔴 去 `customDonePage` |
+| `RelicOption(RelicModel)` | `protected EventOption (RelicModel, string pageName = "", string? customDonePage = null)` | `protected EventOption (RelicModel, string pageName = "")` | 🔴 同上 |
+| `AllowedOptions` | — | `protected List<EventOption> (IEnumerable<EventOption>)` | 🟢 选项池过滤 |
+| `GetOptionsFromThreePools` | — | `protected List<EventOption> (List, List, List)` | 🟢 |
+| `ConfigureBackgroundScene` | — | `virtual void (Control)` | 🟢 自定义背景 |
+
+### `Models/EncounterModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `DebugRandomizeRng` | `void ()` | `ulong ()` | 🔴 改返回种子 |
+| `DebugSetRng` | — | `void (ulong seed)` | 🟢 |
+| `ScenePath` | — | `protected virtual string` | 🟢 场景路径 override 点 |
+| `GetDominion` | — | `virtual DominionModel? ()` | 🟢 Dread 强化归属 |
+
+### `Models/ActModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `GenerateRooms` | `void (Rng, UnlockState, bool isMultiplayer = false)` | `void (RunState)` + `void (Rng, UnlockState, bool isMultiplayer = false, bool isBlitz = false)` | 🟢 新重载 + 🔵 尾参 |
+| `SetRooms`/`GetRoomsDebug` | — | `void (RoomSet)` / `RoomSet ()` | 🟢 |
+
+### `Models/PotionModel.cs` / `ModifierModel.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `PotionModel.ArrowHoverTip` | — | `protected IHoverTip` | 🟢 |
+| `ModifierModel.AdditionalRestSiteMendText` | — | `protected LocString?` | 🟢 |
+
+### `Models/ModelId.cs` / `ModelDb.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `ModelId` 拷贝构造 | `protected ModelId(ModelId original)` | — | 🔴 移除 |
+| `ModelId.Compare` | — | `static int (ModelId?, ModelId?)` | 🟢 |
+| `ModelDb.Singleton<T>` | `static T Singleton<T>() where T : SingletonModel` | `static T RunModel<T>() where T : RunModel` + `static T Dominion<T>() where T : DominionModel` | 🔴 改名/换约束；`SingletonModel` 删除，`MultiplayerScalingModel` 移到 `Models/` 直下 |
+
+## 3. 战斗指令（Commands）
+
+### `Commands/CreatureCmd.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `Damage(Creature)` | `static Task<IEnumerable<DamageResult>> (PlayerChoiceContext, IEnumerable<Creature>?, decimal, ValueProp, Creature?, CardModel?, CardPlay?)` | 同前 + `ModifyDamageHookType modifyDamageHookType = All` | 🔵 尾加默认参 |
+| `Damage(DamageTargetData)` | — | `static Task<IEnumerable<DamageResult>> (PlayerChoiceContext, IEnumerable<DamageTargetData>?, decimal, ValueProp, Creature?, CardModel?, CardPlay?, ModifyDamageHookType = All)` | 🟢 新重载 |
+| `Kill` | `static Task (Creature)` | `static Task (Creature, CardModel? cardSource, bool force = false)` + `static Task (IReadOnlyCollection<Creature>, CardModel?, bool)` | 🔴🟢 |
+| `LoseMaxHp` | `static Task (PlayerChoiceContext, Creature, decimal, bool isFromCard)` | `static Task (PlayerChoiceContext, Creature, decimal, CardModel? cardSource)` | 🔴 末参改类型 |
+
+### `Commands/CardSelectCmd.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| 静态选择器栈 | `static ICardSelector? Selector/LocalSelector` + `UseSelector`/`PushSelector`/`SuspendSelectorForTest`/`Reset` + `StackedSelectorScope`/`RestoreSelectorScope`/`SelectorScope` | — | 🔴 全部移除 → `RunManager.CardSelectorStack`（`CardSelectorStack` 新类）；`TestSupport.ICardSelector` 不变 |
+| `FromChooseABundleScreen` | `(Player, IReadOnlyList<IReadOnlyList<CardModel>>)` | 同前 + `bool canSkip = false` | 🔵 |
+
+### `Commands/CardPileCmd.cs` / `Cmd.cs` / `VfxCmd.cs` / `Builders/AttackCommand.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `CardPileCmd.AutoPlayFromDrawPile` | — | `static Task (PlayerChoiceContext, Player, int count, CardPilePosition, bool forceExhaust, Action<CardModel>)` | 🟢 自动从抽牌堆打出 |
+| `Cmd.TryWait` | — | `static Task<bool> (float seconds, CancellationToken = default, bool ignoreCombatEnd = false)` | 🟢 |
+| `VfxCmd.PlayOnCreature[Center]` | `(Creature, string path)` | 同前 + `bool forceIfDead = false` | 🔵 |
+| `AttackCommand.FromArrow` | — | `()` 链式调用 | 🟢 箭矢攻击 |
+| `ArrowCmd` / `MelodyCmd` | — | 新文件 | 🟢 Fool/Cho 机制指令 |
+
+## 4. 战斗状态与玩家/生物实体
+
+### `Combat/CombatState.cs` / `CombatManager.cs` / `CombatTurnState.cs` / `CombatHistory.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `CombatState` 构造 | `(EncounterModel?, IRunState?, IReadOnlyList<ModifierModel>?, IReadOnlyList<BadgeModel>?, MultiplayerScalingModel?)` | `(EncounterModel?, IRunState?, IReadOnlyList<ModifierModel>?, IReadOnlyList<BadgeModel>?, IReadOnlyList<RunModel>?, DominionModel?)` | 🔴 参数换 |
+| `CombatState` 模型 | `MultiplayerScalingModel? MultiplayerScalingModel { get; private set; }` | `IReadOnlyList<RunModel> RunModels { get; private set; }` + `DominionModel? Dominion` + `SetDominion(DominionModel?)` | 🔴 改名/拆分 |
+| `CombatManager.UndoReadyToEndTurn` | `void (Player)` | `void TryUndoReadyToEndTurn(Player)` + `bool CanUnEndTurn(Player)` | 🔴 改名 + 🟢 |
+| `CombatManager.ShouldSkipCombatEffect` | — | `bool` | 🟢 |
+| `CombatTurnState.PlayersThatCannotUnEndTurn` | — | `HashSet<Player>` | 🟢 |
+| `CombatHistory.ArrowShot` | — | `void (ICombatState, ArrowSlot)` | 🟢 新 entry `ArrowShotEntry` |
+
+### `Entities/Players/Player.cs` / `PlayerCombatState.cs` / `ExtraPlayerFields.cs`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `Player.MaxAscensionWhenRunStarted` | `int { get; }` | — | 🔴 移除 |
+| `Player.PopulateCombatState` | `void (Rng, CombatState)` | `void (Rng, ICombatState)` | 🔴 参数改接口 |
+| `Player.PopulateRelicGrabBagDebug` | — | `void (List<RelicModel>, Rng)` | 🟢 |
+| `PlayerCombatState` 箭矢 | — | `IReadOnlyList<ArrowSlot> Arrows` + `int AvailableArrowCount` + `void GainArrow()` + `event Action? ArrowsChanged` | 🟢 |
+| `ExtraPlayerFields.IsPlayingRotatingCharacter` | — | `bool { get; set; }` | 🟢 Dread 轮换 |
+
+### `Entities/Cards/` / `Creatures/` / `RestSite/` / `FoolArrows/`
+
+| API | 111 | 113 | 说明 |
+|---|---|---|---|
+| `CardPile` | `class CardPile` + `CardPile(PileType)` | `class CardPile(PileType)` 主构造 | 🔵 等价；`RandomizeOrderInternal` 参数 `CombatState`→`ICombatState` |
+| `DamageResult` | `Creature Target`/`HpLoss`/`Blocked`… | + `Creature OriginalTarget { get; set; }` + `int IntendedHpLoss { get; set; }` | 🟢 |
+| `DamageTargetData` | — | 新类型 | 🟢 配合 `CreatureCmd.Damage` 重载 |
+| `ArrowSlot`/`ArrowStatus` | — | 新目录新类型 | 🟢 Fool 箭矢槽位/状态 |
+| `SmithRestSiteOption` | `int SmithCount { get; set; } = 1` + `override LocString Description` | — | 🔴 移除 |
+| `EvolveRestSiteOption`/`RestoreRestSiteOption` | — | 新文件 | 🟢 新休息选项 |
+| `TarotCards` | — | 新文件 | 🟢 `TarotCards.All` 塔罗牌集合 |
+
+## 5. 奖励与选卡
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `Rewards/CardReward.cs` | 两个构造函数 | `(CardCreationOptions, int, Player, PlayerChoiceSynchronizer?)` / `(IEnumerable<CardModel>, CardCreationSource, Player, CardCreationOptions, PlayerChoiceSynchronizer?)` | 同前 + `CardSelectorStack? selectorStack = null` | 🔵 |
+| `Rewards/RelicReward.cs` | 两个构造函数 | `(RelicModel, Player)` / `(RelicRarity, Player)` | 同前 + `Rng? rngOverride = null` | 🔵 |
+| `Rewards/CardUpgradeReward.cs` | 新类型 | — | `UpgradeCard` 奖励 | 🟢 |
+| `Odds/CardRarityOdds.cs` | `Roll*` ×4 | `(CardRarityOddsType)` / `(CardRarityOddsType, float)` / `(CardRarityOddsType)` | 同前 + `Rng? rngOverride = null` | 🔵；+ 🟢 `blitzShop*/blitzNeow*` 6 个稀有度常量 |
+| `CardSelection/CardSelectorStack.cs` | 新类 | — | `RunManager.CardSelectorStack` | 🟢 承接原 `CardSelectCmd` 静态栈 |
+| `Nodes/Screens/CardSelection/` | `ICardSelector.cs` | `ICardSelector` 接口 | `ICardSelectionScreen.cs` | 🔴 改名 |
+| `Entities/TreasureRelicPicking/RelicPickingResult.cs` | `GenerateRelicFight` + 字段 | `(List<Player>, RelicModel, Func<RelicPickingFightMove>)` | `(List<Player>, RelicModel, int relicIndex, Func<RelicPickingFightMove>)` + `required int relicIndex` | 🔴 |
+
+## 6. 多人上下文与接口（Multiplayer / 接口契约）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `PlayerChoiceContext.cs` | `GameActionType` | — | `abstract GameActionType? GameActionType { get; }` | 🟢 各子类补 override |
+| `BranchingPlayerChoiceContext.cs` | 两个构造函数 | `(ulong, GameActionType, PlayerChoiceContext)` / `(AbstractModel, ulong, GameActionType, PlayerChoiceContext)` | `(ulong, PlayerChoiceContext)` / `(AbstractModel, ulong, PlayerChoiceContext)` | 🔴 去 `gameActionType` |
+| `ActionQueueSet.cs` | `WasReset`/`AreAnyPlayerDrivenActionsBeingExecuted` | — | `bool` / `bool (bool excludeEndOfTurn = false)` | 🟢 |
+| `Runs/IRunState.cs` | 接口成员 | `MultiplayerScalingModel? MultiplayerScalingModel` | `IReadOnlyList<RunModel> RunModels` + `DominionModel? Dominion` + `IReadOnlyList<MapCoord> VisitedMapCoords` + `bool IsCustomGame` | 🔴 实现者必改 |
+| `Combat/ICombatState.cs` | 接口成员 | `MultiplayerScalingModel? MultiplayerScalingModel` | `IReadOnlyList<RunModel> RunModels` | 🔴 `Null*` 同步 |
+| `Game/INetHostGameService.cs` | `ConnectedPeers`/`DisconnectClient` | `(ulong, NetError, bool)` | + `IReadOnlyList<ulong> ConnectedPeers`；`DisconnectClient` 尾加 `string? debugReason = null` | 🟢🔵 |
+| `Game/Lobby/IStartRunLobbyListener.cs` | `PlayerChanged`/`GameModeChanged` | `PlayerChanged(Player, bool isRandomCharacterResolution)` | `PlayerChanged(Player)` + `GameModeChanged()` | 🔴 |
+| `Connection/IClientConnectionInitializer.cs` | `Platform`/`GetHostId` | — | `PlatformType Platform` + `ulong? GetHostId()` | 🟢（ENet/Steam 实现同步） |
+| `Game/JoinResult.cs` | `isCustom` | — | `bool` | 🟢 |
+| `Messages/Lobby/ClientLobbyJoinResponseMessage.cs` | `gameMode`/`isCustom` | — | 新增字段 | 🟢 |
+| `Messages/Lobby/InitialGameInfoMessage.cs` | `gameMode` | 有 | — | 🔴 |
+| `Messages/Lobby/LobbyPlayerChangedCharacterMessage.cs` | `isRotatingDread` | — | `bool` | 🟢 |
+| `Messages/Lobby/` | `LobbyGameModeChangedMessage` | — | 新文件 | 🟢 |
+| `Entities/Multiplayer/NetFullCombatState.cs` | `ArrowSlotState` | — | 内嵌结构体 | 🟢 箭矢网络同步 |
+| `Entities/Multiplayer/NetErrorInfo.cs` | `JoinExtraInfo`/`ConnectionExtraInfo` | `ConnectionExtraInfo` get only | + `JoinExtraInfo` 属性；`ConnectionExtraInfo` get→get,set | 🟢 |
+| `Entities/Multiplayer/StartRunLobbyPlayer.cs` | ascension | `int maxMultiplayerAscensionUnlocked` | `int maxStandardAscension` + `int maxBlitzAscension` + `bool isRotatingDread` | 🔴🟢 |
+| `Nodes/Debug/IBootstrapSettings.cs` | `Setup` | `(Player localPlayer)` | `(Player player)` 参数名/用途改 `debugActMap` | 🔴 |
+| `Nodes/Screens/CharacterSelect/ICharacterSelectButtonDelegate.cs` | `SelectCharacter` | `(NCharacterSelectButton, CharacterModel)` | `(NCharacterSelectButton)` | 🔴；`NCharacterSelectButton` +`InitAsRandom`/`InitAsRotating` |
+| `Game/JoinFlow.cs` | 构造/`Begin` | `JoinFlow(INetClientGameService)` + `Begin(IClientConnectionInitializer, SceneTree?)` | `JoinFlow(INetClientGameService, IClientConnectionInitializer)` + `Begin(SceneTree?)` | 🔴 initializer 移到构造 |
+| `Game/FlavorSynchronizer.cs` | `OnEndTurnPingReceived` | `event Action<ulong>?` | `event Action<ulong>? EndTurnPingReceived` + `event Action<Player, MapCoord>? MapPingReceived` | 🔴 改名 + 🟢 |
+| `Game/MapSelectionSynchronizer.cs` | 构造/`PlayerVoteCancelled` | `(INetGameService, ActionQueueSynchronizer, RunState)` + `event Action<Player>?` | `(INetGameService, ActionQueueSynchronizer, IRunState)` + `event Action<Player, MapVote?>?` | 🔴；+ 🟢 `OnLocalPlayerVotedFor`/`BeforeBeginningMoveToNewMapCoord` |
+| `Game/MapVote.cs` | 类型 | `struct` | `record struct` | 🔵 等价 |
+| `Game/OneOffSynchronizer.cs` | `DoLocalMerchantCardRemoval` | `(int, bool)` → `Task<bool>` | — | 🔴 走 MerchantSynchronizer |
+| `Game/TreasureRoomRelicSynchronizer.cs` | `RelicsAwarded`/构造 | `event Action<List<RelicPickingResult>>?` + `(IPlayerCollection, ulong, ActionQueueSynchronizer, RelicGrabBag, Rng)` | 事件签名改；构造去 `sharedGrabBag` 加 `treasureRelics` | 🔴 |
+| `Game/RewardsSetSynchronizer.cs` | 内部字段 | — | — | 🔵 实现变化 |
+| `Messages/Lobby/ClientLobbyJoinRequestMessage.cs` | `password` | `string` | — | 🔴 |
+| `Serialization/QuantizeParams.cs` | `maxValue` | — | 字段 | 🟢 |
+| `Platform/AchievementsUtil.cs` | 构造 | `(ILogger)` | `(IPlatformServices)` | 🔴 |
+| `Platform/Steam/SteamInitializer.cs` | `AchievementsUtil` | — | `AchievementsUtil` 属性 | 🟢 |
+
+## 7. 商店（Merchant）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `MerchantEntry.cs` | `Cost` | `int` | `virtual int` | 🔵；+ 🟢 `Player`、`uint? Id` |
+| 同上 | 购买钩子 | `public Task<bool> OnTryPurchaseWrapper(MerchantInventory?, bool)` + `protected abstract Task<(bool,int)> OnTryPurchase(MerchantInventory?, bool)` | `public Task<bool> OnTryPurchaseUnsynchronized(MerchantInventory?, bool)` + `protected abstract Task<(bool,int)> OnTryPurchaseInternal(MerchantInventory?, bool)` | 🔴 改名；子类同步 |
+| `MerchantCardEntry.cs` | 构造/`Populate` | `(Player, MerchantInventory?, IEnumerable<CardModel>, CardType/CardRarity)` + `Populate()` | `(Player, IEnumerable<CardModel>, CardType/CardRarity)` + `Populate(MerchantInventory?)` | 🔴 inventory 移参 |
+| `MerchantCardRemovalEntry.cs` | 取消/移除 | `OnTryPurchaseWrapper(..., bool cancelable)` | `SetPurchaseUncancelable()` + `static Task<bool> DoCardRemoval(Player, bool)` | 🔴 |
+| `MerchantInventory.cs` | `AllEntries` | `IEnumerable<MerchantEntry>` | `List<MerchantEntry>` | 🔴 |
+| 同上 | Blitz/事务 | — | `IReadOnlyList<BlitzMerchantEntry> BlitzEntries` + `bool IsBlitzShop` + `int BlitzChoicesRemaining` + `TryBeginPurchase`/`EndPurchase`/`Setup`/`CreateForBlitzMerchant`/`TryPurchaseEntryWithIdUnsynchronized` + 新构造 | 🟢 |
+| `MerchantDialogueSet.cs` | `BlitzFinishedLines` | — | `IReadOnlyList<LocString>` | 🟢 |
+| `Rooms/MerchantRoom.cs` | `Inventories`/`GetLocalInventory` | 有 | — | 🔴 |
+| `Entities/Merchant/` | `BlitzMerchant*` | — | 21 个新文件 | 🟢 Blitz 商店条目体系 |
+| `Multiplayer/Game/` | `MerchantSynchronizer` | — | 新类型 | 🟢；`MerchantCardRemovalMessage` 删除 |
+
+## 8. 随机数
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `Random/Rng.cs` | `Shuffle<T>` | `void (IList<T>)` | — | 🔴 删除；用 `list.StableShuffle(rng)`/`UnstableShuffle(rng)`（`Extensions/ListExtensions.cs`） |
+| 同上 | `Chaotic`/`CreateChaoticSeed` | `static Rng Chaotic { get; } = new Rng((ulong)DateTimeOffset.Now.ToUnixTimeSeconds())` | `= new Rng(CreateChaoticSeed())` + `static ulong CreateChaoticSeed()` | 🟢 |
+| `Random/PlayerRngSet.cs` | `NonCombatGeneration` | — | `Rng` | 🟢 非战斗生成 RNG |
+
+## 9. 工厂（Factories）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `RelicFactory.cs` | 拉取/稀有度 | `PullNextRelicFromFront(Player)` + `PullNextRelicFromBack(Player)`（自动 roll）+ `RollRarity(Player)` | `PullNextRelicForRewardFromFront(Player)` + `RollRarityForReward(Player)` | 🔴 改名；自动 roll `PullNextRelicFromBack` 删除（商店用 `(player, rarity, filter)`） |
+| `CardFactory.cs` | `CreateForMerchant` ×2 | `(Player, IEnumerable<CardModel> options, CardType/CardRarity)` | `(Player, IEnumerable<CardModel> options, IEnumerable<CardModel> blacklist, CardType/CardRarity)` | 🔴 中间插参 |
+
+## 10. 悬停提示（HoverTips）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `HoverTip.cs` | `Id`/`IsSmart`/`IsDebuff`/`IsInstanced` | `{ get; set; }` | `{ get; }` | 🔴 对象初始化器写法失效 |
+| 同上 | `ShouldOverrideTextOverflow` | `{ get; set; }` | `{ get; init; }` | 🔴 |
+| `HoverTipFactory.cs` | 新工厂 | — | `FromEnchantment(EnchantmentModel, int)` + `FromCardWithCardHoverTips` ×2 + `ForEnergy(DominionModel)` + `ForArrow(Player?, bool)` | 🟢 |
+
+## 11. 本地化（Localization）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `LocManager.cs` | RTL | — | `bool IsRtl` + `static bool IsHiddenLanguage(string)` + `static bool IsRtlLanguage(string)` | 🟢 阿拉伯语 |
+| `DynamicVars/DynamicVarSet.cs` | `HitCount` | — | `HitCountVar` | 🟢（新文件 `HitCountVar`/`CalculatedHitCountVar`） |
+| `DynamicVars/DynamicVar.cs` | `GetBaseValueForIConvertible` | `protected virtual decimal ()` | — | 🔴 移除 |
+| 新文件 | `ArabicPluralRule`/`RtlControlUtils`/`AraFontPathSet` | — | 新文件 | 🟢 |
+
+## 12. 地图（Map）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `ActMap.cs` | `ConnectChildren` ×2 / `RestoreStartMapPoints` | — | `protected static`/`protected` 方法 | 🟢 序列化恢复下沉 |
+| `MapPoint.cs` | `FromSerializable` | — | `static MapPoint (SerializableMapPoint)` | 🟢 |
+| `MapCoord.cs`/`Runs/MapLocation.cs` | 主构造写法 | `struct` + 显式构造 | `struct(int col, int row)` 主构造 | 🔵 等价 |
+| `BlitzActMap.cs` | 新文件 | — | Blitz 地图 | 🟢 |
+
+## 13. 游戏流程（RunManager / RunState）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `RunManager.cs` | `OnEnded` | `SerializableRun (bool)` | `PostRunProgressUpdateResult (bool)` | 🔴 返回类型 |
+| 同上 | `ProceedFromTerminalRewardsScreen` | `async Task ()` | `void ProceedFromTerminalRewardsScreen()` + `async Task ProceedFromTerminalRewardsScreenAsync()` + `void Proceed()` | 🔴 拆分 |
+| 同上 | 新增 | — | `HasRunEnded`/`IsChangingRooms`/`IsPotionUseLocked`/`MerchantSynchronizer`/`CardSelectorStack`/`MapChanged`/`OnIsChangingRoomsModified`/`InvokeMapChanged`/`IsDread()` | 🟢 |
+| `RunHistory.cs`/`Runs/Metrics/*` | `SerializableMapPointHistoryEntry` | — | 新类型 | 🟢 |
+| `Runs/RunHistory.cs` | `IsCustomGame`/`GameMode` | — | `bool`/`GameMode` | 🟢 |
+| `RunState.cs` | 模型 | `MultiplayerScalingModel? MultiplayerScalingModel` | `IReadOnlyList<RunModel> RunModels` + `DominionModel? Dominion` + `SetDominion(DominionModel?)` | 🔴 |
+| 同上 | `IsCustomGame` | — | `bool { get; init; }` | 🟢 |
+| 同上 | `CreateForNewRun` | `(players, acts, modifiers, gameMode, ascensionLevel, seed)` | `(players, acts, modifiers, gameMode, bool isCustom, ascensionLevel, seed)` | 🔴 `gameMode` 后插参 |
+| 同上 | `CreateForTest` | `(…, GameMode gameMode, int ascensionLevel, string? seed)` | `(…, GameMode gameMode, bool isCustomGame = false, int ascensionLevel, string? seed)` | 🔵 |
+| `ExtraRunFields.cs`/`SerializableExtraRunFields.cs` | `UsedDebugCommand`/`MarkDebugToolUsed` | — | `bool` + `void ()` | 🟢 |
+| `Runs/` | `RunRichPresence`/`History/BlitzMerchantHistoryEntry` | — | 新文件 | 🟢 |
+
+## 14. 游戏模式（GameMode / Ascension / 新模式）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `Runs/GameMode.cs` | 枚举 | `None,Standard,Daily,Custom` | `None,Standard,Daily,Dread,Blitz` | 🔴 `Custom=3` 删除；自定义用 `IsCustomGame` bool |
+| `Runs/GameModeExtension.cs` → `Helpers/GameModeHelper.cs` | `AreAchievementsAndEpochsLocked` | `static bool (GameMode, bool?)`（`GameModeExtension`） | `static bool AreAchievementsAndEpochsLocked(GameMode, bool)` + `ForRun`/`ForHistory`/`ForSerializableRun`（`GameModeHelper`） | 🔴 文件/签名重构 |
+| `Entities/Ascension/AscensionManager.cs` | 构造 | `(int)` / `(AscensionLevel)` | `(GameMode, int)` | 🔴；+ 🟢 `GetMaxAllowed`/`ClampToMode`/`maxAscensionAllowedBlitz=5` |
+| `Helpers/AscensionHelper.cs` | 查询 | `GetTitle(int)`/`GetDescription(int)`/`GetHoverTip(CharacterModel,int,bool achievementsLocked)` | `GetTitle(int,GameMode)`/`GetDescription(int,GameMode)`/`GetHoverTip(CharacterModel,int,GameMode,bool isCustomGame)` | 🔴 全部追加 `GameMode` |
+| 同上 | `PovertyAscensionGoldMultiplier` | `static double` 属性 | `const decimal povertyAscensionGoldMultiplier = 0.75m` | 🔴 变小写常量 |
+| 同上 | Dread/轮换 | — | `IsDread`/`GetLevelForBlitz`/`GetPortraitHoverTip`/`GetDreadStreak`/`GetNextRotatingDreadCharacter*`/`GetRotatingCharacterIdForStreak`/`GetCurrentRotatingDread*` | 🟢 |
+| `Models/Blitz/`/`Models/Dread/` | 新模式模型 | — | `BlitzRunModel`/`DreadRunModel`/`DominionModel`/`Dominions/*` | 🟢；`ModelDb.RunModel<T>()`/`Dominion<T>()` |
+| `AutoSlay/AutoSlayConfig.cs` | `GameMode` | — | 字段 | 🟢 |
+| `Multiplayer` 侧 | `StartRunLobby`/`StartHostAsync`/`FastHost` | `maxPlayers` 必填 | `maxPlayers` 可选/加参 | 🔵；+ `LobbyGameModeChangedMessage` |
+| `StartRunLobbyPlayer.cs` | `IsCustomGame` 字段 | — | `bool` | 🟢 |
+
+## 15. 存档（Saves）
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `SaveManager.cs` | `UpdateProgressWithRunData` | `void (SerializableRun, bool)` | `PostRunProgressUpdateResult (SerializableRun, bool)` | 🔴；+ 🟢 `ObtainFoolEpochIfDefectRunCompleted` |
+| `Managers/ProgressSaveManager.cs` | `UpdateWithRunData` | `void (SerializableRun, bool)` | `PostRunProgressUpdateResult (SerializableRun, bool)` | 🔴；+ 🟢 `UpdateDreadWinStreakOnVictory`/`ReconcileDreadWinStreakVersion`/`ObtainFoolEpochIfDefectRunCompleted` |
+| `Managers/RunSaveManager.cs` | `RenameBrokenMultiplayerRunSave` | `void (ReadSaveStatus)` | — | 🔴 |
+| `Runs/PlayerMapPointHistoryEntry.cs` | `BlitzMerchantChoices` | — | `List<BlitzMerchantHistoryEntry>` | 🟢 |
+| `Runs/History/*HistoryEntry.cs` | 主构造写法 | 显式构造 | `struct(...)` 主构造 | 🔵 等价（`CardEnchantment`/`CardTransformation`/`ModelChoice`/`ActMap`/`Ascension`） |
+| `Saves/Test/MockGodotFileIo.cs` | `UnreadablePaths` | — | `HashSet<string>` | 🟢 |
+| `SerializableRun.cs` | `IsCustomGame` | — | `bool { get; set; }` | 🟢（存档 V21） |
+| `Migrations/**` | 文件名 | `*Migration*.cs` | `000N_*` 前缀；新增 `SerializableRunV20ToV21`/`RunHistoryV10ToV11` | 🔵 |
+| `SaveContent.cs`/`PendingDreadWinStreakResult.cs`/`ProfileScopeUserDataMigrator.cs` | 新文件 | — | 新文件 | 🟢 |
+| `SerializableProgress.cs`/`ProgressState.cs` | 偏好/连胜 | — | `PreferredBlitzAscension`/`MaxBlitzAscension`/`Preferred*Character`×6/`PreferredDreadRotating*`×2/`Current*DreadStartingCharacterForRotation`×2/`Pending*DreadWinStreakResult`×2 | 🟢 |
+| `ProgressState.cs` | 新方法 | — | `GetStatsForCharacter<T>()`/`IsEmptyEpochSlotAvailable(epochId)` | 🟢 |
+| `CharacterStats.cs` | `Best*/Current*DreadWinStreak*` ×10 | — | 属性 | 🟢 |
+| `CloudSaveStore.cs` | `directoryPath` | `public string` | — | 🔴 |
+| `Managers/PrefsSaveManager.cs` | 构造 | `(int profileId, ISaveStore, MigrationManager)` | — | 🔴 |
+| `MegaCritSerializerContext.cs` | JsonTypeInfo | — | `BlitzMerchantEntryType`/`BlitzMerchantHistoryEntry`/`PendingDreadWinStreakResult`/`ListBlitzMerchantHistoryEntry` | 🟢 |
+| `Runs/Metrics/RunMetrics.cs` | `GameMode` | — | `required string` | 🟢 |
+| `Runs/Metrics/EncounterMetric.cs` | `damage` | `readonly int` | `readonly int = Math.Clamp(damage,0,100)` | 🔵 |
+| `Runs/Metrics/CardChoiceMetric.cs` | `picked`/`skipped` | `readonly List<string>` | `readonly List<string> = new()` | 🔵 |
+| `Saves/Runs/SavedProperties.cs` | `SavedProperty<T>` | 显式构造 | 主构造 | 🔵 |
+
+## 16. 时间线 / 每日挑战 / 日志杂项
+
+| 文件 | API | 111 | 113 | 说明 |
+|---|---|---|---|---|
+| `Nodes/Screens/Timeline/NEpochCard.cs` + `UnlockScreens/NUnlockEpochScreen.cs` | 删除 | 有 | — | 🔴 Timeline UI 改版 |
+| `Timeline/Epochs/` | 新 Epoch | — | `BlitzEpoch`/`DreadEpoch`/`Fool1–7Epoch` + `Stories/FoolStory` | 🟢 |
+| `Daily/DailyRunUtility.cs` | 时间/种子 | — | `GetDailySeed`/`GetDailySeedDate`/`TryGetDailySeedDate`/`IsFutureLeaderboardDay`/`IsCurrentLeaderboardDay`/`GetTimeServerTime` | 🟢 |
+| `Logging/LogSanitizer.cs` | `AnonymizeSteamIds` | — | `void` | 🟢 |
+| `Helpers/ImageHelper.cs` | `GetAtlasUvRegion` | — | `static` | 🟢 |
+| `Assets/PreloadManager.cs` | `LoadRoomBlitzMerchantAssets` | — | `void` | 🟢 |
+| `RichTextTags/RichTextYellow.cs` | 新文件 | — | `RichTextEffect` | 🟢 |
+| `DevConsole/ConsoleCommands/` | 新命令 | — | `ScreenshotConsoleCmd`/`GetLogsConsoleCommand`/`UnlockConsoleCommand`/`AchievementConsoleCommand` + `BudgetedZipWriter`/`FeedbackAttachment`/`FeedbackLogFiles`/`FeedbackTextEntry` | 🟢 |
+| `DevConsole/ConsoleCommands/FightConsoleCmd.cs` | `FightArgs`/`TryParseFightArgs` | — | `record struct` + `static bool` | 🟢 支持指定种子 |
+| `DevConsole/ConsoleCommands/GetLogsConsoleCmd.cs` | `CollectFeedbackLogFiles`/`WriteFeedbackZip` | — | `static` | 🟢 |
+| `Debug/` | 截图上报 | — | `Bootstrapper`/`CaptureResult`/`CaptureStatus`/`ScreenshotPaths`/`ViewportCapture` | 🟢 |
+| `Helpers/StsColors.cs` | `halfTransparentBlack` | — | `static Color` | 🟢 |
+| `Assets/AssetSets.cs` | 新资源集 | — | `NCardFlyShuffleVfx`/`ArrowSlot`/`NFoolUi`/`NBlitzTopBar`/`NBlitzIcon`/`NDreadIcon` 等 | 🟢 |
+| `Audio/Debug/` | `TmpSfx`/`NDebugAudioManager` | — | 新增 | 🟢 |
+| `ControllerInput/ControllerConfig.cs`/`SteamControllerConfig.cs` | `GlyphType`/`SteamDeckOnly`/`IsSteamInputActive` | — | 新增 | 🟢 |
+| `Entities/Cards/CardTransformation.cs` | `TransformResult.transformer` | — | `CardModel?` 字段 | 🟢 |
+| `Entities/Enchantments/EnchantmentOption.cs` | `card` | — | `CardModel?` 字段 | 🟢 |
+| `Runs/CardCreationOptions.cs` | `MerchantBlacklist`/`CustomPool` | — | `IEnumerable<CardModel>` | 🟢 |
+| `Runs/Metrics/ActWinMetric.cs` | `dread` | — | `bool` | 🟢 |
+| `Runs/History/*HistoryEntry.cs` | 构造参数 | 旧参数 | `transformer`/`enchantment` 等参数重排/新增 | 🔴 |
+| `Combat/History/Entries/` | `EnergySpentEntry`/`StarsModifiedEntry`/`SummonedEntry` | 旧构造 | 参数调整 | 🔴 |
+| `GameInfo/NGameInfoUploader.cs` | `GameInfoPath`/`SerializeGameInfo` | — | `static` | 🟢 |
+| `Runs/PlayerMapPointHistoryEntry.cs` | `BlitzMerchantChoices` | — | `List<BlitzMerchantHistoryEntry>` | 🟢 |
+| `Saves/Test/MockGodotFileIo.cs` | `UnreadablePaths` | — | `HashSet<string>` | 🟢 |
+| `TestSupport/TestRngInjector.cs` | `SetRelicOverride<T>` | `static void` | `static void AddRelicOverride<T>` | 🔴 改名 |
+| `FmodSfx.cs` | `foolWah`/`foolCho`/`foolKi` | — | `const string` | 🟢 |
+| `Entities/Merchant/MerchantDialogueSet.cs` | `BlitzFinishedLines` | — | `IReadOnlyList<LocString>` | 🟢 |
+
+## 17. Modding 命名空间
+
+| 文件 | 111 | 113 | 状态 |
+|---|---|---|---|
+| `Mod.cs`/`ModManifest.cs`/`ModSettings.cs`/`ModManager.cs`/`ModHelper.cs`/`ModDependency.cs`/`ModLoadState.cs`/`ModManagerState.cs`/`ModSource.cs`/`CombatHookSubscriptionDelegate.cs`/`RunHookSubscriptionDelegate.cs`/`IModManagerFileIo.cs`/`ModInitializerAttribute.cs`/`SettingsSaveMod.cs` | 原签名 | 相同 | ✅ 仅反编译器格式差异；`OnModDetected`/`OnMetricsUpload` 事件仍在 |
+
+## 18. AutoSlay（自动测试，🔴 大重构）
+
+| 区域 | 111 | 113 | 说明 |
+|---|---|---|---|
+| `Launchers/` | — | `IRunLauncher`/`StandardRunLauncher`/`BlitzRunLauncher`/`DreadRunLauncher`/`ModeScreen`/`RunLaunchers` | 🟢 |
+| `Navigation/` | — | `IRoomNavigator`/`MapNavigator`/`BlitzNavigator`/`RunPosition`/`RoomNavigators` | 🟢 |
+| `Scenarios/` | — | `ScenarioScript`/`ScenarioRunner`/`ScenarioConditions`/`ScenarioStatement`/`ScenarioOutcome`/`ScenarioExitCode`/`ScenarioLog`/`ScenarioWaitCondition`/`ScenarioParseResult`/`ScenarioDirectives`/`ScenarioConditionDescriptor` | 🟢 脚本化场景 |
+| 其他 | `AutoSlayTimeoutException` | `DriverTimeoutException` + `AutoSlayMode`/`AutoSlayModes`/`AutoSlayUnlocks`/`ActEntryCheck`/`ByrdEvolutionScreenHandler` | 🔴 改名 + 🟢 |
+| `AutoSlayer.cs` | `Start(string seed, string? logFile = null)` + `static Watchdog? CurrentWatchdog` | `Start(string seed, string? mode, string? logFile = null)` + `Watchdog.Current` | 🔴 |
+| `Helpers/Watchdog.cs` | `Watchdog()` | `Watchdog(Action<string>, Action<string>, TimeSpan?, TimeSpan?, Func<DateTime>?)` + `WatchdogScope`/`Use`/`Current` | 🔴 |
+
+## 19. UI 节点（Nodes）
+
+| 区域 | 111 | 113 | 说明 |
+|---|---|---|---|
+| 全体 `N*` 类 | 非 partial + 手写信号 | `partial` + 源生成信号 | 🔵 等价；手写 `EmitSignal*`/`SignalName` 引用会断 |
+| `Nodes/TopBar/` | `NTopBar` 单一类 | `NTopBarButton`/`NTopBarDeckButton`/`NTopBarGold`/`NTopBarHp`/`NTopBarMapButton`/`NTopBarPauseButton`/`NTopBarPortrait`/`NTopBarPortraitTip`/`NTopBarBossIcon`/`NTopBarFloorIcon`/`NTopBarRoomIcon`/`NTopBarModifier`/`NRunTimer` + 3 IconConfig | 🔴 拆分 |
+| `Nodes/Combat/` | `NCreature.SetCreatureIsInteractable` | `SetIsInteractable(on, changeVisibilityImmediately)` + `NFoolArrowUi`/`NFoolCombatUi`/`NFoolCombatSymbol` | 🔴 + 🟢 |
+| `Nodes/Rooms/` | `NMerchantRoom` | `NStandardMerchantRoom` + `NBlitzMerchantRoom` | 🔴 拆分 |
+| `Nodes/Screens/` | — | `NBlitzScreen`/`NDreadScreen`/`NUnderConstruction`/`NSaveAndQuitButton`/`NSubmenuPortrait`/`NCustomGameModeDropdown`/`NLeaderboardDayArrow` | 🟢 |
+| `Nodes/Screens/CardLibrary/` | `SortingOrders.cs` | `NCardLibraryGrid.SortingOrders.cs` | 🔴 移位 |
+| `Bindings/MegaSpine/MegaSlotNode.cs` | `(Node3D)` | `(MegaSlot)` + `SlotName`/`Slot`/`AttachmentName` | 🔴；新类型 `MegaSlot` |
+| `Nodes/GodotExtensions/` | — | `OwnedTween`/`OwnerFreeingTween`/`TweenOutcome`/`TweenWait` | 🟢 |
+| `Nodes/CommonUi/NInputManager.cs` | — | `DebugSkipRestSite`/`DebugProceedFromRewards`/`IsKbOnlyDirectionalKey` | 🟢 |
+| `Nodes/CommonUi/NErrorPopup.cs` | `NErrorPopup` | + `RunSaveErrorContent` record struct + `CreateForRunSave`/`GetRunSaveErrorContent` | 🟢 |
+| `Nodes/GodotExtensions/NMegaTextEdit.cs` | `class NMegaTextEdit : TextEdit` | `class NMegaTextEdit` 持有 `TextEdit` 属性 | 🔴 继承者必改 |
+| `Nodes/GodotExtensions/NDropdown.cs` | — | `protected bool IsOpen` | 🟢 |
+| `Nodes/HoverTips/NHoverTipSet.cs` | — | `const float hoverTipWidth = 360f` + `SetAlignment` | 🟢 |
+| `Nodes/Combat/NCreatureStateDisplay.cs` | — | `Reposition`/`AnimateInSimple`/`AnimateOutSimple` | 🟢 |
+| `Nodes/Cards/NCard.cs` | — | `SetPortraitTexture(Texture2D)` | 🟢 |
+| `Nodes/Cards/NCardGrid.cs` | — | `IReadOnlyList<CardModel> SortedCards` | 🟢 |
+| `Nodes/Screens/Map/NNormalMapPoint.cs` | — | `static string IconName/IconPath/OutlinePath/UnknownIconPath/UnknownOutlinePath` | 🟢 |
+| `Nodes/Rooms/NMerchantButton.cs` | — | `protected MegaSkeleton? _merchantSkeleton` + `protected NSelectionReticle _merchantSelectionReticle` + `protected bool _focusedWhileTargeting` | 🟢 |
+| `Nodes/Relics/NRelicInventory.cs` | — | `UpdateNavigation()` | 🟢 |
+| `Nodes/Screens/Shops/NMerchantInventory.cs` | — | `const int blitzColumns = 3` + `ShowOpenInventory`/`Close` | 🟢 |
+| `Nodes/Screens/Shops/NMerchantDialogue.cs` | — | `ShowForBlitzFinished` | 🟢 |
+| `Nodes/Screens/MainMenu/` | — | `static AssetPaths`（`NCompendiumSubmenu`/`NSingleplayerSubmenu`） | 🟢 |
+| `Nodes/Screens/FeedbackScreen/NSendFeedbackScreen.cs` | — | `static GetUploadedScreenshotSize`/`SendFeedback` | 🟢 |
+| `Nodes/Audio/NRunMusicController.cs` | — | `UpdateTrack(RoomType)` | 🟢 |
+| `Nodes/Vfx/` | — | `NCardFlyVfx.Create`/`NFireSmokePuffVfx.Create`/`NCardSmithVfx()` | 🟢 |
+| `Events/Custom/CrystalSphereEvent/` | — | `CrystalSphereMinigame.Owner` | 🟢 |
+| `CardSelection/CardSelectorPrefs.cs` | — | `static bool AbsorbSelectionPrompt` | 🟢 |
+| `TestSupport/TestRngInjector.cs` | `SetRelicOverride<T>` | `AddRelicOverride<T>` | 🔴 改名 |
+| `addons/sentry/` | `Nodes/SentryBootstrap.cs`/`Nodes/SentryAutoInit.cs` | `addons/sentry/` | 🔵 移位 |
+| `addons/mega_text/` | `MegaCrit.Sts2.addons.mega_text/MegaLabel`/`MegaRichTextLabel`/`ThemeConstants` | `addons/mega_text/`（同 namespace） | 🔵 移位 |
+
+## 20. 枚举值变化汇总（真实变化）
+
+| 枚举 | 111 | 113 | 说明 |
+|---|---|---|---|
+| `Runs/GameMode` | `None,Standard,Daily,Custom` | `None,Standard,Daily,Dread,Blitz` | 🔴 `-Custom`/`+Dread`/`+Blitz`；自定义→`IsCustomGame` |
+| `Hooks/HpLossHookPhase` | `BeforeOsty=1,AfterOsty=2,All=3` | `BeforeWuppy=1,BeforeOsty=2,AfterOsty=4,All=6` | 🔴 位值全移 + 🟢 |
+| `ValueProps/ValueProp` | … | `+FromArrow = 0x20` | 🟢 |
+| `Entities/Cards/CardTag` | … | `+Wah`/`Cho`/`Ki`/`Shoot` | 🟢 |
+| `Entities/Characters/CharacterGender` | `Male,Female,NonBinary,Unspecified` | `+Tree` | 🟢 |
+| `Entities/Multiplayer/NetError` | … | `+DreadNotUnlocked=110`/`BlitzNotUnlocked=111` | 🟢 |
+| `Entities/Rngs/PlayerRngType` | … | `+NonCombatGeneration` | 🟢 |
+| `Rewards/RewardType` | … | `+UpgradeCard` | 🟢 |
+| `Nodes/Vfx/VfxColor` | … | `+Fool` | 🟢 |
+| `Runs/CardRarityOddsType` | … | `+Blitz`/`BlitzNeow` | 🟢 |
+| `HoverTips/StaticHoverTip` | … | `+WahMelody`/`ChoMelody`/`KiMelody`/`Tarot` | 🟢 |
+
+## 21. 原版模型行为改动（mod 若 hook 这些类需留意）
+
+| 文件 | 111 | 113 | 说明 |
+|---|---|---|---|
+| `Models/Relics/Byrdpip.cs` | — | `SwoopsPlayed`/`ShowCounter`/`DisplayAmount`/`AfterCardPlayed`/`TryModifyRestSiteOptions` | 🟢 进化计数+休息选项 |
+| `Models/Relics/PaelsEye.cs` | `ShouldTakeExtraTurn` | `ShouldTakeExtraTurnEarly` | 🔴 提前判定 |
+| `Models/Relics/ScrollBoxes.cs` | `GenerateRandomBundles(count)` | `(Rng rng, count)` | 🔴 参数 |
+| `Models/Relics/`（BookOfFiveRings/FrozenEgg/MoltenEgg/LuckyFysh/JuzuBracelet/Girya/Shovel/WhiteBeastStatue/PotionBelt/LordsParasol/BowlerHat/MealTicket/MassiveScroll/Planisphere） | 旧实现 | 实现更新 | 🔵 hook 签名未变 |
+| `Models/Powers/JugglingPower.cs` | `BeforeCardPlayed` | `AfterCardPlayed` + `cardToClone` 公共字段 | 🔴 行为点移动 |
+| `Models/Powers/PhantomBladesPower.cs` | `AfterCardEnteredCombat` | `TryModifyKeywordsInCombat` | 🔴 |
+| `Models/Powers/InterceptPower.cs` | — | `IsCovering`/`RemoveCoveredCreature`/`AfterRemoved` | 🟢 |
+| `Models/Powers/`（Covered/Reattach/Dampen/Constrict/Adaptable/Infested/Ravenous/PaleBlueDot/Tank/SicEm/Hex/Shrink/PossessSpeed/Illusion/DrawCardsNextTurn） | `AfterDeath` 旧签名 | `AfterDeath` 新签名 + 微调 | 🔴 签名适配 |
+| `Models/Cards/`（Melancholy/SovereignBlade/ExpectAFight/SpoilsMap/ForgottenRitual/HandOfGreed/Royalties/Debt/Expertise/MementoMori） | 旧实现 | 挂接点微调（`AfterThisWasTransformedIntoInternal`/`ShouldGlowGoldInternal`/Blitz 禁用） | 🔵 |
+| `Models/Monsters/KinFollower.cs` | `StartsWithDance` | `Index` | 🔴 构造参数 |
+| `Models/Monsters/`（Byrdpip/TheInsatiable/Queen/Aeonglass/PaelsLegion/LagavulinMatriarch/TestSubject/TwigSlimeS） | 旧实现 | 实现更新 | 🔵 |
+| `Models/Encounters/*Boss.cs` | — | `GetDominion`/`ScenePath` 接入 | 🟢 Dread 强化 |
+| `Models/Enchantments/Sown.cs`/`Swift.cs` | 旧成员 | 成员调整 | 🔵 |
+| `Models/Events/*`（Neow/DoorsOfLightAndDark/Nonupeipe/Tanx/TheArchitect/WelcomeToWongos/Orobas/Darv/Pael/Reflections/Tezcatara/Vakuu） | — | `FoolPronounGuess`/`OnRoomExit`/`ConfigureBackgroundScene` 接入 | 🟢 |
+| `Models/Characters/*`（Ironclad/Defect/Silent/Regent/Necrobinder/Fool） | — | `DreadBgBrightness`/`DreadBgContrast`/`DreadNameColor` override | 🟢 |
+
+## 22. 删除的类型/文件汇总
+
+| 文件（111） | 去向（113） |
+|---|---|
+| `Runs/GameModeExtension.cs` | → `Helpers/GameModeHelper.cs` |
+| `Models/Singleton/SingletonModel.cs` + `Singleton/MultiplayerScalingModel.cs` | → `Models/RunModel.cs`、`Models/MultiplayerScalingModel.cs` |
+| `Nodes/Screens/CardSelection/ICardSelector.cs` | → `ICardSelectionScreen.cs` |
+| `Models/Powers/AmbergrisPower.cs` | 删除 |
+| `AutoSlay/AutoSlayTimeoutException.cs` | → `DriverTimeoutException.cs` |
+| `Multiplayer/Messages/Game/MerchantCardRemovalMessage.cs` | 删除（走 MerchantSynchronizer） |
+| `Nodes/Screens/Timeline/NEpochCard.cs`、`NUnlockEpochScreen.cs` | Timeline 改版 |
+| `Nodes/Screens/CardLibrary/SortingOrders.cs` | → `NCardLibraryGrid.SortingOrders.cs` |
+| `Nodes/SentryBootstrap.cs` / `SentryAutoInit.cs` | → `addons/sentry/` |
+| `MegaCrit.Sts2.addons.mega_text`（`MegaLabel`/`MegaRichTextLabel`/`ThemeConstants`） | → `addons/mega_text/`（同 namespace） |
+
+## 23. 按 mod 类型速查
+
+| mod 类型 | 必改项 |
+|---|---|
+| 卡牌/遗物/能力 | `AfterDeath` 加 `source`；遗物 `IsAllowed`→`IsAllowedInternal`；怪 `IsHealthBarVisible`→`IsInteractable`；卡 `AfterTransformed*` 改名；`IsAllowedInBlitz`/`IsAllowedInRun`/`IsAllowedInShops` |
+| 角色 | 删 4 个 Pronoun 属性 → `AddDetailsTo(str, pronounGuess)`；`ShortTitle`/`BaseArrowSlotCount`/`DreadBg*`/`virtual DeathSfx` |
+| 事件 | `RelicOption` 去 `customDonePage`；`AllowedOptions`/`GetOptionsFromThreePools`/`OnRoomExit`/`FoolPronounGuess`/`ConfigureBackgroundScene` |
+| Boss/遭遇 | `GetDominion`、`ScenePath`、怪 `IsInteractable` |
+| 商店 | `MerchantEntry` 全系改写（`OnTryPurchaseInternal`、无 inventory 构造、`Id`+`TryBeginPurchase`） |
+| 模式/爬塔 | `GameMode.Custom` 删 → `IsCustomGame`；`CreateForNewRun` 加 `isCustom`；Ascension* 签名 |
+| 地图 | `GenerateRooms(RunState)`、`ActMap` protected 连接方法 |
+| Hook 订阅 | `AfterDeath`/`AfterTakingExtraTurn`/`ShouldTakeExtraTurn`/`ModifyUnblockedDamageTarget` |
+| 存档/历史 | `SerializableRun` V21 + `IsCustomGame`；`OnEnded`/`UpdateProgressWithRunData` → `PostRunProgressUpdateResult` |
+| 选卡界面 | `CardSelectCmd` 静态栈 → `RunManager.CardSelectorStack`；`ICardSelector`→`ICardSelectionScreen` |
+| 自动化测试 | AutoSlay 重构（Launchers/Navigation/Scenarios） |
+
 ## 0.110 至 0.111
 
 ### CardModel

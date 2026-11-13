@@ -5,11 +5,11 @@ permalink: docs/04-ritsulib/04-15-add-singleton/
 categories:
 - Basics
 ---
-单例（`SingletonModel`）是一种独立于卡牌、遗物等的`AbstractModel`。所有的`AbstractModel`都有接收游戏事件发生的能力。
+单例（`RunModel`，0.113 前叫`SingletonModel`）是一种独立于卡牌、遗物等的`AbstractModel`。所有的`AbstractModel`都有接收游戏事件发生的能力。
 
 可以用来做一些全局的影响。
 
-例如，多人模式就使用了一个`SingletonModel`，用于判断怪物是否根据玩家数量提高获得的格挡。
+例如，多人模式就使用了一个`RunModel`（`MultiplayerScalingModel`），用于判断怪物是否根据玩家数量提高获得的格挡。
 
 你可以用来做关键词的效果，例如一个关键词是打出后抽一张，就可以创建单例，在出牌后判断是否有关键词然后抽牌。
 
