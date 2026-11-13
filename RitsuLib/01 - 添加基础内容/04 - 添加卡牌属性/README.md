@@ -49,7 +49,7 @@ public override IEnumerable<CardKeyword> CanonicalKeywords => [
 
 判断是否有：`Keywords.Contains(MyKeywords.Unique)`
 
-可配合单例（`SingletonModel`）实现逻辑。参考对应文章。
+可配合单例（`RunModel`，0.113 前叫`SingletonModel`）实现逻辑。参考对应文章。
 
 ![alt text](../../../images/image23.webp)
 

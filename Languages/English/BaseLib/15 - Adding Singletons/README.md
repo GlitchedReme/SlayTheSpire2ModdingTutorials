@@ -1,8 +1,8 @@
-A singleton (`SingletonModel`) is an `AbstractModel` independent of cards, relics, etc. All `AbstractModel` instances can receive game events.
+A singleton (`RunModel`, called `SingletonModel` before 0.113) is an `AbstractModel` independent of cards, relics, etc. All `AbstractModel` instances can receive game events.
 
 Useful for global effects.
 
-For example, multiplayer uses a `SingletonModel` to determine whether monsters gain extra block based on player count.
+For example, multiplayer uses a `RunModel` (`MultiplayerScalingModel`) to determine whether monsters gain extra block based on player count.
 
 You can use one for keyword effects. For instance, a keyword that draws a card when played — create a singleton that checks for the keyword after a card is played, then draws.
 
